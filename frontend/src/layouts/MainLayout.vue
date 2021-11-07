@@ -48,8 +48,11 @@
           Group<q-separator />
 
           <q-item clickable v-ripple>
+          
             <q-item-section avatar>
+            
               <q-avatar>
+              <q-badge color="orange" floating>22</q-badge>
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
               </q-avatar>
             </q-item-section>
