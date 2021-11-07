@@ -1,11 +1,10 @@
 <template>
-  <div class="q-pa-md">
+  <div class="q-pa-md row q-mt-xl">
+    <div class="col-4"></div>
     <div class="q-pa-md">
       <h7>Welcome back</h7>
       <h4 style="color: #06f91e">Login to your account</h4>
-      <br />
       <h6>Email</h6>
-      <br />
       <q-input
         filled
         v-model="username"
@@ -14,17 +13,14 @@
         border
         style="width: 350px; height: 50px"
       />
-      <br />
       <h6>Password</h6>
-      <br />
       <q-input
         filled
-        v-model="pass"
-        label="Password"
         dense
         border
         style="width: 350px; height: 50px"
-      />
+        v-model="pass"
+        :type="isPwd ? 'password' : 'text'"/>
       <div class="q-gutter-sm">
         <q-checkbox class="q-mr-xl" v-model="right" label="Remember me" />
         <q-btn
@@ -34,7 +30,6 @@
           label="Forgot password?"
         />
       </div>
-      <br />
       <q-btn
         class="q-mt-md"
         unelevated
@@ -51,6 +46,7 @@
         style="width: 350px; height: 50px"
       />
     </div>
+    <div class="col-2"></div>
   </div>
 </template>
 
@@ -66,7 +62,8 @@ export default defineComponent({
   data() {
     return {
       username: "",
-      pass: "",
+      pass:  ref(''),
+      isPwd: ref(true),
       right: ref(false),
     };
   },
