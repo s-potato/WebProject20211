@@ -17,8 +17,21 @@ router.post('/register', function (req, res, next) {
     });
 })
 
-router.post('/login', function(req, res, next) {
-    
+router.post('/login', function (req, res, next) {
+    UserModel.findOne({ username: req.body.username }, 'password', function (err, result) {
+        if (err) {
+            res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+        }
+        else {
+            result.comparePassword(req.body.password, function (err2, isMatch) {
+                if (err2)
+                    res.status(500).json({ status: "error", message: "Mismatch", data: req.body.username });
+                else {
+                    res.json({ status: "success", data: isMatch });
+                }
+            })
+        }
+    })
 })
 
 module.exports = router;
