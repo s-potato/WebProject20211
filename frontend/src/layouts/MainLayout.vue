@@ -333,7 +333,7 @@
     </q-drawer>
 
     <q-page-container>
-      <div class="q-pa-md row justify-center">
+      <!-- <div class="q-pa-md row justify-center">
         <div style="width: 100%; max-width: 400px">
           <q-chat-message label="Sunday, 19th" />
 
@@ -351,7 +351,8 @@
             stamp="4 minutes ago"
           />
         </div>
-      </div>
+      </div> -->
+      <router-view />
     </q-page-container>
   </q-layout>
 </template>
