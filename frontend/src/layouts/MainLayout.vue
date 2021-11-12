@@ -29,11 +29,13 @@
       </q-toolbar>
     </q-header>
 
-   <q-drawer
-     show-if-above
-     side="left"
-     bordered
-     class="bg-grey-10 text-white shadow-2">
+    <q-drawer
+      show-if-above
+      v-model="leftDrawerOpen"
+      side="left"
+      bordered
+      class="bg-grey-10 text-white shadow-2"
+    >
       <!-- drawer content -->
       <div class="q-pa-md" style="max-width: 350px">
         <q-toolbar-title> EzNFT </q-toolbar-title>
@@ -50,7 +52,7 @@
             push
             color="red"
             label="Profile"
-            @click="reloadPage"
+            @click="refresh"
           />
         </div>
 
@@ -303,7 +305,7 @@
         <q-item-label header class="text-white">Offline</q-item-label>
 
         <q-item
-          v-for="contact in offline" 
+          v-for="contact in offline"
           :key="contact.id"
           class="q-mb-sm"
           clickable
@@ -425,12 +427,6 @@ export default {
       offline,
     };
   },
-  
-  methods: {
-    reloadPage() {
-      window.location.reload();
-    }
-  }
 };
 </script>
 
