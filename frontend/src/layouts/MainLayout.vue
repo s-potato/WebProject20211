@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh lpR lFr">
+  <q-layout view="lHh lpR lFr" class="bg-grey-9 text-white">
     <q-header class="bg-grey-10 text-white shadow-2">
       <q-toolbar>
         <!--<q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />-->
@@ -8,7 +8,12 @@
           <div class="q-pa-md" style="max-width: 100%">
             <div class="row">
               <div class="col">
-                <q-btn color="green" label="Friend" icon="person" style ="margin-right: 10px"/>
+                <q-btn
+                  color="green"
+                  label="Friend"
+                  icon="person"
+                  style="margin-right: 10px"
+                />
                 <q-btn color="red" label="Group" icon="people" />
               </div>
               <div class="col"></div>
@@ -24,7 +29,13 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer show-if-above v-model="leftDrawerOpen" side="left" bordered class="bg-grey-10 text-white shadow-2">
+    <q-drawer
+      show-if-above
+      v-model="leftDrawerOpen"
+      side="left"
+      bordered
+      class="bg-grey-10 text-white shadow-2"
+    >
       <!-- drawer content -->
       <div class="q-pa-md" style="max-width: 350px">
         <q-toolbar-title> EzNFT </q-toolbar-title>
@@ -44,15 +55,14 @@
             @click="refresh"
           />
         </div>
+
         <q-list bordered>
           Group<q-separator />
 
           <q-item clickable v-ripple>
-          
             <q-item-section avatar>
-            
               <q-avatar>
-              <q-badge color="orange" floating>22</q-badge>
+                <q-badge color="orange" floating>22</q-badge>
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
               </q-avatar>
             </q-item-section>
@@ -76,9 +86,120 @@
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
               </q-avatar>
             </q-item-section>
-            <q-item-section>Group 3</q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
           </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 2</q-item-section>
+          </q-item>
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-avatar>
+                  <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                </q-avatar>
+              </q-item-section>
+              <q-item-section>Group 3</q-item-section>
+            </q-item>
+          
         </q-list>
+
         <q-list bordered>
           Direct Message<q-separator />
 
@@ -141,7 +262,13 @@
       <!-- end left -->
     </q-drawer>
 
-    <q-drawer show-if-above v-model="rightDrawerOpen" side="right" bordered class="bg-grey-10 text-white shadow-2">
+    <q-drawer
+      show-if-above
+      v-model="rightDrawerOpen"
+      side="right"
+      bordered
+      class="bg-grey-10 text-white shadow-2"
+    >
       <!-- drawer content -->
 
       <q-toolbar>
@@ -164,7 +291,9 @@
 
           <q-item-section>
             <q-item-label>{{ contact.name }}</q-item-label>
-            <q-item-label caption lines="1" class="text-white">{{ contact.email }}</q-item-label>
+            <q-item-label caption lines="1" class="text-white">{{
+              contact.email
+            }}</q-item-label>
           </q-item-section>
 
           <q-item-section side>
@@ -175,7 +304,7 @@
         <q-separator />
         <q-item-label header class="text-white">Offline</q-item-label>
 
-        <q-item 
+        <q-item
           v-for="contact in offline"
           :key="contact.id"
           class="q-mb-sm"
@@ -190,7 +319,9 @@
 
           <q-item-section>
             <q-item-label>{{ contact.name }}</q-item-label>
-            <q-item-label caption lines="1" class="text-white">{{ contact.email }}</q-item-label>
+            <q-item-label caption lines="1" class="text-white">{{
+              contact.email
+            }}</q-item-label>
           </q-item-section>
 
           <q-item-section side>
@@ -202,7 +333,27 @@
       <!-- end right -->
     </q-drawer>
 
-    <q-page-container> </q-page-container>
+    <q-page-container>
+      <div class="q-pa-md row justify-center">
+        <div style="width: 100%; max-width: 400px">
+          <q-chat-message label="Sunday, 19th" />
+
+          <q-chat-message
+            name="me"
+            avatar="https://cdn.quasar.dev/img/avatar4.jpg"
+            :text="['hey, how are you?']"
+            sent
+            stamp="7 minutes ago"
+          />
+          <q-chat-message
+            name="Jane"
+            avatar="https://cdn.quasar.dev/img/avatar3.jpg"
+            :text="['doing fine, how r you?']"
+            stamp="4 minutes ago"
+          />
+        </div>
+      </div>
+    </q-page-container>
   </q-layout>
 </template>
 
@@ -275,6 +426,10 @@ export default {
       contacts,
       offline,
     };
+  },
+  setup() {
+    function onScroll(position) {}
+    return { onScroll };
   },
 };
 </script>
