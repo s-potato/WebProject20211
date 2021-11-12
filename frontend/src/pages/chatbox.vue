@@ -8,6 +8,7 @@
         <q-toolbar-title> Friend 1 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</q-toolbar-title>
         <q-btn flat round dense icon="call" class="q-mr-xs" />
         <q-btn flat round dense icon="videocam" class="q-mr-xs" />
+        <q-btn flat round dense icon="search" class="q-mr-xs" />
         <q-btn flat round dense icon="more_vert" />
       </q-toolbar>
       <div style="width: 100%">
