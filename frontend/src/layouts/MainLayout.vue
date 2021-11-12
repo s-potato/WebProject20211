@@ -1,10 +1,11 @@
 <template>
   <q-layout view="lHh lpR lFr">
-    <!-- <q-img
+    <q-img
       src="~assets/background.png"
-      class="bg-grey-10"
-    /> -->
-    <q-header class="bg-grey-10">
+      class="background-img absolute-top"
+    />
+    <q-header>
+      <q-img src="~assets/background.png" class="background-img absolute-top" />
       <q-toolbar>
         <!--<q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />-->
 
@@ -33,12 +34,8 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      show-if-above
-      side="left"
-      bordered
-      class="bg-grey-10 text-white shadow-2"
-    >
+    <q-drawer show-if-above side="left" bordered class="text-white">
+      <q-img src="~assets/background.png" class="background-img absolute-top" />
       <!-- drawer content -->
       <div class="q-pa-md" style="max-width: 350px">
         <q-toolbar-title> EzNFT </q-toolbar-title>
@@ -59,8 +56,30 @@
           />
         </div>
 
-        <q-list bordered>
+        <q-list bordered class="list-group">
           Group<q-separator />
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <q-badge color="orange" floating>22</q-badge>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 1</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <q-badge color="orange" floating>22</q-badge>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Group 1</q-item-section>
+          </q-item>
 
           <q-item clickable v-ripple>
             <q-item-section avatar>
@@ -102,105 +121,14 @@
 
             <q-item-section>Group 2</q-item-section>
           </q-item>
-
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-avatar>
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
               </q-avatar>
             </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
+            <q-item-section>Group 3</q-item-section>
           </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-            <q-item clickable v-ripple>
-              <q-item-section avatar>
-                <q-avatar>
-                  <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-                </q-avatar>
-              </q-item-section>
-              <q-item-section>Group 3</q-item-section>
-            </q-item>
-          
         </q-list>
 
         <q-list bordered>
@@ -270,8 +198,9 @@
       v-model="rightDrawerOpen"
       side="right"
       bordered
-      class="bg-grey-10 text-white shadow-2"
+      class="text-white"
     >
+      <q-img src="~assets/background.png" class="background-img absolute-top" />
       <!-- drawer content -->
 
       <q-toolbar>
@@ -336,7 +265,8 @@
       <!-- end right -->
     </q-drawer>
 
-    <q-page-container    >
+    <q-page-container class="text-white">
+      <q-img src="~assets/background.png" class="background-img absolute-top" />
       <router-view />
     </q-page-container>
   </q-layout>
@@ -416,15 +346,15 @@ export default {
   methods: {
     refresh() {
       window.location.reload();
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-
-  .background-img {
-    height: 100%;
-    z-index: -1;
-  }
+.background-img {
+  height: 100%;
+  width: 100%;
+  z-index: -1;
+}
 </style>
