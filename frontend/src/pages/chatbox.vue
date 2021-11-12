@@ -1,6 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
-    <div class="q-pa-md row justify-center">
+  <q-page class="flex">
         <div style="width: 100%; max-width: 400px">
           <q-chat-message label="Sunday, 19th" />
 
@@ -18,7 +17,6 @@
             stamp="4 minutes ago"
           />
         </div>
-      </div>
   </q-page>
 </template>
 
