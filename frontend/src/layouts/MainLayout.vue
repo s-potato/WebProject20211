@@ -10,7 +10,7 @@
         <!--<q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />-->
 
         <q-toolbar-title>
-          <div class="q-pa-md" style="max-width: 100%">
+          <div class="q-pa-md" style="max-width:100%">
             <div class="row">
               <div class="col">
                 <q-btn
@@ -55,10 +55,8 @@
             @click="refresh"
           />
         </div>
-
+          Group
         <q-list bordered class="list-group">
-          Group<q-separator />
-
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-avatar>
@@ -130,10 +128,8 @@
             <q-item-section>Group 3</q-item-section>
           </q-item>
         </q-list>
-
-        <q-list bordered>
-          Direct Message<q-separator />
-
+         Direct Message
+        <q-list bordered class="list-group">
           <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-avatar>
@@ -356,5 +352,9 @@ export default {
   height: 100%;
   width: 100%;
   z-index: -1;
+}
+.list-group {
+  height:300px; 
+  overflow: auto;
 }
 </style>
