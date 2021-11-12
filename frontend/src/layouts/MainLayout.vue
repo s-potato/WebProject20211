@@ -31,7 +31,6 @@
 
     <q-drawer
       show-if-above
-      v-model="leftDrawerOpen"
       side="left"
       bordered
       class="bg-grey-10 text-white shadow-2"
@@ -427,6 +426,12 @@ export default {
       offline,
     };
   },
+
+  methods: {
+    refresh() {
+      window.location.reload();
+    }
+  }
 };
 </script>
 
