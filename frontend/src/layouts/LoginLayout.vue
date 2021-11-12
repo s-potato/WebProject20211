@@ -1,8 +1,9 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <!-- <q-img src = /background.png spinner-color="white"
-            style="object-fit: scale-down" /> -->
-    <div class="q-pa-md">
+        <q-img
+        src="~assets/background.png"
+        class="background-img "
+        />
       <div class="row">
         <div class="col">
           <q-img src = ~assets/moutains.png spinner-color="white"
@@ -14,6 +15,19 @@
         </q-page-container>
       </div>
     </div>
-    </div>
   </q-layout>
 </template>
+
+<script>
+import { defineComponent} from 'vue'
+export default defineComponent({
+  name: "PageIndex",
+});
+</script>
+
+<style lang="scss">
+  .background-img {
+    height: 100%;
+    z-index: -1;
+  }
+</style>

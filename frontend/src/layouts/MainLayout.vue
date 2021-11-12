@@ -1,6 +1,10 @@
 <template>
-  <q-layout view="lHh lpR lFr" class="bg-grey-9 text-white">
-    <q-header class="bg-grey-10 text-white shadow-2">
+  <q-layout view="lHh lpR lFr">
+    <q-img
+      src="~assets/background.png"
+      class="background-img"
+    />
+    <q-header class="bg-grey-10">
       <q-toolbar>
         <!--<q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />-->
 
@@ -333,25 +337,6 @@
     </q-drawer>
 
     <q-page-container>
-      <!-- <div class="q-pa-md row justify-center">
-        <div style="width: 100%; max-width: 400px">
-          <q-chat-message label="Sunday, 19th" />
-
-          <q-chat-message
-            name="me"
-            avatar="https://cdn.quasar.dev/img/avatar4.jpg"
-            :text="['hey, how are you?']"
-            sent
-            stamp="7 minutes ago"
-          />
-          <q-chat-message
-            name="Jane"
-            avatar="https://cdn.quasar.dev/img/avatar3.jpg"
-            :text="['doing fine, how r you?']"
-            stamp="4 minutes ago"
-          />
-        </div>
-      </div> -->
       <router-view />
     </q-page-container>
   </q-layout>
@@ -436,11 +421,10 @@ export default {
 };
 </script>
 
-<!-- <style lang="sass" scoped>
-.row > div
-  padding: 10px 15px
-  background: rgba(86,61,124,.15)
-  border: 1px solid rgba(86,61,124,.2)
-.row + .row
-  margin-top: 1rem
-</style> -->
+<style lang="scss">
+
+  .background-img {
+    height: 100%;
+    z-index: -1;
+  }
+</style>
