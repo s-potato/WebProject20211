@@ -17,6 +17,12 @@
             :text="['doing fine, how r you?']"
             stamp="4 minutes ago"
           />
+          <q-chat-message
+            name="Jane"
+            avatar="https://cdn.quasar.dev/img/avatar3.jpg"
+            :text="['moshi moshi']"
+            stamp="5 minutes ago"
+          />
         </div>
       </div>
   </q-page>
