@@ -427,10 +427,6 @@ export default {
       offline,
     };
   },
-  setup() {
-    function onScroll(position) {}
-    return { onScroll };
-  },
 };
 </script>
 
