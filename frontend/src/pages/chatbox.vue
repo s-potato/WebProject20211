@@ -1,27 +1,58 @@
 <template>
   <q-page class="flex">
-        <div style="width: 100%; max-width: 400px">
-          <q-chat-message label="Sunday, 19th" />
+    <div style="width: 100%; max-width: 400px">
+      <q-toolbar class="bg-purple text-white" style="width:800px">
+        <q-avatar >
+          <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+        </q-avatar>
+        <q-toolbar-title> friend 1 </q-toolbar-title>
+        <q-btn flat round icon="call" class="q-mr-xs" />
+        <q-btn flat round icon="videocam" class="q-mr-xs" />
+        <q-btn flat round icon="search" class="q-mr-xs" />
+        <q-btn flat round icon="morehoriz" />
+      </q-toolbar>
+      <q-chat-message class="q-pr-xs text-align" label="Sunday, 19th" />
 
-          <q-chat-message
-            name="me"
-            avatar="https://cdn.quasar.dev/img/avatar4.jpg"
-            :text="['hey, how are you?']"
-            sent
-            stamp="7 minutes ago"
-          />
-          <q-chat-message
-            name="Jane"
-            avatar="https://cdn.quasar.dev/img/avatar3.jpg"
-            :text="['doing fine, how r you?']"
-            stamp="4 minutes ago"
-          />
-        </div>
+      <q-chat-message 
+        name="me"
+        avatar="https://cdn.quasar.dev/img/avatar4.jpg"
+        :text="['hey, how are you?']"
+        sent
+        stamp="7 minutes ago"
+      />
+      <q-chat-message 
+        name="Jane"
+        avatar="https://cdn.quasar.dev/img/avatar3.jpg"
+        :text="['doing fine, how r you?']"
+        stamp="4 minutes ago"
+      />
+       <q-input filled bottom-slots v-model="text" label="Type a message..." counter maxlength="200" :dense="dense" class="bg-white absolute-bottom">
+        <template v-slot:before>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/img/avatar5.jpg">
+          </q-avatar>
+        </template>
+
+        <template v-slot:append>
+          <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer" />
+          <q-icon name="schedule" />
+        </template>
+
+        <template v-slot:hint>
+          Field hint
+        </template>
+
+        <template v-slot:after>
+          <q-btn round dense flat icon="send" />
+        </template>
+      </q-input>
+    </div>
+    
   </q-page>
 </template>
 
 <script>
-import { defineComponent} from 'vue'
+import { defineComponent } from "vue";
 export default defineComponent({
   name: "PageIndex",
 });
