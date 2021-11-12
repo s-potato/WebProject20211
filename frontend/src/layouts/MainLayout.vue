@@ -1,9 +1,9 @@
 <template>
   <q-layout view="lHh lpR lFr">
-    <q-img
+    <!-- <q-img
       src="~assets/background.png"
-      class="background-img"
-    />
+      class="bg-grey-10"
+    /> -->
     <q-header class="bg-grey-10">
       <q-toolbar>
         <!--<q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />-->
@@ -336,7 +336,7 @@
       <!-- end right -->
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container    >
       <router-view />
     </q-page-container>
   </q-layout>
