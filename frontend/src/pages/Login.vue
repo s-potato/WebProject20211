@@ -67,5 +67,6 @@ export default defineComponent({
       right: ref(false),
     };
   },
+  
 });
 </script>
