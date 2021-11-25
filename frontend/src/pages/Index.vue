@@ -18,6 +18,14 @@
           v-bind="link"
         />
       </q-list>
+      <q-btn
+        @click="print"
+        class="q-mt-md"
+        unelevated
+        color="primary"
+        label="Login now"
+        style="width: 350px; height: 50px"
+      />
   </q-page>
 </template>
 
@@ -27,7 +35,7 @@ import EssentialLink from 'components/EssentialLink.vue'
 const linksList = [
   {
     title: 'Docs',
-    caption: 'quasar.dev',
+    caption: 'quasar.dev',  
     icon: 'school',
     link: 'https://quasar.dev'
   },
@@ -70,6 +78,7 @@ const linksList = [
 ];
 
 import { defineComponent} from 'vue'
+import { api } from "boot/axios";
 export default defineComponent({
   name: "PageIndex",
   components: {
@@ -79,6 +88,15 @@ export default defineComponent({
     return {
       essentialLinks: linksList
     }
+  },
+  methods: {
+    print() {
+      api.get("https://619f57421ac52a0017ba4733.mockapi.io/api/user")
+        .then(response => {
+          console.log(response.data);
+        })
+    }
   }
+
 });
 </script>

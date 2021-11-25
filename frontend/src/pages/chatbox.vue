@@ -9,7 +9,7 @@
         <q-btn flat round icon="call" class="q-mr-xs" />
         <q-btn flat round icon="videocam" class="q-mr-xs" />
         <q-btn flat round icon="search" class="q-mr-xs" />
-        <q-btn flat round icon="morehoriz"/>
+        <q-btn flat round icon="more_horiz" class="q-mr-xs"/>
       </q-toolbar>
     <div class="col">
       <q-chat-message class=" q-pr-xs text-align" label="Sunday, 19th" />

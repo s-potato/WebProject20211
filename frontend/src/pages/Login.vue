@@ -15,6 +15,7 @@
       />
       <h6>Password</h6>
       <q-input
+        @keyup.enter="Login"
         filled
         dense
         border
@@ -31,6 +32,7 @@
         />
       </div>
       <q-btn
+        @click="Login"
         class="q-mt-md"
         unelevated
         color="primary"
@@ -52,11 +54,12 @@
 
 <script>
 import { defineComponent } from "vue";
+import { api } from "boot/axios";
 import { ref } from "vue";
 export default defineComponent({
   name: "Login",
-  username: "none",
-  pass: "none",
+  username: '',
+  pass: '',
   right: "right",
 
   data() {
@@ -67,6 +70,21 @@ export default defineComponent({
       right: ref(false),
     };
   },
+
+  methods: {
+    Login() {
+      let params = {
+        user: this.username,
+        password: this.pass
+      };
+      api.post("https://619f57421ac52a0017ba4733.mockapi.io/api/user",params)
+        .then(response => {
+          console.log(response.data.data);
+        })
+      this.username='';
+      this.pass='';
+    }
+  }
   
 });
 </script>

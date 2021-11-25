@@ -354,7 +354,7 @@ export default {
   z-index: -1;
 }
 .list-group {
-  height:200px; 
+  height:280px; 
   overflow: auto;
 }
 </style>

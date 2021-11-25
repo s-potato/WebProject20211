@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-img src="~assets/background.png" class="background-img absolute-top" />
+    <!-- <q-img src="~assets/background.png" class="background-img absolute-top" /> -->
     <div class="row">
       <div class="col">
         <q-img src = ~assets/moutains.png spinner-color="white"

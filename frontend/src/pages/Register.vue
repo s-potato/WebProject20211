@@ -80,16 +80,16 @@
 
 <script>
 import { defineComponent } from "vue";
+import { api } from "boot/axios";
 import { ref } from "vue";
 export default defineComponent({
-  name: "Login",
-  username: "none",
-  firstname: "none",
-  lastname: "none",
-  pass: "none",
-  cfpass: "none",
+  username: "",
+  firstname: "",
+  lastname: "",
+  pass: "",
+  cfpass: "",
   right: "right",
-  email: "none",
+  email: "",
 
   data() {
     return {
