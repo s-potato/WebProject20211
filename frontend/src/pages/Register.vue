@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md row q-mt-xl" >
+  <div class="q-pa-md row q-mt-xl">
     <div class="col-4"></div>
     <div class="col-8">
       <h4>Registration Form</h4>
@@ -12,13 +12,12 @@
         border
         style="width: 350px; height: 50px"
       />
-      <div class = "row">
-        
+      <div class="row">
         <q-input
           class="col-8"
           filled
-          v-model="firstname"
-          label="Firstname"
+          v-model="first "
+          label="firstname"
           dense
           border
           style="width: 180px; height: 50px"
@@ -26,8 +25,8 @@
         <q-input
           class="col-4 q-ml-md"
           filled
-          v-model="lastname"
-          label="Lastname"
+          v-model="last"
+          label="lastname"
           dense
           border
           style="width: 153px; height: 50px"
@@ -48,17 +47,21 @@
         style="width: 350px; height: 50px"
         v-model="pass"
         :type="isPwd ? 'password' : 'text'"
-        label="Password"/>
+        label="Password"
+      />
       <q-input
+        @keyup.enter="Register"
         filled
         dense
         border
         style="width: 350px; height: 50px"
-        v-model="cfpass"
+        v-model="confirm"
         :type="isPwd ? 'password' : 'text'"
-        label="Confirm Password"/>
+        label="Confirm Password"
+      />
 
       <q-btn
+        @click="Register"
         class="q-mt-md"
         unelevated
         color="primary"
@@ -84,10 +87,10 @@ import { api } from "boot/axios";
 import { ref } from "vue";
 export default defineComponent({
   username: "",
-  firstname: "",
-  lastname: "",
+  first : "",
+  last: "",
   pass: "",
-  cfpass: "",
+  confirm: "",
   right: "right",
   email: "",
 
@@ -95,13 +98,35 @@ export default defineComponent({
     return {
       username: "",
       pass: "",
-      cfpass: "",
+      confirm: "",
       email: "",
       isPwd: ref(true),
-      firstname: "",
-      lastname: "",
+      first : "",
+      last: "",
       right: ref(false),
     };
   },
+  methods: {
+    Register() {
+      let params = {
+        username: this.username,
+        pass: this.pass,
+        confirm: this.confirm,
+        email: this.email,
+        first : this.first ,
+        last: this.last,
+      };
+      api.post("https://619f57421ac52a0017ba4733.mockapi.io/api/register",params)
+        .then(response => {
+          console.log(response.data.data);
+        })
+      this.username ='';
+      this.pass ='';
+      this.confirm ='';
+      this.email ='';
+      this.first  ='';
+      this.last ='';    
+    }
+  }
 });
 </script>
