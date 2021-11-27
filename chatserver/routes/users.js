@@ -1,10 +1,16 @@
 const express = require('express');
 const UserModel = require('../models/user');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-    res.send('respond with a resource');
+    jwt.verify(req.body.jwt, process.env.SECRET, function(err, data){
+        if (err) {
+            res.status(500).json(err);
+        }
+        res.json(data);
+    })
 });
 
 router.post('/register', function (req, res, next) {
@@ -27,7 +33,8 @@ router.post('/login', function (req, res, next) {
                 if (err2)
                     res.status(500).json({ status: "error", message: "Mismatch", data: req.body.username });
                 else {
-                    res.json({ status: "success", data: isMatch });
+                    let token = jwt.sign({username: req.body.username }, process.env.SECRET, {expiresIn: '1s'});
+                    res.json({ status: "success", data: {username: req.body.username, jwt: token} });
                 }
             })
         }
