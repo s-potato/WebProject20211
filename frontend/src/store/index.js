@@ -1,8 +1,6 @@
 import { store } from 'quasar/wrappers'
 import { createStore } from 'vuex'
 
-import auth from './auth'
-
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation;
@@ -15,7 +13,6 @@ import auth from './auth'
 export default store(function (/* { ssrContext } */) {
   const Store = createStore({
     modules: {
-      auth
     },
 
     // enable strict mode (adds overhead!)
