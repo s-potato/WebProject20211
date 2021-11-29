@@ -1,16 +1,11 @@
 const express = require('express');
 const UserModel = require('../models/user');
 const jwt = require('jsonwebtoken');
+const auth = require('../util/auth');
 const router = express.Router();
-
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-    jwt.verify(req.body.jwt, process.env.SECRET, function(err, data){
-        if (err) {
-            res.status(500).json(err);
-        }
-        res.json(data);
-    })
+router.get('/', auth.isAuthorized, function (req, res, next) {
+    res.json({username: req.body.decoded.username});
 });
 
 router.post('/register', function (req, res, next) {

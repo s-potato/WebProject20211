@@ -14,5 +14,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.json(err);
+  });
 
 module.exports = app;
