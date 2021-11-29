@@ -1,16 +1,13 @@
 <template>
   <q-layout view="lHh lpR lFr">
-    <q-img
-      src="~assets/background.png"
-      class="background-img absolute-top"
-    />
+    <q-img src="~assets/background.png" class="background-img absolute-top" />
     <q-header>
       <q-img src="~assets/background.png" class="background-img absolute-top" />
       <q-toolbar>
         <!--<q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />-->
 
         <q-toolbar-title>
-          <div class="q-pa-md" style="max-width:100%">
+          <div class="q-pa-md" style="max-width: 100%">
             <div class="row">
               <div class="col">
                 <q-btn
@@ -38,24 +35,44 @@
       <q-img src="~assets/background.png" class="background-img absolute-top" />
       <!-- drawer content -->
       <div class="q-pa-md" style="max-width: 350px">
-        <q-toolbar-title> EzNFT </q-toolbar-title>
+        <div class="q-pa-md" style="max-width: 100%">
+          <div class="row">
+            <div class="col">
+              <q-item-section avatar>
+                <q-avatar>
+                  <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                </q-avatar>
+              </q-item-section>
+            </div>
+            <div class="col">
+              <q-toolbar-title> Chats </q-toolbar-title>
+            </div>
+
+            <div>
+              <q-btn
+                @click="logUserOut"
+                flat
+                round
+                dense
+                icon="logout"
+                class="q-ml-xs"
+              />
+            </div>
+          </div>
+        </div>
+
         <div class="q-pa-md q-gutter-sm">
-          <q-btn color="deep-orange" push>
+          <q-btn color="deep-orange" push @click="isActive = !isActive">
             <div class="row items-center no-wrap">
               <q-icon left name="home" />
               <div class="text-center">Home</div>
             </div>
+            
           </q-btn>
           <br />
-          <q-btn
-            class="secondary"
-            push
-            color="red"
-            label="Profile"
-            @click="refresh"
-          />
+          <q-btn class="secondary" push color="red" label="Profile" />
         </div>
-          Group
+        Group
         <q-list bordered class="list-group">
           <q-item clickable v-ripple>
             <q-item-section avatar>
@@ -128,7 +145,7 @@
             <q-item-section>Group 3</q-item-section>
           </q-item>
         </q-list>
-         Direct Message
+        Direct Message
         <q-list bordered class="list-group">
           <q-item clickable v-ripple>
             <q-item-section avatar>
@@ -196,68 +213,76 @@
       bordered
       class="text-white"
     >
-      <q-img src="~assets/background.png" class="background-img absolute-top" />
-      <!-- drawer content -->
+      <div v-if="isActive == false">
+        <q-img
+          src="~assets/background.png"
+          class="background-img absolute-top"
+        />
+        <!-- drawer content -->
 
-      <q-toolbar>
-        <q-toolbar-title>Friends</q-toolbar-title>
-      </q-toolbar>
+        <q-toolbar>
+          <q-toolbar-title>Friends</q-toolbar-title>
+        </q-toolbar>
 
-      <q-list bordered>
-        <q-item
-          v-for="contact in contacts"
-          :key="contact.id"
-          class="q-my-sm"
-          clickable
-          v-ripple
-        >
-          <q-item-section avatar>
-            <q-avatar color="primary" text-color="white">
-              {{ contact.letter }}
-            </q-avatar>
-          </q-item-section>
+        <q-list bordered>
+          <q-item
+            v-for="contact in contacts"
+            :key="contact.id"
+            class="q-my-sm"
+            clickable
+            v-ripple
+          >
+            <q-item-section avatar>
+              <q-avatar color="primary" text-color="white">
+                {{ contact.letter }}
+              </q-avatar>
+            </q-item-section>
 
-          <q-item-section>
-            <q-item-label>{{ contact.name }}</q-item-label>
-            <q-item-label caption lines="1" class="text-white">{{
-              contact.email
-            }}</q-item-label>
-          </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ contact.name }}</q-item-label>
+              <q-item-label caption lines="1" class="text-white">{{
+                contact.email
+              }}</q-item-label>
+            </q-item-section>
 
-          <q-item-section side>
-            <q-icon name="chat_bubble" color="green" />
-          </q-item-section>
-        </q-item>
+            <q-item-section side>
+              <q-icon name="chat_bubble" color="green" />
+            </q-item-section>
+          </q-item>
 
-        <q-separator />
-        <q-item-label header class="text-white">Offline</q-item-label>
+          <q-separator />
+          <q-item-label header class="text-white">Offline</q-item-label>
 
-        <q-item
-          v-for="contact in offline"
-          :key="contact.id"
-          class="q-mb-sm"
-          clickable
-          v-ripple
-        >
-          <q-item-section avatar>
-            <q-avatar>
-              <img :src="`https://cdn.quasar.dev/img/${contact.avatar}`" />
-            </q-avatar>
-          </q-item-section>
+          <q-item
+            v-for="contact in offline"
+            :key="contact.id"
+            class="q-mb-sm"
+            clickable
+            v-ripple
+          >
+            <q-item-section avatar>
+              <q-avatar>
+                <img :src="`https://cdn.quasar.dev/img/${contact.avatar}`" />
+              </q-avatar>
+            </q-item-section>
 
-          <q-item-section>
-            <q-item-label>{{ contact.name }}</q-item-label>
-            <q-item-label caption lines="1" class="text-white">{{
-              contact.email
-            }}</q-item-label>
-          </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ contact.name }}</q-item-label>
+              <q-item-label caption lines="1" class="text-white">{{
+                contact.email
+              }}</q-item-label>
+            </q-item-section>
 
-          <q-item-section side>
-            <q-icon name="chat_bubble" color="grey" />
-          </q-item-section>
-        </q-item>
-      </q-list>
+            <q-item-section side>
+              <q-icon name="chat_bubble" color="grey" />
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </div>
+      <div v-else>
+        <!-- friends -->
 
+      </div>
       <!-- end right -->
     </q-drawer>
 
@@ -314,6 +339,11 @@ const offline = [
 ];
 
 export default {
+  data() {
+            return {
+                isActive: true
+            }
+        },
   // Setup lay out
   setup() {
     const leftDrawerOpen = ref(false);
@@ -338,6 +368,10 @@ export default {
     refresh() {
       window.location.reload();
     },
+    logUserOut() {
+      localStorage.removeItem("jwt");
+      this.$router.push("/login");
+    }
   },
 };
 </script>
@@ -349,7 +383,7 @@ export default {
   z-index: -1;
 }
 .list-group {
-  height:280px; 
+  height: 280px;
   overflow: auto;
 }
 </style>
