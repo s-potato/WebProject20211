@@ -48,6 +48,15 @@
         label="Or sign-in with google"
         style="width: 350px; height: 50px"
       />
+      <br />
+      <q-btn
+        to="/register"
+        class="q-mt-md"
+        unelevated
+        color="primary"
+        label="Sign in"
+        style="width: 350px; height: 50px"
+      />
     </div>
     <div class="col-2"></div>
   </div>
@@ -93,7 +102,7 @@ export default defineComponent({
         })
       this.username='';
       this.pass='';
-      }
+      },
   }
   
 });

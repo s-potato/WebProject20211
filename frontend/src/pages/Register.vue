@@ -70,10 +70,11 @@
       />
       <br />
       <q-btn
+        to="/login"
         class="q-mt-md"
         unelevated
         color="primary"
-        label="Cancel"
+        label="Login"
         style="width: 350px; height: 50px"
       />
     </div>
@@ -111,16 +112,26 @@ export default defineComponent({
       let params = {
         username: this.username,
         password: this.pass,
-        email: this.email
+        email: this.email,
       };
       api
-        .post(
-          "http://localhost:8000/users/register",
-          params
-        )
+        .post("http://localhost:8000/users/register", params)
         .then((response) => {
           console.log(response.data.data);
-          
+          let token = response.data.token;
+          if (token) {
+            localStorage.setItem("jwt", token);
+            this.$router.push("/");
+            console.log("success");
+          } else {
+            console.log("err");
+          }
+        })
+        .catch((err) => {
+          let error = err.response;
+          if (error.status == 500) {
+            console.log("err");
+          }
         });
       this.username = "";
       this.pass = "";

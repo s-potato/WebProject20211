@@ -6,7 +6,10 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Index.vue') },
       { path: '/chat', component: () => import('pages/chatbox.vue') }
-    ]
+    ],
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/account',
@@ -23,6 +26,7 @@ const routes = [
     path: '/:catchAll(.*)*',
     component: () => import('pages/Error404.vue')
   }
-]
+];
+
 
 export default routes

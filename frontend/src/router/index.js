@@ -26,15 +26,19 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE)
   })
 
-  // Router.beforeEach((to, from, next) => {
-  //   const auth = store.state.auth
-  //   if (to.matched.some(record => record.meta.requireLogin) && !auth.isAuthenticated) {
-  //     next({
-  //       name: 'LoginIn',
-  //       query: { to: to.path }
-  //     })
-  //   } else next()
-  // })
+  Router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (localStorage.getItem("jwt") == null) {
+        next({
+          path: "/login"
+        });
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
+  })
   
   return Router
 })
