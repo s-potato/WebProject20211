@@ -62,7 +62,7 @@
         </div>
 
         <div class="q-pa-md q-gutter-sm">
-          <q-btn color="deep-orange" push @click="isActive = !isActive">
+          <q-btn color="deep-orange" push >
             <div class="row items-center no-wrap">
               <q-icon left name="home" />
               <div class="text-center">Home</div>
@@ -74,7 +74,7 @@
         </div>
         Group
         <q-list bordered class="list-group">
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="isActive = !isActive">
             <q-item-section avatar>
               <q-avatar>
                 <q-badge color="orange" floating>22</q-badge>
@@ -223,60 +223,71 @@
         <q-toolbar>
           <q-toolbar-title>Friends</q-toolbar-title>
         </q-toolbar>
-
+        
         <q-list bordered>
-          <q-item
-            v-for="contact in contacts"
-            :key="contact.id"
-            class="q-my-sm"
-            clickable
-            v-ripple
-          >
+          <q-item-label header class="text-white">Online</q-item-label>
+          <q-item clickable v-ripple>
             <q-item-section avatar>
-              <q-avatar color="primary" text-color="white">
-                {{ contact.letter }}
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                <q-badge color="green" rounded floating />
               </q-avatar>
             </q-item-section>
 
-            <q-item-section>
-              <q-item-label>{{ contact.name }}</q-item-label>
-              <q-item-label caption lines="1" class="text-white">{{
-                contact.email
-              }}</q-item-label>
+            <q-item-section>Friend 1</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                <q-badge color="green" rounded floating />
+              </q-avatar>
             </q-item-section>
 
-            <q-item-section side>
-              <q-icon name="chat_bubble" color="green" />
+            <q-item-section>Friend 1</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                <q-badge color="green" rounded floating />
+              </q-avatar>
             </q-item-section>
+
+            <q-item-section>Friend 1</q-item-section>
           </q-item>
 
           <q-separator />
           <q-item-label header class="text-white">Offline</q-item-label>
-
-          <q-item
-            v-for="contact in offline"
-            :key="contact.id"
-            class="q-mb-sm"
-            clickable
-            v-ripple
-          >
+          <q-item clickable v-ripple>
             <q-item-section avatar>
               <q-avatar>
-                <img :src="`https://cdn.quasar.dev/img/${contact.avatar}`" />
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
               </q-avatar>
             </q-item-section>
 
-            <q-item-section>
-              <q-item-label>{{ contact.name }}</q-item-label>
-              <q-item-label caption lines="1" class="text-white">{{
-                contact.email
-              }}</q-item-label>
+            <q-item-section>Friend 1</q-item-section>
+          </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
             </q-item-section>
 
-            <q-item-section side>
-              <q-icon name="chat_bubble" color="grey" />
-            </q-item-section>
+            <q-item-section>Friend 1</q-item-section>
           </q-item>
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>Friend 1</q-item-section>
+          </q-item>
+
+          
         </q-list>
       </div>
       <div v-else>
