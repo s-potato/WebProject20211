@@ -51,12 +51,19 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
     });
 };
 
-UserSchema.methods.getRoomList = function(cb) {
-    cb(this.populate('rooms').rooms);
+UserSchema.methods.createRoom = function(name, cb) {
+    Room.create({name: name, owner: this._id, users: [this._id]}, function(err, result) {
+         if (err) cb(err);
+        cb(null, result);
+     })
+ }
+
+UserSchema.methods.getRoomList = function() {
+    return this.populate('rooms').rooms;
 }
 
-UserSchema.methods.joinRoom = function(room_id, cb) {
-    Room.findOne({_id: room_id}, function(err, result){
+UserSchema.methods.joinRoom = function(room, cb) {
+    Room.findOne({_id: room._id}, function(err, result){
         if (err) cb(err);
         if (result.users.find(this_id)) cb({status: "Existed.", message: "User is on this room."});
         result.users.push(this._id);
@@ -64,6 +71,7 @@ UserSchema.methods.joinRoom = function(room_id, cb) {
         cb(null, {status: "Success"});
     })
 }
+
 
 const User = mongoose.model("User", UserSchema);
 

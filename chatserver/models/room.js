@@ -18,11 +18,20 @@ var RoomSchema = new mongoose.Schema({
     updated_at: { type: Date, default: Date.now },
 });
 
-RoomSchema.methods.createRoom = function(name, owner_id, cb) {
-    Room.create({name: name, owner: owner_id, users: [owner_id]}, function(err, result) {
+/* RoomSchema.methods.createRoom = function(name, cb) {
+   Room.create({name: name, owner: this._id, users: [this._id]}, function(err, result) {
         if (err) cb(err);
-        cb(null, result);
+       cb(null, result);
     })
+} */
+
+
+RoomSchema.methods.getMembersList = function(){
+    return this.populate('users').users;
+}
+
+RoomSchema.methods.getMessagesList = function() {
+    return this.populate("messages").messages;
 }
 
 const Room = mongoose.model("Room", RoomSchema);

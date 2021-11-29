@@ -7,6 +7,8 @@ const app = require('./app');
 const http = require('http');
 const dbconnect = require('./config/database');
 
+const test = require('./test/test');
+
 
 /**
  * Get port from environment and store in Express.
@@ -22,6 +24,8 @@ app.set('port', port);
 var server = http.createServer(app);
 
 dbconnect();
+
+test();
 /**
  * Listen on provided port, on all network interfaces.
  */
