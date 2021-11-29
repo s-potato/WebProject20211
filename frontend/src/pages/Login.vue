@@ -19,6 +19,7 @@
         filled
         dense
         border
+        label="Password"
         style="width: 350px; height: 50px"
         v-model="pass"
         :type="isPwd ? 'password' : 'text'"/>
@@ -72,18 +73,27 @@ export default defineComponent({
   },
 
   methods: {
-    Login() {
+    async Login() {
       let params = {
-        user: this.username,
+        username: this.username,
         password: this.pass
       };
-      api.post("https://619f57421ac52a0017ba4733.mockapi.io/api/user",params)
+      api.post("http://localhost:8000/users/login",params)
         .then(response => {
-          console.log(response.data.data);
+          console.log(response);
+          let token = response.data.data.jwt;
+          localStorage.setItem("jwt", token);
+          if (token) {
+            console.log("success");
+            this.$router.push('/chat')
+          }
+        })
+        .catch((err) => {
+          console.log(err);
         })
       this.username='';
       this.pass='';
-    }
+      }
   }
   
 });

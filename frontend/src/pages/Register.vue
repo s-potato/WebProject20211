@@ -16,8 +16,8 @@
         <q-input
           class="col-8"
           filled
-          v-model="first "
-          label="firstname"
+          v-model="firstname"
+          label="firstnamename"
           dense
           border
           style="width: 180px; height: 50px"
@@ -25,8 +25,8 @@
         <q-input
           class="col-4 q-ml-md"
           filled
-          v-model="last"
-          label="lastname"
+          v-model="lastname"
+          label="lastnamename"
           dense
           border
           style="width: 153px; height: 50px"
@@ -87,8 +87,8 @@ import { api } from "boot/axios";
 import { ref } from "vue";
 export default defineComponent({
   username: "",
-  first : "",
-  last: "",
+  firstname: "",
+  lastname: "",
   pass: "",
   confirm: "",
   right: "right",
@@ -101,8 +101,8 @@ export default defineComponent({
       confirm: "",
       email: "",
       isPwd: ref(true),
-      first : "",
-      last: "",
+      firstname: "",
+      lastname: "",
       right: ref(false),
     };
   },
@@ -110,23 +110,25 @@ export default defineComponent({
     Register() {
       let params = {
         username: this.username,
-        pass: this.pass,
-        confirm: this.confirm,
-        email: this.email,
-        first : this.first ,
-        last: this.last,
+        password: this.pass,
+        email: this.email
       };
-      api.post("https://619f57421ac52a0017ba4733.mockapi.io/api/register",params)
-        .then(response => {
+      api
+        .post(
+          "http://localhost:8000/users/register",
+          params
+        )
+        .then((response) => {
           console.log(response.data.data);
-        })
-      this.username ='';
-      this.pass ='';
-      this.confirm ='';
-      this.email ='';
-      this.first  ='';
-      this.last ='';    
-    }
-  }
+          
+        });
+      this.username = "";
+      this.pass = "";
+      this.confirm = "";
+      this.email = "";
+      this.firstname = "";
+      this.lastname = "";
+    },
+  },
 });
 </script>

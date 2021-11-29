@@ -329,11 +329,6 @@ export default {
       toggleRightDrawer() {
         rightDrawerOpen.value = !rightDrawerOpen.value;
       },
-    };
-  },
-  //Set up right
-  setup() {
-    return {
       contacts,
       offline,
     };

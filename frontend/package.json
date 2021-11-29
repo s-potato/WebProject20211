@@ -1,12 +1,11 @@
 {
   "name": "web",
   "version": "0.0.1",
-  "description": "webproject",
-  "productName": "web",
-  "author": "Nguyen Minh Hieu <hieu.nm932000@gmail.com>",
   "private": true,
+  "description": "webproject",
+  "author": "Nguyen Minh Hieu <hieu.nm932000@gmail.com>",
   "scripts": {
-    "lint": "eslint --ext .js,.vue ./",
+    "lint": "vue-cli-service lint",
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
@@ -24,6 +23,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
     "@quasar/app": "^3.0.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^7.0.0",
@@ -44,5 +44,6 @@
     "node": ">= 12.22.1",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
-  }
+  },
+  "productName": "web"
 }
