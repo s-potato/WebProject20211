@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const Room = require('./room');
 
 var UserSchema = new mongoose.Schema({
     username: {
@@ -24,7 +24,11 @@ var UserSchema = new mongoose.Schema({
         lowercase: true,
         unique: true,
         required: true
-    }
+    },
+    rooms: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Room'
+    }]
 })
 
 UserSchema.pre('save', function(next) {
@@ -47,6 +51,20 @@ UserSchema.methods.comparePassword = function(candidatePassword, cb) {
     });
 };
 
-const usermodel = mongoose.model("User", UserSchema);
+UserSchema.methods.getRoomList = function(cb) {
+    cb(this.populate('rooms').rooms);
+}
 
-module.exports = usermodel;
+UserSchema.methods.joinRoom = function(room_id, cb) {
+    Room.findOne({_id: room_id}, function(err, result){
+        if (err) cb(err);
+        if (result.users.find(this_id)) cb({status: "Existed.", message: "User is on this room."});
+        result.users.push(this._id);
+        this.rooms.push(result._id);
+        cb(null, {status: "Success"});
+    })
+}
+
+const User = mongoose.model("User", UserSchema);
+
+module.exports = User;

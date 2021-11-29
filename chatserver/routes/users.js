@@ -28,7 +28,7 @@ router.post('/login', function (req, res, next) {
                 if (err2)
                     res.status(500).json({ status: "error", message: "Mismatch", data: req.body.username });
                 else {
-                    let token = jwt.sign({username: req.body.username }, process.env.SECRET, {expiresIn: '1d'});
+                    let token = jwt.sign({username: req.body.username, _id: result._id }, process.env.SECRET, {expiresIn: '1d'});
                     res.json({ status: "success", data: {username: req.body.username, jwt: token} });
                 }
             })
