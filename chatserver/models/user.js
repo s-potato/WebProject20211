@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const Room = require('./room');
 
 var UserSchema = new mongoose.Schema({
     username: {
@@ -24,29 +24,81 @@ var UserSchema = new mongoose.Schema({
         lowercase: true,
         unique: true,
         required: true
-    }
+    },
+    rooms: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Room'
+    }]
 })
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
     var user = this;
     if (!user.isModified('password')) return next();
-    bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.genSalt(10, function (err, salt) {
         if (err) return next(err);
-        bcrypt.hash(user.password, salt, function(err, hash) {
+        bcrypt.hash(user.password, salt, function (err, hash) {
             if (err) return next(err);
             user.password = hash;
             next();
         });
     });
 });
-     
-UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+
+UserSchema.methods.comparePassword = function (candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
 };
 
-const usermodel = mongoose.model("User", UserSchema);
+UserSchema.methods.createRoom = function (name, cb) {
+    var user = this;
+    Room.create({ name: name, owner: this._id, users: [this._id] }, function (err, result) {
+        if (err) cb(err);
+        else {
+            console.log(user.rooms);
+            user.rooms = [result._id];
+            user.save(function (err) {
+                if (err) console.log(err);
+            });
+            cb(null, result);
+        }
+    })
+}
 
-module.exports = usermodel;
+UserSchema.statics.getRoomsList = function (user, cb) {
+    User.findOne({ username: user.username }).populate('rooms').exec(function (err, result) {
+        if (err) { cb(err) }
+        else {
+            cb(null, result.rooms);
+        }
+    })
+}
+
+UserSchema.methods.joinRoom = function (room, cb) {
+    var user = this;
+    Room.findOne({name: room.name}, function (err, result) {
+        if (err) { return cb(err) }
+        else {
+            if (result.users && result.users.find(element => element == user._id)) {
+                cb({ status: "Existed.", message: "User is on this room." });
+            }
+            else {
+                result.users.push(user._id);
+                user.rooms.push(result._id);
+                result.save(function (err) {
+                    if (err) console.log(err);
+                });
+                user.save(function (err) {
+                    if (err) console.log(err);
+                });
+                cb(null, { status: "Success" });
+            }
+        }
+    })
+}
+
+
+const User = mongoose.model("User", UserSchema);
+
+module.exports = User;
