@@ -62,7 +62,7 @@
         </div>
 
         <div class="q-pa-md q-gutter-sm">
-          <q-btn color="deep-orange" push>
+          <q-btn color="deep-orange" push @click="groupList()">
             <div class="row items-center no-wrap">
               <q-icon left name="home" />
               <div class="text-center">Home</div>
@@ -73,7 +73,7 @@
         </div>
         Group
         <q-list bordered class="list-group">
-          <q-item clickable v-ripple @click="groupMembers()">
+          <q-item clickable v-ripple @click="groupMembers(group.name)" v-for="group in grouplist" :key="group.name" >
             <!-- isActive = !isActive -->
             <q-item-section avatar>
               <q-avatar>
@@ -81,30 +81,7 @@
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
               </q-avatar>
             </q-item-section>
-
-            <q-item-section>Group 1</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <q-badge color="orange" floating>22</q-badge>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 1</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <q-badge color="orange" floating>22</q-badge>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 1</q-item-section>
+            <q-item-section>{{group.name}}</q-item-section>
           </q-item>
 
           <q-item clickable v-ripple>
@@ -125,24 +102,6 @@
             </q-item-section>
 
             <q-item-section>Group 2</q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Group 2</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-            <q-item-section>Group 3</q-item-section>
           </q-item>
         </q-list>
         Direct Message
@@ -389,7 +348,8 @@ export default {
     this.user = decoded;
     return {
       isActive: true,
-      groupmembers: []
+      groupmembers: [],
+      grouplist: []
     };
   },
   methods: {
@@ -400,13 +360,25 @@ export default {
       localStorage.removeItem("jwt");
       this.$router.push("/login");
     },
-    groupMembers() {
+    groupMembers(groupName) {
       let params = {
-        name: "rapxiec"
+        name: groupName,
       };
       api.post("http://localhost:8000/rooms/members",params)
         .then(response => {
           this.groupmembers = response.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      },
+    groupList() {
+      let params = {
+        username: this.user.username
+      };
+      api.post("http://localhost:8000/users/rooms",params)
+        .then(response => {
+          this.grouplist = response.data;
         })
         .catch((err) => {
           console.log(err);

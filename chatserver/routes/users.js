@@ -36,7 +36,7 @@ router.post('/login', function (req, res, next) {
     })
 })
 
-router.get('/rooms', function (req, res, next) {
+router.post('/rooms', function (req, res, next) {
     User.getRoomsList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
