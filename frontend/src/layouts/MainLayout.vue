@@ -45,7 +45,7 @@
               </q-item-section>
             </div>
             <div class="col">
-              <q-toolbar-title> Chats </q-toolbar-title>
+              <q-toolbar-title> {{ user.username }} </q-toolbar-title>
             </div>
 
             <div>
@@ -62,12 +62,11 @@
         </div>
 
         <div class="q-pa-md q-gutter-sm">
-          <q-btn color="deep-orange" push >
+          <q-btn color="deep-orange" push>
             <div class="row items-center no-wrap">
               <q-icon left name="home" />
               <div class="text-center">Home</div>
             </div>
-            
           </q-btn>
           <br />
           <q-btn class="secondary" push color="red" label="Profile" />
@@ -223,7 +222,74 @@
         <q-toolbar>
           <q-toolbar-title>Friends</q-toolbar-title>
         </q-toolbar>
-        
+
+        <q-list bordered>
+          <q-item
+            v-for="contact in contacts"
+            :key="contact.id"
+            class="q-my-sm"
+            clickable
+            v-ripple
+          >
+            <q-item-section avatar>
+              <q-avatar color="primary" text-color="white">
+                {{ contact.letter }}
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ contact.name }}</q-item-label>
+              <q-item-label caption lines="1" class="text-white">{{
+                contact.email
+              }}</q-item-label>
+            </q-item-section>
+
+            <q-item-section side>
+              <q-icon name="chat_bubble" color="green" />
+            </q-item-section>
+          </q-item>
+
+          <q-separator />
+          <q-item-label header class="text-white">Offline</q-item-label>
+
+          <q-item
+            v-for="contact in offline"
+            :key="contact.id"
+            class="q-mb-sm"
+            clickable
+            v-ripple
+          >
+            <q-item-section avatar>
+              <q-avatar>
+                <img :src="`https://cdn.quasar.dev/img/${contact.avatar}`" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ contact.name }}</q-item-label>
+              <q-item-label caption lines="1" class="text-white">{{
+                contact.email
+              }}</q-item-label>
+            </q-item-section>
+
+            <q-item-section side>
+              <q-icon name="chat_bubble" color="grey" />
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </div>
+      <div v-else>
+        <!-- friends -->
+        <q-img
+          src="~assets/background.png"
+          class="background-img absolute-top"
+        />
+        <!-- drawer content -->
+
+        <q-toolbar>
+          <q-toolbar-title>Friends</q-toolbar-title>
+        </q-toolbar>
+
         <q-list bordered>
           <q-item-label header class="text-white">Online</q-item-label>
           <q-item clickable v-ripple>
@@ -286,13 +352,7 @@
 
             <q-item-section>Friend 1</q-item-section>
           </q-item>
-
-          
         </q-list>
-      </div>
-      <div v-else>
-        <!-- friends -->
-
       </div>
       <!-- end right -->
     </q-drawer>
@@ -306,6 +366,7 @@
 
 <script>
 import { ref } from "vue";
+import VueJwtDecode from "vue-jwt-decode";
 
 const contacts = [
   {
@@ -350,11 +411,7 @@ const offline = [
 ];
 
 export default {
-  data() {
-            return {
-                isActive: true
-            }
-        },
+  user: {},
   // Setup lay out
   setup() {
     const leftDrawerOpen = ref(false);
@@ -374,7 +431,15 @@ export default {
       offline,
     };
   },
-
+  data() {
+    let token = localStorage.getItem("jwt");
+    console.log(token);
+    let decoded = VueJwtDecode.decode(token);
+    this.user = decoded;
+    return {
+      isActive: true
+    };
+  },
   methods: {
     refresh() {
       window.location.reload();
@@ -382,7 +447,7 @@ export default {
     logUserOut() {
       localStorage.removeItem("jwt");
       this.$router.push("/login");
-    }
+    },
   },
 };
 </script>

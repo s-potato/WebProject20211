@@ -7,9 +7,9 @@ const routes = [
       { path: '', component: () => import('pages/Index.vue') },
       { path: '/chat', component: () => import('pages/chatbox.vue') }
     ],
-    // meta: {
-    //   requiresAuth: true
-    // }
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/account',
