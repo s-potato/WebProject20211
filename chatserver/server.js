@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = require('./app');
 const http = require('http');
 const dbconnect = require('./config/database');
-
+const socket = require('socket.io');
 const test = require('./test/test');
 
 
@@ -24,6 +24,12 @@ app.set('port', port);
 var server = http.createServer(app);
 
 dbconnect();
+
+const io = socket(server, {
+  cors: {
+    origin: process.env.CLIENT,
+  },
+});
 
 test();
 /**

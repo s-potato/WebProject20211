@@ -1,5 +1,5 @@
 const express = require('express');
-const UserModel = require('../models/user');
+const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const auth = require('../util/auth');
 const router = express.Router();
@@ -9,7 +9,7 @@ router.get('/', auth.isAuthorized, function (req, res, next) {
 });
 
 router.post('/register', function (req, res, next) {
-    UserModel.create(req.body, function (err, result) {
+    User.create(req.body, function (err, result) {
         if (err) //if error, return status: error, data: err
             res.status(500).json({ status: "error", data: err });
         else {  //if success, return username and email
@@ -19,7 +19,7 @@ router.post('/register', function (req, res, next) {
 })
 
 router.post('/login', function (req, res, next) {
-    UserModel.findOne({ username: req.body.username }, 'password', function (err, result) {
+    User.findOne({ username: req.body.username }, 'password', function (err, result) {
         if (err) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
         }
@@ -32,6 +32,17 @@ router.post('/login', function (req, res, next) {
                     res.json({ status: "success", data: {username: req.body.username, jwt: token} });
                 }
             })
+        }
+    })
+})
+
+router.get('/rooms', function (req, res, next) {
+    User.getRoomsList(req.body, function (err, result) {
+        if (err) {
+            res.status(500).json(err);
+        }
+        else {
+            res.json(result);
         }
     })
 })

@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Message = require('./message');
+const User = require('./user');
 
 var RoomSchema = new mongoose.Schema({
     name: { type: String, lowercase: true, unique: true },
@@ -18,20 +20,43 @@ var RoomSchema = new mongoose.Schema({
     updated_at: { type: Date, default: Date.now },
 });
 
-/* RoomSchema.methods.createRoom = function(name, cb) {
-   Room.create({name: name, owner: this._id, users: [this._id]}, function(err, result) {
-        if (err) cb(err);
-       cb(null, result);
+RoomSchema.statics.getMembersList = function (room, cb) {
+    Room.findOne({ name: room.name }).populate('users').exec(function (err, result) {
+        if (err) { cb(err) }
+        else {
+            cb(null, result.users);
+        }
     })
-} */
-
-
-RoomSchema.methods.getMembersList = function(){
-    return this.populate('users').users;
 }
 
-RoomSchema.methods.getMessagesList = function() {
-    return this.populate("messages").messages;
+RoomSchema.statics.getMessagesList = function (room, cb) {
+    Room.findOne({ name: room.name }).populate('messages').exec(function (err, result) {
+        if (err) { cb(err) }
+        else {
+            cb(null, result.messages);
+        }
+    })
+}
+
+RoomSchema.statics.addMessage = function (room, user, message, cb) {
+    Room.findOne({ name: room.name }).exec(function (err, result) {
+        if (err) { cb(err) }
+        else {
+            room = result;
+            User.findOne({ username: user.username }).exec(function (err, result) {
+                if (err) { cb(err) }
+                else {
+                    user = result;
+                    Message.create({ room: room._id, sender: user._id, content: message.body }, function (err, result) {
+                        if (err) { cb(err) }
+                        else {
+                            cb(null, result);
+                        }
+                    })
+                } F
+            })
+        }
+    })
 }
 
 const Room = mongoose.model("Room", RoomSchema);

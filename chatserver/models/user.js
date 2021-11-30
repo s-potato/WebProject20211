@@ -31,44 +31,70 @@ var UserSchema = new mongoose.Schema({
     }]
 })
 
-UserSchema.pre('save', function(next) {
+UserSchema.pre('save', function (next) {
     var user = this;
     if (!user.isModified('password')) return next();
-    bcrypt.genSalt(10, function(err, salt) {
+    bcrypt.genSalt(10, function (err, salt) {
         if (err) return next(err);
-        bcrypt.hash(user.password, salt, function(err, hash) {
+        bcrypt.hash(user.password, salt, function (err, hash) {
             if (err) return next(err);
             user.password = hash;
             next();
         });
     });
 });
-     
-UserSchema.methods.comparePassword = function(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+
+UserSchema.methods.comparePassword = function (candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
         if (err) return cb(err);
         cb(null, isMatch);
     });
 };
 
-UserSchema.methods.createRoom = function(name, cb) {
-    Room.create({name: name, owner: this._id, users: [this._id]}, function(err, result) {
-         if (err) cb(err);
-        cb(null, result);
-     })
- }
-
-UserSchema.methods.getRoomList = function() {
-    return this.populate('rooms').rooms;
+UserSchema.methods.createRoom = function (name, cb) {
+    var user = this;
+    Room.create({ name: name, owner: this._id, users: [this._id] }, function (err, result) {
+        if (err) cb(err);
+        else {
+            console.log(user.rooms);
+            user.rooms = [result._id];
+            user.save(function (err) {
+                if (err) console.log(err);
+            });
+            cb(null, result);
+        }
+    })
 }
 
-UserSchema.methods.joinRoom = function(room, cb) {
-    Room.findOne({_id: room._id}, function(err, result){
-        if (err) cb(err);
-        if (result.users.find(this_id)) cb({status: "Existed.", message: "User is on this room."});
-        result.users.push(this._id);
-        this.rooms.push(result._id);
-        cb(null, {status: "Success"});
+UserSchema.statics.getRoomsList = function (user, cb) {
+    User.findOne({ username: user.username }).populate('rooms').exec(function (err, result) {
+        if (err) { cb(err) }
+        else {
+            cb(null, result.rooms);
+        }
+    })
+}
+
+UserSchema.methods.joinRoom = function (room, cb) {
+    var user = this;
+    Room.findOne({name: room.name}, function (err, result) {
+        if (err) { return cb(err) }
+        else {
+            if (result.users && result.users.find(element => element == user._id)) {
+                cb({ status: "Existed.", message: "User is on this room." });
+            }
+            else {
+                result.users.push(user._id);
+                user.rooms.push(result._id);
+                result.save(function (err) {
+                    if (err) console.log(err);
+                });
+                user.save(function (err) {
+                    if (err) console.log(err);
+                });
+                cb(null, { status: "Success" });
+            }
+        }
     })
 }
 
