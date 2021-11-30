@@ -16,7 +16,8 @@ router.get('/messages', function (req, res, next) {
     })
 })
 
-router.get('/members', function (req, res, next) {
+router.post('/members', function (req, res, next) {
+    console.log(req.body);
     Room.getMembersList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);

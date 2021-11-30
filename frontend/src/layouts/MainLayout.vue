@@ -73,7 +73,8 @@
         </div>
         Group
         <q-list bordered class="list-group">
-          <q-item clickable v-ripple @click="isActive = !isActive">
+          <q-item clickable v-ripple @click="groupMembers()">
+            <!-- isActive = !isActive -->
             <q-item-section avatar>
               <q-avatar>
                 <q-badge color="orange" floating>22</q-badge>
@@ -291,8 +292,7 @@
         </q-toolbar>
 
         <q-list bordered>
-          <q-item-label header class="text-white">Online</q-item-label>
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple v-for="groupmember in groupmembers" :key="groupmember.username">
             <q-item-section avatar>
               <q-avatar>
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
@@ -300,57 +300,7 @@
               </q-avatar>
             </q-item-section>
 
-            <q-item-section>Friend 1</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-                <q-badge color="green" rounded floating />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Friend 1</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-                <q-badge color="green" rounded floating />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Friend 1</q-item-section>
-          </q-item>
-
-          <q-separator />
-          <q-item-label header class="text-white">Offline</q-item-label>
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Friend 1</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Friend 1</q-item-section>
-          </q-item>
-          <q-item clickable v-ripple>
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>Friend 1</q-item-section>
+            <q-item-section>{{groupmember.username}}</q-item-section>
           </q-item>
         </q-list>
       </div>
@@ -367,6 +317,8 @@
 <script>
 import { ref } from "vue";
 import VueJwtDecode from "vue-jwt-decode";
+import { api } from "boot/axios";
+
 
 const contacts = [
   {
@@ -433,11 +385,11 @@ export default {
   },
   data() {
     let token = localStorage.getItem("jwt");
-    console.log(token);
     let decoded = VueJwtDecode.decode(token);
     this.user = decoded;
     return {
-      isActive: true
+      isActive: true,
+      groupmembers: []
     };
   },
   methods: {
@@ -448,6 +400,18 @@ export default {
       localStorage.removeItem("jwt");
       this.$router.push("/login");
     },
+    groupMembers() {
+      let params = {
+        name: "rapxiec"
+      };
+      api.post("http://localhost:8000/rooms/members",params)
+        .then(response => {
+          this.groupmembers = response.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      },
   },
 };
 </script>
