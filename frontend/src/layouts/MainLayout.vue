@@ -370,9 +370,11 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-        })
+        });
+        //this.$router.push("/chat", params);
       },
-    groupList() {
+  },
+  mounted: function () {
       let params = {
         username: this.user.username
       };
@@ -383,8 +385,7 @@ export default {
         .catch((err) => {
           console.log(err);
         })
-      },
-  },
+  }
 };
 </script>
 

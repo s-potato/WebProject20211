@@ -28,7 +28,11 @@ var UserSchema = new mongoose.Schema({
     rooms: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Room'
-    }]
+    }],
+    status: {
+        type: Boolean,
+        default: false
+    }
 })
 
 UserSchema.pre('save', function (next) {
@@ -54,7 +58,7 @@ UserSchema.methods.comparePassword = function (candidatePassword, cb) {
 UserSchema.methods.createRoom = function (name, cb) {
     var user = this;
     Room.create({ name: name, owner: this._id, users: [this._id] }, function (err, result) {
-        if (err) cb(err);
+        if (err) {cb(err)}
         else {
             console.log(user.rooms);
             user.rooms = [result._id];
@@ -68,7 +72,7 @@ UserSchema.methods.createRoom = function (name, cb) {
 
 UserSchema.statics.getRoomsList = function (user, cb) {
     User.findOne({ username: user.username }).populate('rooms').exec(function (err, result) {
-        if (err) { cb(err) }
+        if (err || !result) {cb({err: "Can't query"})}
         else {
             cb(null, result.rooms);
         }
@@ -78,7 +82,7 @@ UserSchema.statics.getRoomsList = function (user, cb) {
 UserSchema.methods.joinRoom = function (room, cb) {
     var user = this;
     Room.findOne({name: room.name}, function (err, result) {
-        if (err) { return cb(err) }
+        if (err || !result) {cb({err: "Can't query"})}
         else {
             if (result.users && result.users.find(element => element == user._id)) {
                 cb({ status: "Existed.", message: "User is on this room." });

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const auth = require('../util/auth');
 const router = express.Router();
 /* GET users listing. */
-router.get('/', auth.isAuthorized, function (req, res, next) {
+router.post('/', auth.isAuthorized, function (req, res, next) {
     res.json({username: req.body.decoded.username});
 });
 
@@ -20,7 +20,7 @@ router.post('/register', function (req, res, next) {
 
 router.post('/login', function (req, res, next) {
     User.findOne({ username: req.body.username }, 'password', function (err, result) {
-        if (err) {
+        if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
         }
         else {

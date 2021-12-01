@@ -8,13 +8,13 @@ const http = require('http');
 const dbconnect = require('./config/database');
 const socket = require('socket.io');
 const test = require('./test/test');
-
+const ioutils = require('./socket');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 
 /**
@@ -30,7 +30,7 @@ const io = socket(server, {
     origin: process.env.CLIENT,
   },
 });
-
+ioutils(io);
 test();
 /**
  * Listen on provided port, on all network interfaces.

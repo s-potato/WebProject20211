@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const auth = require('../util/auth');
 const router = express.Router();
 
-router.get('/messages', function (req, res, next) {
+router.post('/messages', function (req, res, next) {
     Room.getMessagesList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
@@ -17,7 +17,6 @@ router.get('/messages', function (req, res, next) {
 })
 
 router.post('/members', function (req, res, next) {
-    console.log(req.body);
     Room.getMembersList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
