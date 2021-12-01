@@ -6,7 +6,7 @@
         <q-avatar >
           <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
         </q-avatar>
-        <q-toolbar-title> friend 1 </q-toolbar-title>
+        <q-toolbar-title> rapxiec </q-toolbar-title>
         <q-btn flat round icon="call" class="q-mr-xs" />
         <q-btn flat round icon="videocam" class="q-mr-xs" />
         <q-btn flat round icon="search" class="q-mr-xs" />
@@ -15,31 +15,21 @@
     <div class="col">
       <q-chat-message class=" q-pr-xs text-align" label="Sunday, 19th" />
     </div>
-    <div class="col">
-      <q-chat-message
-        name="me"
-        avatar="https://cdn.quasar.dev/img/avatar4.jpg"
-        :text="['hey, how are you?']"
-        sent
-        stamp="7 minutes ago"
-      />
-    </div>
-    
-    <div class="col">
-      <q-chat-message
-        name="Jane"
-        avatar="https://cdn.quasar.dev/img/avatar3.jpg"
-        :text="['doing fine, how r you?']"
-        stamp="4 minutes ago"
-      />
-    </div>
-    <div class="col" v-for="message in messages" :key="message.data.date">
+    <div class="col" v-for="message in messages" :key="message.date">
        <q-chat-message
-        :name="message.data.sender"
+        :name="message.sender"
         avatar="https://cdn.quasar.dev/img/avatar4.jpg"
-        :text="[message.data.message]"
+        :text="[message.message]"
         sent
-        stamp="7 minutes ago"
+        :stamp="message.date"
+        v-if="message.sender === this.user.username"
+      />
+      <q-chat-message
+        :name="message.sender"
+        avatar="https://cdn.quasar.dev/img/avatar3.jpg"
+        :text="[message.message]"
+        :stamp="message.date"
+        v-else
       />
     </div>
     </div>
@@ -106,8 +96,9 @@ export default defineComponent({
       };
       api.post("http://localhost:8000/rooms/messages",params)
         .then(response => {
-          this.messages = response.data;
-          //console.log(this.messages)
+          //console.log(response);
+          this.messages = response.data
+          // console.log(this.messages)
         })
         .catch((err) => {
           console.log(err);
@@ -116,9 +107,9 @@ export default defineComponent({
   },
   created() {
     this.socket.on('response', (data) => {
-      console.log(data);
+      //console.log(data);
       this.messages.push(data);
-      console.log(this.messages[0].data);
+      console.log(this.messages[0]);
     })
   }
 });

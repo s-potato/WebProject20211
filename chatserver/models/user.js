@@ -69,6 +69,14 @@ UserSchema.methods.createRoom = function (name, cb) {
         }
     })
 }
+//UserSchema.methods.getName = function (id, cb) {
+//User.findOne({ id: user._id }).exec(function (err, result) {
+//    if (err || !result) {cb({err: "Can't query"})}
+//    else {
+//        cb(null, result.username);
+//    }
+//})
+//}
 
 UserSchema.statics.getRoomsList = function (user, cb) {
     User.findOne({ username: user.username }).populate('rooms').exec(function (err, result) {

@@ -11,6 +11,7 @@ router.post('/messages', function (req, res, next) {
             res.status(500).json(err);
         }
         else {
+            console.log(result);
             res.json(result);
         }
     })

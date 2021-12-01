@@ -30,31 +30,23 @@ RoomSchema.statics.getMembersList = function (room, cb) {
 }
 
 RoomSchema.statics.getMessagesList = function (room, cb) {
-    Room.findOne({ name: room.name }).populate('messages').exec(function (err, result) {
+    Room.findOne({ name: room.name }).populate({path: 'messages', populate: [
+        { path: 'sender' },
+        { path: 'room' }
+    ]}).exec(function (err, result) {
         if (err || !result) {cb({err: "Can't query"})}
         else {
-            cb(null, result.messages);
-        }
-    })
-}
-
-RoomSchema.statics.addMessage = function (room, user, message, cb) {
-    Room.findOne({ name: room.name }).exec(function (err, result) {
-        if (err || !result) {cb({err: "Can't query"})}
-        else {
-            room = result;
-            User.findOne({ username: user.username }).exec(function (err, result) {
-                if (err || !result) {cb({err: "Can't query"})}
-                else {
-                    user = result;
-                    Message.create({ room: room._id, sender: user._id, content: message.body }, function (err, result) {
-                        if (err) { cb(err) }
-                        else {
-                            cb(null, result);
-                        }
-                    })
-                } F
-            })
+            let response = [];
+            for (let i = 0; i < result.messages.length; i++) {
+                let temp = {};
+                temp.message = result.messages[i].content;
+                temp.room = result.messages[i].room.name;
+                temp.sender = result.messages[i].sender.username;
+                temp.date = result.messages[i].created_at;
+                response.push(temp);
+            }
+            console.log(response);
+            cb(null, response);
         }
     })
 }
