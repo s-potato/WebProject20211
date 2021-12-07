@@ -1,7 +1,7 @@
 
 <template>
   <q-page class="flex">
-    <div style="width: 100%" class="column">
+    <div style="width: 100%; height:690px" class="list-group">
       <q-toolbar class="bg-purple text-white">
         <q-avatar >
           <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
@@ -12,10 +12,10 @@
         <q-btn flat round icon="search" class="q-mr-xs" />
         <q-btn flat round icon="more_horiz" class="q-mr-xs"/>
       </q-toolbar>
-    <div class="col">
+    <div >
       <q-chat-message class=" q-pr-xs text-align" label="Sunday, 19th" />
     </div>
-    <div class="col" v-for="message in messages" :key="message.date">
+    <div v-for="message in messages" :key="message.date">
        <q-chat-message separator
         :name="message.sender"
         avatar="https://cdn.quasar.dev/img/avatar4.jpg"
@@ -125,3 +125,8 @@ export default defineComponent({
   }
 });
 </script>
+<style lang="scss">
+.list-group {
+  overflow: auto;
+}
+</style>
