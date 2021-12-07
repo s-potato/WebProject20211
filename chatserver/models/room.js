@@ -42,7 +42,7 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
                 temp.message = result.messages[i].content;
                 temp.room = result.messages[i].room.name;
                 temp.sender = result.messages[i].sender.username;
-                temp.date = result.messages[i].created_at;
+                temp.date = result.messages[i].created_at.getTime();
                 response.push(temp);
             }
             console.log(response);

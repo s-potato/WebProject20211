@@ -16,12 +16,12 @@
       <q-chat-message class=" q-pr-xs text-align" label="Sunday, 19th" />
     </div>
     <div class="col" v-for="message in messages" :key="message.date">
-       <q-chat-message
+       <q-chat-message separator
         :name="message.sender"
         avatar="https://cdn.quasar.dev/img/avatar4.jpg"
         :text="[message.message]"
         sent
-        :stamp="message.date"
+        :stamp="relativeDate(message.date)"
         v-if="message.sender === this.user.username"
       />
       <q-chat-message
@@ -69,6 +69,8 @@ import { defineComponent } from "vue";
 import { api } from "boot/axios";
 import VueJwtDecode from "vue-jwt-decode";
 import io from 'socket.io-client';
+import { formatDistance } from 'date-fns';
+import moment from 'moment';
 
 
 export default defineComponent({
@@ -85,9 +87,18 @@ export default defineComponent({
       socket: io("http://localhost:8000")
     }
   },
+
   methods: {
     send: function () {
       this.socket.emit("chat message", {room: "rapxiec", sender: this.user.username, message: this.text});
+    },
+    relativeDate(value){
+      return formatDistance(value, new Date())
+    },
+    format_date(value){
+         if (value) {
+           return moment(String(value)).format('MM/DD/YYYY hh:mm')
+        }
     },
   },
   mounted: function () {
