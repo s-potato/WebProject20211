@@ -1,8 +1,8 @@
 
 <template>
   <q-page class="flex">
-    <div style="width: 100%; height:690px" class="list-group">
-      <q-toolbar class="bg-purple text-white">
+    
+    <q-toolbar dense class="bg-purple text-white toolbal">
         <q-avatar >
           <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
         </q-avatar>
@@ -11,7 +11,8 @@
         <q-btn flat round icon="videocam" class="q-mr-xs" />
         <q-btn flat round icon="search" class="q-mr-xs" />
         <q-btn flat round icon="more_horiz" class="q-mr-xs"/>
-      </q-toolbar>
+    </q-toolbar>
+    <div class="list-group chatbox">
     <div >
       <q-chat-message class=" q-pr-xs text-align" label="Sunday, 19th" />
     </div>
@@ -28,7 +29,7 @@
         :name="message.sender"
         avatar="https://cdn.quasar.dev/img/avatar3.jpg"
         :text="[message.message]"
-        :stamp="message.date"
+        :stamp="relativeDate(message.date)"
         v-else
       />
     </div>
@@ -40,6 +41,7 @@
       label="Type a message..."
       counter
       maxlength="200"
+      @keyup.enter="send()"
       :dense="dense"
       class="bg-white absolute-bottom">
         <template v-slot:before>
@@ -91,6 +93,7 @@ export default defineComponent({
   methods: {
     send: function () {
       this.socket.emit("chat message", {room: "rapxiec", sender: this.user.username, message: this.text});
+      this.text='';
     },
     relativeDate(value){
       return formatDistance(value, new Date())
@@ -128,5 +131,13 @@ export default defineComponent({
 <style lang="scss">
 .list-group {
   overflow: auto;
+}
+.toolbal{
+  height: 50px;
+}
+.chatbox{
+  width: 100%;
+  height: 743px;
+  margin-top: -78px;
 }
 </style>
