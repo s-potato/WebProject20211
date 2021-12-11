@@ -2,7 +2,7 @@
   <v-app :style="{background: $vuetify.theme.themes.dark.background}">
     <v-container fluid>
       <v-row>
-        <v-col cols="12" sm="3" lg="3" class="border">
+        <v-col cols="12" sm="3" lg="3" class="border" >
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-btn title color="white" block>
               <v-icon left color="blue">fas fa-plus</v-icon>
@@ -33,7 +33,7 @@
                 </v-btn>
             </v-col>
           </v-row>
-          <v-list two-line color="rgba(0,0,0,0)" style="overflow:auto; height:50%">
+          <v-list two-line color="rgba(0,0,0,0)" style="overflow:auto; height:40%">
             <v-list-item-group v-model="selected" active-class="blue lighten-4" multiple >
               <template v-for="(item, index) in items">
                 <v-list-item :key="item.title">
@@ -83,121 +83,139 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </v-app-bar>
-          <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-            <v-spacer></v-spacer>
-            <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-              <v-list-item three-line>
-                <v-list-item-content>
-                  <div class=" mb-4">
-                    Good morning. How are you today? 
-                  </div>
-                  <v-list-item-subtitle>16 mins ago <span class="ml-16">Seen 1:03PM</span></v-list-item-subtitle>  
-                </v-list-item-content>
-              </v-list-item>
-            </v-card>
-            <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+          <div style="overflow:auto; max-height:52%">
+            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
+              <v-spacer></v-spacer>
+              <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <div class=" mb-4">
+                      Good morning. How are you today? 
+                    </div>
+                    <v-list-item-subtitle>16 mins ago <span class="ml-16">Seen 1:03PM</span></v-list-item-subtitle>  
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+                <v-avatar class="mt-n5 " size="30" elevation="10">
+                      <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
+                </v-avatar>
+              </v-badge>
+            </v-app-bar>
+            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+                <v-avatar class="mt-n5 " size="30" elevation="10">
+                      <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
+                </v-avatar>
+              </v-badge>
+              <v-card class="mt-10 ml-2" max-width="350px">
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <div class=" mb-4">
+                      Hey! Very good.I'm taking a photos in the office
+                    </div>
+                    <v-list-item-subtitle>12 mins ago</v-list-item-subtitle>  
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
+              <v-btn color="black" icon class="mb-n10">
+                <v-icon>fas fa-ellipsis-h</v-icon>
+              </v-btn>
+            </v-app-bar>
+            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+                <v-avatar class="mt-n5 " size="30" elevation="10">
+                      <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
+                </v-avatar>
+              </v-badge>
+              <v-card class="mt-10 ml-2" max-width="350px">
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <div class=" mb-4">
+                      Fernando shared 3 photos :<br><br>
+                      <v-avatar size="60" tile class="mr-2">
+                        <v-img src="1.jpg"></v-img>
+                      </v-avatar>
+                      <v-avatar size="60" tile class="mr-2">
+                        <v-img src="2.jpg"></v-img>
+                      </v-avatar>
+                      <v-avatar size="60" tile>
+                        <v-img src="3.jpg"></v-img>
+                      </v-avatar>
+                    </div>
+                    <v-list-item-subtitle>12 mins ago</v-list-item-subtitle>  
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card >
+            </v-app-bar>
+            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-8">
+            
+              <v-spacer></v-spacer>
+              <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <div class=" mb-4">
+                      There many variations of passages of Loream
+                    </div>
+                    <v-list-item-subtitle>2 mins ago <span class="ml-16">Seen 1:23PM</span></v-list-item-subtitle>  
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card >
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
               <v-avatar class="mt-n5 " size="30" elevation="10">
                     <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
               </v-avatar>
-            </v-badge>
-          </v-app-bar>
-          <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-            <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+              </v-badge>
+            </v-app-bar>
+            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
+              <v-spacer></v-spacer>
+              <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <div class=" mb-4">
+                      God by !!!!!!!!!!!!!!
+                    </div>
+                    <v-list-item-subtitle>3 mins ago <span class="ml-16">Seen 1:24PM</span></v-list-item-subtitle>  
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card >
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
               <v-avatar class="mt-n5 " size="30" elevation="10">
-                    <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
+                <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
               </v-avatar>
-            </v-badge>
-            <v-card class="mt-10 ml-2" max-width="350px">
-              <v-list-item three-line>
-                <v-list-item-content>
-                  <div class=" mb-4">
-                    Hey! Very good.I'm taking a photos in the office
-                  </div>
-                  <v-list-item-subtitle>12 mins ago</v-list-item-subtitle>  
-                </v-list-item-content>
-              </v-list-item>
-            </v-card>
-            <v-btn color="black" icon class="mb-n10">
-              <v-icon>fas fa-ellipsis-h</v-icon>
-            </v-btn>
-          </v-app-bar>
-          <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-            <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+              </v-badge>
+            </v-app-bar>
+            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
+              <v-spacer></v-spacer>
+              <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
+                <v-list-item three-line>
+                  <v-list-item-content>
+                    <div class=" mb-4">
+                      God by !!!!!!!!!!!!!!
+                    </div>
+                    <v-list-item-subtitle>3 mins ago <span class="ml-16">Seen 1:24PM</span></v-list-item-subtitle>  
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card >
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
               <v-avatar class="mt-n5 " size="30" elevation="10">
-                    <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
+                <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
               </v-avatar>
-            </v-badge>
-            <v-card class="mt-10 ml-2" max-width="350px">
-              <v-list-item three-line>
-                <v-list-item-content>
-                  <div class=" mb-4">
-                    Fernando shared 3 photos :<br><br>
-                    <v-avatar size="60" tile class="mr-2">
-                      <v-img src="1.jpg"></v-img>
-                    </v-avatar>
-                    <v-avatar size="60" tile class="mr-2">
-                      <v-img src="2.jpg"></v-img>
-                    </v-avatar>
-                    <v-avatar size="60" tile>
-                      <v-img src="3.jpg"></v-img>
-                    </v-avatar>
-                  </div>
-                  <v-list-item-subtitle>12 mins ago</v-list-item-subtitle>  
-                </v-list-item-content>
-              </v-list-item>
-            </v-card >
-          </v-app-bar>
-          <v-app-bar color="rgba(0,0,0,0)" flat class="mb-8">
-          
-            <v-spacer></v-spacer>
-            <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-    <v-list-item three-line>
-      <v-list-item-content>
-        <div class=" mb-4">
-          There many variations of passages of Loream
-        </div>
-        <v-list-item-subtitle>2 mins ago <span class="ml-16">Seen 1:23PM</span></v-list-item-subtitle>  
-      </v-list-item-content>
-    </v-list-item>
-  </v-card >
-            <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
-            <v-avatar class="mt-n5 " size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
-            </v-avatar>
-            </v-badge>
-          </v-app-bar>
-          <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-            <v-spacer></v-spacer>
-            <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-              <v-list-item three-line>
-                <v-list-item-content>
-                  <div class=" mb-4">
-                    God by !!!!!!!!!!!!!!
-                  </div>
-                  <v-list-item-subtitle>3 mins ago <span class="ml-16">Seen 1:24PM</span></v-list-item-subtitle>  
-                </v-list-item-content>
-              </v-list-item>
-            </v-card >
-            <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
-            <v-avatar class="mt-n5 " size="30" elevation="10">
-              <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
-            </v-avatar>
-            </v-badge>
-          </v-app-bar>
-          <v-app-bar color="rgba(0,0,0,0)" flat>
-            <v-text-field
-              v-model="message"
-              append-icon="mdi-emoticon"
-              :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
-              filled
-              clear-icon="mdi-close-circle"
-              clearable
-              label="Message"
-              type="text"
-              @click:append-outer="sendMessage"
-              @click:clear="clearMessage"
-            ></v-text-field>
-         </v-app-bar>
+              </v-badge>
+            </v-app-bar>
+          </div>
+          <v-text-field
+            v-model="message"
+            append-icon="mdi-emoticon"
+            :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
+            filled
+            clear-icon="mdi-close-circle"
+            clearable
+            label="Message"
+            type="text"
+            @click:append-outer="sendMessage"
+            @click:clear="clearMessage"
+          ></v-text-field>
         </v-col>      
         <v-col cols="12" sm="3" lg="3">
           <v-card class="text-center mt-8 mb-3" shaped >
@@ -332,7 +350,7 @@
       ],
       panel: [2],
       show: false,
-      message: 'Type a message here',
+      message: '',
       marker: true,
       iconIndex: 0
     }),
@@ -359,4 +377,5 @@
 .boder {
   border-right: 1px solid grey;
 }
+
 </style>
