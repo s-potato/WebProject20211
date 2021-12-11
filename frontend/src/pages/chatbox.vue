@@ -1,7 +1,6 @@
 
 <template>
-  <q-page class="flex">
-    
+  <q-page>
     <q-toolbar dense class="bg-purple text-white toolbal">
         <q-avatar >
           <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
@@ -12,7 +11,7 @@
         <q-btn flat round icon="search" class="q-mr-xs" />
         <q-btn flat round icon="more_horiz" class="q-mr-xs"/>
     </q-toolbar>
-    <div class="list-group chatbox">
+    <div class="list-group2 chatbox">
     <div >
       <q-chat-message class=" q-pr-xs text-align" label="Sunday, 19th" />
     </div>
@@ -49,12 +48,10 @@
             <img src="https://cdn.quasar.dev/img/avatar4.jpg">
           </q-avatar>
         </template>
-
         <template v-slot:append>
           <q-icon v-if="text !== ''" name="close" @click="text = ''" class="cursor-pointer" />
           <q-icon name="schedule" />
         </template>
-
         <template v-slot:hint>
           Field hint
         </template>
@@ -129,7 +126,7 @@ export default defineComponent({
 });
 </script>
 <style lang="scss">
-.list-group {
+.list-group2 {
   overflow: auto;
 }
 .toolbal{

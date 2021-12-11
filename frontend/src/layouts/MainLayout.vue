@@ -267,7 +267,7 @@
     </q-drawer>
 
     <q-page-container class="text-white">
-      <q-img src="~assets/background.png" class="background-img absolute-top" />
+      <!-- <q-img src="~assets/background.png" class="background-img absolute-top" /> -->
       <router-view />
     </q-page-container>
   </q-layout>
@@ -374,7 +374,8 @@ export default {
         //this.$router.push("/chat", params);
       },
   },
-  mounted: function () {
+  mounted: 
+  function () {
       let params = {
         username: this.user.username
       };
@@ -385,7 +386,23 @@ export default {
         .catch((err) => {
           console.log(err);
         })
-  }
+      
+      params = {
+        name: 'rapxiec',
+      };
+      api.post("http://localhost:8000/rooms/members",params)
+        .then(response => {
+          this.groupmembers = response.data;
+          console.log("success")
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+        //this.$router.push("/chat", params);
+  },
+  // groupMembers () {
+  // },
+  
 };
 </script>
 
