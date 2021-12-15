@@ -11,6 +11,7 @@ var UserSchema = new mongoose.Schema({
         trim: true,
         required: true
     },
+    //display_name: { type : String, }
     password: {
         type: String,
         require: true,
@@ -22,6 +23,7 @@ var UserSchema = new mongoose.Schema({
         require: true,
         trim: true,
         lowercase: true,
+        select: false,
         unique: true,
         required: true
     },
@@ -29,24 +31,43 @@ var UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Room'
     }],
+    friends: [{
+        friend: { 
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }, 
+        room: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Room'
+        }
+    }],
     status: {
         type: Boolean,
         default: false
     }
 })
 
-UserSchema.pre('save', function (next) {
+UserSchema.methods.setStatus = function(status) {
     var user = this;
-    if (!user.isModified('password')) return next();
-    bcrypt.genSalt(10, function (err, salt) {
-        if (err) return next(err);
-        bcrypt.hash(user.password, salt, function (err, hash) {
-            if (err) return next(err);
-            user.password = hash;
-            next();
-        });
+    user.status = status;
+    user.save(function (err) {
+        if (err) console.log(err);  
     });
-});
+};
+
+// TODO: khi demo thi bat len
+// UserSchema.pre('save', function (next) {
+//     var user = this;
+//     if (!user.isModified('password')) return next();
+//     bcrypt.genSalt(10, function (err, salt) {
+//         if (err) return next(err);
+//         bcrypt.hash(user.password, salt, function (err, hash) {
+//             if (err) return next(err);
+//             user.password = hash;
+//             next();
+//         });
+//     });
+// });
 
 UserSchema.methods.comparePassword = function (candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
@@ -57,11 +78,11 @@ UserSchema.methods.comparePassword = function (candidatePassword, cb) {
 
 UserSchema.methods.createRoom = function (name, cb) {
     var user = this;
-    Room.create({ name: name, owner: this._id, users: [this._id] }, function (err, result) {
+    Room.create({ name: name, owner: user._id, users: [user._id] }, function (err, result) {
         if (err) {cb(err)}
         else {
             console.log(user.rooms);
-            user.rooms = [result._id];
+            user.rooms.push(result._id);
             user.save(function (err) {
                 if (err) console.log(err);
             });
@@ -79,20 +100,27 @@ UserSchema.methods.createRoom = function (name, cb) {
 //}
 
 UserSchema.statics.getRoomsList = function (user, cb) {
-    User.findOne({ username: user.username }).populate('rooms').exec(function (err, result) {
+    User.findOne({ username: user.username, isDirect: false }).populate('rooms').exec(function (err, result) {
         if (err || !result) {cb({err: "Can't query"})}
         else {
-            cb(null, result.rooms);
+            let response = [];
+            for (let i = 0; i < result.rooms.length; i++) {
+                let temp = {};
+                temp.id = result.rooms[i]._id;
+                temp.name = result.rooms[i].name;
+                response.push(temp);
+            }
+            cb(null, response);
         }
     })
 }
 
 UserSchema.methods.joinRoom = function (room, cb) {
     var user = this;
-    Room.findOne({name: room.name}, function (err, result) {
-        if (err || !result) {cb({err: "Can't query"})}
+    Room.findOne( { _id: room.id}, function (err, result) {
+        if (err || !result) { cb({err: "Can't query"}) }
         else {
-            if (result.users && result.users.find(element => element == user._id)) {
+            if (result.users && result.users.find((element) => (String(element) === String(user._id))) ) {
                 cb({ status: "Existed.", message: "User is on this room." });
             }
             else {

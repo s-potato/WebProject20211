@@ -47,4 +47,40 @@ router.post('/rooms', function (req, res, next) {
     })
 })
 
+router.post('/createroom', (req, res, next) => {
+    User.findOne({ username: req.body.username }, function (err, result) {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+        }
+        else {
+            result.createRoom( req.body.roomname, (err, result) => {
+                if (err) {
+                    res.status(500).json(err);
+                }
+                else {
+                    res.json(result);
+                }
+            })
+        }
+    })
+})
+
+router.post('/joinroom', (req, res, next) => {
+    User.findOne({ username: req.body.username }, function (err, result) {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+        }
+        else {
+            result.joinRoom( {id: req.body.roomid}, (err, result) => {
+                if (err) {
+                    res.status(500).json(err);
+                }
+                else {
+                    res.json(result);
+                }
+            })
+        }
+    })
+})
+
 module.exports = router;
