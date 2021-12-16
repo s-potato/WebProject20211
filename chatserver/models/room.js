@@ -3,7 +3,7 @@ const Message = require('./message');
 const User = require('./user');
 
 var RoomSchema = new mongoose.Schema({
-    name: { type: String, lowercase: true, unique: true },
+    name: { type: String, lowercase: true },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

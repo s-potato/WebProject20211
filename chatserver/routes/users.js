@@ -1,5 +1,6 @@
 const express = require('express');
 const User = require('../models/user');
+const Request = require('../models/request')
 const jwt = require('jsonwebtoken');
 const auth = require('../util/auth');
 const router = express.Router();
@@ -71,7 +72,101 @@ router.post('/joinroom', (req, res, next) => {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
         }
         else {
-            result.joinRoom( {id: req.body.roomid}, (err, result) => {
+            result.joinRoom( {id: req.body.room_id}, (err, result) => {
+                if (err) {
+                    res.status(500).json(err);
+                }
+                else {
+                    res.json(result);
+                }
+            })
+        }
+    })
+})
+
+router.post('/find', (req, res, next)=>{
+    User.search(req.body.term, (err, result)=>{
+        if (err) {
+            res.status(500).json(err);
+        } else {
+            res.json(result);
+        }
+    })
+})
+
+router.post('/acceptrequest', (req, res, next)=> {
+    Request.findById( req.body.request_id, function (err, request) {
+        if (err || !request) {
+            res.status(500).json({ status: "error", message: "Not found!" });
+        }
+        else {
+            User.addFriend( {requester: request.requester, request_to: request.request_to}, (err, result) => {
+                if (err) {
+                    res.status(500).json(err);
+                }
+                else {
+                    request.remove(); 
+                    res.json({status: "Success"});
+                }
+            })
+        }
+    })
+})
+
+router.post('/directs', function (req, res, next) {
+    User.getDirectsList(req.body, function (err, result) {
+        if (err) {
+            res.status(500).json(err);
+        }
+        else {
+            res.json(result);
+        }
+    })
+})
+
+router.post('/sendrequest', (req, res, next)=> {
+    User.findOne( { username: req.body.username }, function (err, result) {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+        }
+        else {
+            result.sendRequest( {username: req.body.friendname}, (err, result) => {
+                if (err) {
+                    res.status(500).json(err);
+                }
+                else {
+                    res.json(result);
+                }
+            })
+        }
+    })
+})
+
+router.post('/inrequest', (req, res, next)=>{
+    User.findOne( { username: req.body.username }, function (err, result) {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+        }
+        else {
+            Request.inRequest( result._id, (err, result) => {
+                if (err) {
+                    res.status(500).json(err);
+                }
+                else {
+                    res.json(result);
+                }
+            })
+        }
+    })
+})
+
+router.post('/outrequest', (req, res, next)=>{
+    User.findOne( { username: req.body.username }, function (err, result) {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+        }
+        else {
+            Request.outRequest( result._id, (err, result) => {
                 if (err) {
                     res.status(500).json(err);
                 }
