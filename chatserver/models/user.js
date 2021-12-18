@@ -223,7 +223,7 @@ UserSchema.statics.addFriend = function(users, cb) {
                                 requester.save(function (err) {
                                     if (err) console.log(err);
                                 });
-                                cb(null, { status: "Success" });
+                                cb(null, { status: "Success", message: "Friend added successfully!" });
                             }
                         }
                     );
@@ -266,10 +266,25 @@ UserSchema.methods.sendRequest = function (friend, cb) {
             ) {
                 cb({ status: "Existed.", message: "User is already friend." });
             } else {
-                // TODO: Request.findOne({request_to: user._id, requester: result._id}, )
-                Request.create( {requester: user._id, request_to: result._id}, (err, result)=>{
-                    if (err) cb(err);
-                    else cb(null, result);
+                Request.findOne({request_to: user._id, requester: result._id}, (err, request)=>{
+                    if(err) cb(err);
+                    else if (!request) {
+                        Request.create( {requester: user._id, request_to: result._id}, (err, result)=>{
+                            if (err) cb(err);
+                            else cb(null, result);
+                        })
+                    }
+                    else {
+                        User.addFriend( {requester: request.requester, request_to: request.request_to}, (err, result) => {
+                            if (err) {
+                                cb(err);
+                            }
+                            else {
+                                request.remove(); 
+                                cb(null, result);
+                            }
+                        })
+                    }
                 })
             }
         }

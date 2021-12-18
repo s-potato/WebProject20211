@@ -106,7 +106,7 @@ router.post('/acceptrequest', (req, res, next)=> {
                 }
                 else {
                     request.remove(); 
-                    res.json({status: "Success"});
+                    res.json(result);
                 }
             })
         }
