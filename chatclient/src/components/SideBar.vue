@@ -71,7 +71,9 @@
             </nav>
         </v-col-1>
         <v-col>
-            <router-view></router-view>
+            <router-view>
+                
+            </router-view>
         </v-col>
     </v-row>    
 </template>
