@@ -9,14 +9,14 @@ const routes = [
     path: '/login', component: () => import('../views/Login.vue') ,
   },
   {
-    // path: '/chat',
-    // name: 'chat',
-    // component: Chat
     path: '/',
     component: () => import('../components/SideBar.vue'),
     children: [
       { path: '/chat', component: () => import('../views/Chat.vue') }
     ],
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/about',
@@ -32,6 +32,20 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (localStorage.getItem("jwt") == null) {
+      next({
+        path: "/login"
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 })
 
 export default router

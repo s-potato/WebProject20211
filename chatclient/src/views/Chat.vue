@@ -31,12 +31,12 @@
           </v-app-bar>
           <v-row class="mt-1 mb-1">
             <v-col color="rgba(0,0,0,0,0)">
-              <v-btn title color="white" block @click="isDirect = true">
+              <v-btn title color="white" block @click="isDirect = false">
                 Group
               </v-btn>
             </v-col>
             <v-col color="rgba(0,0,0,0,0)">
-              <v-btn title color="white" block @click="isDirect = false">
+              <v-btn title color="white" block @click="isDirect = true">
                 Direct
               </v-btn>
             </v-col>
@@ -48,13 +48,13 @@
             style="overflow: auto; height: 40%"
           >
             <v-list-item-group
-              v-if="isDirect == true"
+              v-if="isDirect == false"
               v-model="selected"
               active-class="blue lighten-4"
               multiple
             >
-              <template v-for="(item, index) in items">
-                <v-list-item :key="item.title">
+              <template v-for="(item, index) in group">
+                <v-list-item :key="item.name">
                   <v-badge
                     bordered
                     bottom
@@ -64,34 +64,31 @@
                     offset-y="26"
                   >
                     <v-list-item-avatar>
-                      <v-img :src="item.avatar"></v-img>
+                      <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
                     </v-list-item-avatar>
                   </v-badge>
                   <template>
                     <v-list-item-content>
                       <v-list-item-title
-                        v-text="item.title"
+                        v-text="item.name"
                       ></v-list-item-title>
-                      <v-list-item-subtitle
-                        v-text="item.subtitle"
-                      ></v-list-item-subtitle>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
                 <v-divider
-                  v-if="index < items.length - 1"
+                  v-if="index < group.length - 1"
                   :key="index"
                 ></v-divider>
               </template>
             </v-list-item-group>
-            <!-- <v-list-item-group
+            <v-list-item-group
               v-else
               v-model="selected"
               active-class="blue lighten-4"
               multiple
             >
-              <template v-for="(item1, index) in item1s">
-                <v-list-item :key="item1.title">
+              <template v-for="(item, index) in direct">
+                <v-list-item :key="item.friend.username">
                   <v-badge
                     bordered
                     bottom
@@ -101,26 +98,23 @@
                     offset-y="26"
                   >
                     <v-list-item-avatar>
-                      <v-img :src="item1.avatar"></v-img>
+                      <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
                     </v-list-item-avatar>
                   </v-badge>
                   <template>
                     <v-list-item-content>
                       <v-list-item-title
-                        v-text="item1.title"
+                        v-text="item.friend.username"
                       ></v-list-item-title>
-                      <v-list-item-subtitle
-                        v-text="item1.subtitle"
-                      ></v-list-item-subtitle>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
                 <v-divider
-                  v-if="index < items1.length - 1"
+                  v-if="index < direct.length - 1"
                   :key="index"
                 ></v-divider>
               </template>
-            </v-list-item-group> -->
+            </v-list-item-group>
           </v-list>
         </v-col>
         <v-col
@@ -174,91 +168,6 @@
           </v-app-bar>
           <div style="overflow: auto; max-height: 52%">
             <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-              <v-spacer></v-spacer>
-              <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="mb-4">Good morning. How are you today?</div>
-                    <v-list-item-subtitle
-                      >16 mins ago
-                      <span class="ml-16"
-                        >Seen 1:03PM</span
-                      ></v-list-item-subtitle
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
-              <v-badge
-                bordered
-                bottom
-                color="green"
-                dot
-                offset-x="10"
-                offset-y="10"
-              >
-                <v-avatar class="mt-n5" size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
-                </v-avatar>
-              </v-badge>
-            </v-app-bar>
-            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-              <v-badge
-                bordered
-                bottom
-                color="green"
-                dot
-                offset-x="10"
-                offset-y="10"
-              >
-                <v-avatar class="mt-n5" size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
-                </v-avatar>
-              </v-badge>
-              <v-card class="mt-10 ml-2" max-width="350px">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="mb-4">
-                      Hey! Very good.I'm taking a photos in the office
-                    </div>
-                    <v-list-item-subtitle>12 mins ago</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
-              <!-- <v-btn color="black" icon class="mb-n10">
-                  <v-icon>fas fa-ellipsis-h</v-icon>
-                </v-btn> -->
-              <v-menu left bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on">
-                    <v-icon>fas fa-ellipsis-h</v-icon>
-                  </v-btn>
-                </template>
-
-                <v-list>
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-share</v-icon>
-                      Reply</v-list-item-title>
-                  </v-list-item >
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-circle-edit-outline</v-icon>
-                      Edit</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-content-copy</v-icon>
-                      Copy</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-delete</v-icon>
-                      Delete</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-app-bar>
-            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
               <v-badge
                 bordered
                 bottom
@@ -294,48 +203,23 @@
             <v-app-bar color="rgba(0,0,0,0)" flat class="mb-8">
               <v-spacer></v-spacer>
               <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-                <v-list-item three-line>
+                <v-list-item>
                   <v-list-item-content>
                     <div class="mb-4">
-                      There many variations of passages of Loream
+                      There many variations of passages of Loreama
                     </div>
-                    <v-list-item-subtitle
-                      >2 mins ago
-                      <span class="ml-16"
-                        >Seen 1:23PM</span
-                      ></v-list-item-subtitle
-                    >
                   </v-list-item-content>
                 </v-list-item>
               </v-card>
-              <v-badge
-                bordered
-                bottom
-                color="green"
-                dot
-                offset-x="10"
-                offset-y="10"
-              >
-                <v-avatar class="mt-n5" size="30" elevation="10">
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+                <v-avatar size="30" elevation="10">
                   <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
                 </v-avatar>
               </v-badge>
             </v-app-bar>
-            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-              <v-spacer></v-spacer>
-              <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="mb-4">God by !!!!!!!!!!!!!!</div>
-                    <v-list-item-subtitle
-                      >3 mins ago
-                      <span class="ml-16"
-                        >Seen 1:24PM</span
-                      ></v-list-item-subtitle
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
+          </div>
+          <div style="overflow: auto; max-height: 52%" v-for="message in messages" :key="message.date">
+            <v-app-bar  color="rgba(0,0,0,0)" flat v-if="message.sender == this.mainUser">
               <v-badge
                 bordered
                 bottom
@@ -344,23 +228,56 @@
                 offset-x="10"
                 offset-y="10"
               >
-                <v-avatar class="mt-n5" size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
+                <v-avatar size="30" elevation="10">
+                  <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
                 </v-avatar>
               </v-badge>
-            </v-app-bar>
-            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-              <v-spacer></v-spacer>
-              <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-                <v-list-item three-line>
+              <v-card class="ml-2 sender" max-width="350px">
+                <v-list-item>
                   <v-list-item-content>
-                    <div class="mb-4">God by !!!!!!!!!!!!!!</div>
-                    <v-list-item-subtitle
-                      >3 mins ago
-                      <span class="ml-16"
-                        >Seen 1:24PM</span
-                      ></v-list-item-subtitle
-                    >
+                    <div>
+                      {{message.message}}
+                    </div>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
+              <v-menu left bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>fas fa-ellipsis-h</v-icon>
+                  </v-btn>
+                </template>
+
+                <v-list>
+                  <v-list-item clickable>
+                    <v-list-item-title>
+                      <v-icon>mdi-share</v-icon>
+                      Reply</v-list-item-title>
+                  </v-list-item >
+                  <!-- <v-list-item clickable>
+                    <v-list-item-title>
+                      <v-icon>mdi-circle-edit-outline</v-icon>
+                      Edit</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item clickable>
+                    <v-list-item-title>
+                      <v-icon>mdi-content-copy</v-icon>
+                      Copy</v-list-item-title>
+                  </v-list-item> -->
+                  <v-list-item clickable>
+                    <v-list-item-title>
+                      <v-icon>mdi-delete</v-icon>
+                      Delete</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-app-bar>
+            <v-app-bar color="rgba(0,0,0,0)" flat v-else>
+              <v-spacer></v-spacer>
+              <v-card class="mr-2 recept" max-width="350px" color="blue" dark>
+                <v-list-item>
+                  <v-list-item-content>
+                    <div>{{message.message}}</div>
                   </v-list-item-content>
                 </v-list-item>
               </v-card>
@@ -372,7 +289,7 @@
                 offset-x="10"
                 offset-y="10"
               >
-                <v-avatar class="mt-n5" size="30" elevation="10">
+                <v-avatar size="30" elevation="10">
                   <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
                 </v-avatar>
               </v-badge>
@@ -461,137 +378,104 @@
 </template>
 
 <script>
+import VueJwtDecode from "vue-jwt-decode";
+import axios from 'axios';
+
 export default {
-  data: () => ({
-    selected: [2],
-    items: [
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-        subtitle: `I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
-        title: "Ali Connors",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        subtitle: `Wish I could come, but I'm out of town this weekend.`,
-        title: "me, Scrott, Jennifer",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        subtitle: "Do you have Paris recommendations? Have you ever been?",
-        title: "Sandra Adams",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-        subtitle:
-          "Have any ideas about what we should get Heidi for her birthday?",
-        title: "Trevor Hansen",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        subtitle:
-          "We should eat this: Grate, Squash, Corn, and tomatillo Tacos.",
-        title: "Britta Holt",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-        subtitle: `I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
-        title: "Connors",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        subtitle: `Wish I could come, but I'm out of town this weekend.`,
-        title: " Jennifer",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        subtitle: "Do you have Paris recommendations? Have you ever been?",
-        title: "Sandra ",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        subtitle: `Wish I could come, but I'm out of town this weekend.`,
-        title: " Jennifer",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        subtitle: "Do you have Paris recommendations? Have you ever been?",
-        title: "Sandra ",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        subtitle: `Wish I could come, but I'm out of town this weekend.`,
-        title: " Jennifer",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        subtitle: "Do you have Paris recommendations? Have you ever been?",
-        title: "Sandra ",
-      },
-    ],
-    item1s: [
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        subtitle: "Do you have Paris recommendations? Have you ever been?",
-        title: "Sandra ",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        subtitle: `Wish I could come, but I'm out of town this weekend.`,
-        title: " Jennifer",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        subtitle: "Do you have Paris recommendations? Have you ever been?",
-        title: "Sandra ",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        subtitle: `Wish I could come, but I'm out of town this weekend.`,
-        title: " Jennifer",
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        subtitle: "Do you have Paris recommendations? Have you ever been?",
-        title: "Sandra ",
-      },
-    ],
-    files: [
-      { text: "Landing_page.zip", icon: " mdi-cloud-upload" },
-      { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
-      { text: "Uwagi.docx", icon: " mdi-cloud-upload" },
-    ],
-    panel: [2],
-    show: false,
-    message: "",
-    marker: true,
-    isActive: true,
-    isDirect: true,
-    iconIndex: 0,
-  }),
+  data() {
+    let token = localStorage.getItem("jwt");
+    let decoded = VueJwtDecode.decode(token);
+    this.user = decoded;
+    return {
+      isDirect: false,
+      isActive: true,
+      selected: [2],
+      panel: [2],
+      show: false,
+      message: '',
+      marker: true,
+      iconIndex: 0,
+      files: [
+          { text: 'Landing_page.zip', icon: ' mdi-cloud-upload' },
+          { text: 'Requirements.pdf', icon: ' mdi-cloud-upload' },
+          { text: 'Uwagi.docx', icon: ' mdi-cloud-upload' },
+      ],
+      group: [],
+      direct: [],
+      messages: [],
+    }
+  },
   computed: {
     theme() {
-      return this.$vuetify.theme.dark ? "dark" : "light";
-    },
+        return this.$vuetify.theme.dark ? "dark" : "light";
+    }
+  },
+  mounted: function() {
+    let params = {
+        username: this.user.username
+      };
+    axios.post("http://localhost:8000/users/rooms",params)
+      .then(response => {
+        this.group = response.data;
+        // console.log(this.group);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    axios.post("http://localhost:8000/users/directs",params)
+      .then(response => {
+        this.direct = response.data;
+        // console.log(this.group);
+      })
+      .catch((err) => {
+        console.log(err);
+      }),
+    params = {
+        id: "61a5a73fc8981fc37875aaa1"
+      };
+    axios.post("http://localhost:8000/rooms/messages",params)
+      .then(response => {
+        // console.log(response);
+        this.messages = response.data
+        console.log(this.messages[2].sender === this.user.username);
+        console.log(typeof this.user)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   },
   methods: {
-    sendMessage() {
-      this.resetIcon();
-      this.clearMessage();
-    },
-    clearMessage() {
-      this.message = "";
-    },
-    resetIcon() {
-      this.iconIndex = 0;
-    },
     logUserOut() {
+      localStorage.removeItem("jwt");
       this.$router.push("/login");
     },
-  },
-};
+    sendMessage () {
+      this.resetIcon()
+      this.clearMessage()
+    },
+    clearMessage() {
+      this.message = ''
+    },
+    resetIcon () {
+      this.iconIndex = 0
+    },
+    joinGroup() {
+      //TODO:
+    },
+    sendRequest() {
+      //TODO:
+    }
+  }
+}
 </script>
 <style scoped>
 .boder {
   border-right: 1px solid grey;
+}
+.sender {
+  border-radius: 1px 50px 50px;
+}
+.recept{
+  border-radius: 50px 50px 1px;
 }
 </style>

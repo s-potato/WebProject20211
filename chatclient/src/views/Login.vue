@@ -12,7 +12,7 @@
                       <v-card-text class="mt-12">
                         <h1
                           class="text-center display-2 teal--text text--accent-3"
-                        >Sign in to Diprella</h1>
+                        >Sign in to ChatApp</h1>
                         <div class="text-center mt-4">
                           <v-btn class="mx-2" fab color="black" outlined>
                             <v-icon>fab fa-facebook-f</v-icon>
@@ -28,17 +28,20 @@
                         <h4 class="text-center mt-4">Ensure your email for registration</h4>
                         <v-form>
                           <v-text-field
-                            label="Email"
-                            name="Email"
+                            label="Username"
+                            name="Username"
                             prepend-icon="email"
                             type="text"
                             color="teal accent-3"
+                            v-model="username"
                           />
 
                           <v-text-field
+                            @keyup.enter="Login"
                             id="password"
                             label="Password"
                             name="password"
+                            v-model="password"
                             prepend-icon="lock"
                             type="password"
                             color="teal accent-3"
@@ -47,7 +50,7 @@
                         <h3 class="text-center mt-4">Forgot your password ?</h3>
                       </v-card-text>
                       <div class="text-center mt-3">
-                        <v-btn rounded color="teal accent-3" dark>SIGN IN</v-btn>
+                        <v-btn rounded color="teal accent-3" dark @click="Login">SIGN IN</v-btn>
                       </div>
                     </v-col>
                     <v-col cols="12" md="4" class="teal accent-3">
@@ -100,6 +103,8 @@
                             prepend-icon="person"
                             type="text"
                             color="teal accent-3"
+                            v-model="username"
+                            @keyup.enter="Register"
                           />
                           <v-text-field
                             label="Email"
@@ -107,6 +112,8 @@
                             prepend-icon="email"
                             type="text"
                             color="teal accent-3"
+                            v-model="email"
+                            @keyup.enter="Register"
                           />
 
                           <v-text-field
@@ -116,11 +123,13 @@
                             prepend-icon="lock"
                             type="password"
                             color="teal accent-3"
+                            v-model="password"
+                            @keyup.enter="Register"
                           />
                         </v-form>
                       </v-card-text>
                       <div class="text-center mt-n5">
-                        <v-btn rounded color="teal accent-3" dark>SIGN UP</v-btn>
+                        <v-btn rounded color="teal accent-3" dark @click="Register">SIGN UP</v-btn>
                       </div>
                     </v-col>
                   </v-row>
@@ -135,12 +144,70 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
+  username: '',
+  password: '',
   data: () => ({
-    step: 1
+    step: 1,
+    username: "",
+    pass: '',
   }),
-  props: {
-    source: String
+  
+  methods: {
+    async Login() {
+      let params = {
+        username: this.username,
+        password: this.password
+      };
+      axios
+        .post("http://localhost:8000/users/login",params)
+        .then(response => {
+          console.log(response);
+          let token = response.data.data.jwt;
+          localStorage.setItem("jwt", token);
+          if (token) {
+            console.log("success");
+            this.$router.push('/chat')
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      this.username='';
+      this.pass='';
+    },
+    async Register() {
+      let params = {
+        username: this.username,
+        password: this.password,
+        email: this.email,
+      };
+      axios
+        .post("http://localhost:8000/users/register", params)
+        .then((response) => {
+          console.log(response.data.data);
+          let token = response.data.token;
+          if (token) {
+            localStorage.setItem("jwt", token);
+            this.$router.push("/chat");
+            console.log("success");
+          } else {
+            console.log("err");
+          }
+        })
+        .catch((err) => {
+          let error = err.response;
+          if (error.status == 500) {
+            console.log("err");
+          }
+        });
+      this.username = "";
+      this.password = "";
+      // this.confirm = "";
+      this.email = "";
+    },
   }
 };
 </script>

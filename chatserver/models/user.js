@@ -168,7 +168,7 @@ UserSchema.statics.search = function (term, cb) {
     User.findById( friend_id, function (err, result) {
         if (err || !result) {
             cb({ err: "Can't query" });
-        } else {
+        } else {    
             if (
                 user.friends &&
                 user.friends.find(
@@ -235,7 +235,7 @@ UserSchema.statics.addFriend = function(users, cb) {
 
 UserSchema.statics.getDirectsList = function (user, cb) {
     User.findOne({ username: user.username })
-        .populate("friends.room")
+        .populate("friends.room").populate("friends.friend")
         .exec(function (err, result) {
             if (err || !result) {
                 cb({ err: "Can't query" });
@@ -243,8 +243,8 @@ UserSchema.statics.getDirectsList = function (user, cb) {
                 let response = [];
                 for (let i = 0; i < result.friends.length; i++) {
                     let temp = {};
+                    temp.username = result.friends[i].friend.username;
                     temp.id = result.friends[i].room._id;
-                    temp.name = result.friends[i].room.name;
                     response.push(temp);
                 }
                 cb(null, result.friends);
