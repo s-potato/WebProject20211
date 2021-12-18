@@ -3,7 +3,7 @@ const Message = require('./message');
 const User = require('./user');
 
 var RoomSchema = new mongoose.Schema({
-    name: { type: String, lowercase: true, unique: true },
+    name: { type: String, lowercase: true },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -16,21 +16,29 @@ var RoomSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message'
     }],
+    isDirect: {type: Boolean , default : false},
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now },
 });
 
 RoomSchema.statics.getMembersList = function (room, cb) {
-    Room.findOne({ name: room.name }).populate('users').exec(function (err, result) {
+    Room.findById(room.id).populate('users').exec(function (err, result) {
         if (err || !result) {cb({err: "Can't query"})}
         else {
-            cb(null, result.users);
+            let response = [];
+            for (let i = 0; i < result.users.length; i++) {
+                let temp = {};
+                temp.username = result.users[i].username;
+                temp.status = result.users[i].status;
+                response.push(temp);
+            }
+            cb(null, response);
         }
     })
 }
 
 RoomSchema.statics.getMessagesList = function (room, cb) {
-    Room.findOne({ name: room.name }).populate({path: 'messages', populate: [
+    Room.findById(room.id).populate({path: 'messages', populate: [
         { path: 'sender' },
         { path: 'room' }
     ]}).exec(function (err, result) {
@@ -45,7 +53,6 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
                 temp.date = result.messages[i].created_at.getTime();
                 response.push(temp);
             }
-            console.log(response);
             cb(null, response);
         }
     })

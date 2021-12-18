@@ -30,12 +30,14 @@ function addMessage(room, user, message, cb) {
 }
 module.exports = (io) => {
   io.on("connection", (socket) => {
+    // TODO: set status and join room
     socket.join("rapxiec");
 
     console.log("A user connected.");
 
     socket.on("disconnect", () => {
       console.log("User disconnected");
+      // TODO;
     });
 
     socket.on("chat message", (data) => {
@@ -50,6 +52,6 @@ module.exports = (io) => {
         }
       });
       
+    });
   });
-});
 };
