@@ -149,14 +149,24 @@ UserSchema.methods.joinRoom = function (room, cb) {
     });
 };
 
-UserSchema.statics.search = function (term, cb) {
-    User.find({ username: { $regex: ".*" + term + ".*" } }, (err, result) => {
-        console.log(result);
-        console.log(term);
+UserSchema.statics.search = function (params, cb) {
+    User.find({ username: { $regex: ".*" + params.term + ".*" } })
+    .where('username').ne(params.username)
+    .populate("friends.friend", "username").select("_id username").exec((err, result) => {
         if (err || !result) {
             cb({ err: "Can't query" });
         } else {
-            cb(null, result);
+            let data = []
+            result.forEach(function(element){
+                var eleobj = element.toObject();
+                if (eleobj.friends.find((ele) =>  ele.friend.username == params.username)){
+                    eleobj.isFriend = true;
+                }
+                delete eleobj.friends;
+                console.log(eleobj);
+                data.push(eleobj);
+            })
+            cb(null, data);
         }
     });
 };
