@@ -235,7 +235,7 @@ UserSchema.statics.addFriend = function(users, cb) {
 
 UserSchema.statics.getDirectsList = function (user, cb) {
     User.findOne({ username: user.username })
-        .populate("friends.room").populate("friends.friend")
+        .populate("friends.room", "isDirect").populate("friends.friend", "username status")
         .exec(function (err, result) {
             if (err || !result) {
                 cb({ err: "Can't query" });

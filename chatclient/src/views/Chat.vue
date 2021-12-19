@@ -219,7 +219,7 @@
             </v-app-bar>
           </div>
           <div style="overflow: auto; max-height: 52%" v-for="message in messages" :key="message.date">
-            <v-app-bar  color="rgba(0,0,0,0)" flat v-if="message.sender == this.mainUser">
+            <v-app-bar  color="rgba(0,0,0,0)" flat v-if="message.sender === user.username">
               <v-badge
                 bordered
                 bottom
@@ -380,13 +380,16 @@
 <script>
 import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
+import io from 'socket.io-client';
 
 export default {
   data() {
     let token = localStorage.getItem("jwt");
     let decoded = VueJwtDecode.decode(token);
     this.user = decoded;
+
     return {
+      user: decoded,
       isDirect: false,
       isActive: true,
       selected: [2],
@@ -403,7 +406,13 @@ export default {
       group: [],
       direct: [],
       messages: [],
+      socket: io('http://localhost:8000')
     }
+  },
+  created() {
+    this.socket.on('connect',()=>{
+      this.socket.emit('userconnected', {username: this.user.username})
+    })
   },
   computed: {
     theme() {

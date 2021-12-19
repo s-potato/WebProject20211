@@ -80,6 +80,7 @@ export default defineComponent({
     let token = localStorage.getItem("jwt");
     let decoded = VueJwtDecode.decode(token);
     this.user = decoded;
+    console.log(this.user);
     return {
       text: '',
       messages: [],

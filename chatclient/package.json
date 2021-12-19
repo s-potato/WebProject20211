@@ -12,6 +12,7 @@
     "~": "file:fontawesome/fontawesome-free/css/all/css",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "socket.io-client": "^4.4.0",
     "vue": "^2.6.11",
     "vue-jwt-decode": "^0.1.0",
     "vue-router": "^3.2.0",
