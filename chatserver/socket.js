@@ -82,7 +82,7 @@ module.exports = (io) => {
         } else {
           data.date = Date.now();
           console.log("send data"+data);  
-          socket.to(data.room_id).emit("response", data);
+          io.to(data.room_id).emit("response", data);
         }
       });
       

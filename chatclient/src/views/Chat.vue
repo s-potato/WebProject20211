@@ -213,8 +213,38 @@
           </div> -->
           <div style="overflow: auto; max-height: 52%">
           <div v-for="message in messages" :key="message.date">
-            <v-app-bar color="rgba(0,0,0,0)" flat v-if="message.sender === user.username">
+            <v-app-bar color="rgba(0,0,0,0)" flat v-if="message.sender === user.username"  @mouseover="active = true" @mouseleave="active = false">
               <v-spacer></v-spacer>
+              <v-menu left bottom>
+                <template  v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" >
+                    <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item clickable>
+                    <v-list-item-title>
+                      <v-icon>mdi-share</v-icon>
+                      Reply</v-list-item-title>
+                  </v-list-item >
+                  <!-- <v-list-item clickable>
+                    <v-list-item-title>
+                      <v-icon>mdi-circle-edit-outline</v-icon>
+                      Edit</v-list-item-title>
+                  </v-list-item>
+                  <v-list-item clickable>
+                    <v-list-item-title>
+                      <v-icon>mdi-content-copy</v-icon>
+                      Copy</v-list-item-title>
+                  </v-list-item> -->
+                  <v-list-item clickable>
+                    <v-list-item-title>
+                      <v-icon>mdi-delete</v-icon>
+                      Delete</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+              <v-icon class="mr-2" v-show="active">far fa-grin-beam</v-icon>
               <v-card class="mr-2 recept" max-width="350px" color="blue" dark>
                 <v-list-item>
                   <v-list-item-content>
@@ -235,15 +265,8 @@
                 </v-avatar>
               </v-badge>
             </v-app-bar>
-            <v-app-bar  color="rgba(0,0,0,0)" flat v-else>
-              <v-badge
-                bordered
-                bottom
-                color="green"
-                dot
-                offset-x="10"
-                offset-y="10"
-              >
+            <v-app-bar  color="rgba(0,0,0,0)" flat v-else  @mouseover="active = true" @mouseleave="active = false">
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
                 <v-avatar size="30" elevation="10">
                   <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
                 </v-avatar>
@@ -257,13 +280,13 @@
                   </v-list-item-content>
                 </v-list-item>
               </v-card>
+              <v-icon class="ml-2" v-show="active">far fa-grin-beam</v-icon>
               <v-menu left bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on">
-                    <v-icon>fas fa-ellipsis-h</v-icon>
+                <template  v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" >
+                    <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
                   </v-btn>
                 </template>
-
                 <v-list>
                   <v-list-item clickable>
                     <v-list-item-title>
@@ -386,6 +409,7 @@ export default {
     this.user = decoded;
 
     return {
+      active: false,
       user: decoded,
       isDirect: false,
       isActive: true,
