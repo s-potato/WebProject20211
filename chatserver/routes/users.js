@@ -85,7 +85,7 @@ router.post('/joinroom', (req, res, next) => {
 })
 
 router.post('/find', (req, res, next)=>{
-    User.search(req.body.term, (err, result)=>{
+    User.search(req.body, (err, result)=>{
         if (err) {
             res.status(500).json(err);
         } else {
