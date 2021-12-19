@@ -46,14 +46,16 @@ module.exports = (io) => {
       User.getDirectsList({username: data.username}, (err, result)=>{
         if(!err && result){
           for (friend of result) {
-            socket.join(friend.room._id);
+            console.log(friend.room._id);
+            socket.join(String(friend.room._id));
           }
         }
       })
       User.getRoomsList({username: data.username}, (err, result)=>{
         if(!err && result){
           for (group of result) {
-            socket.join(group._id);
+            console.log(group.id);
+            socket.join(String(group.id));
           }
         }
       })
@@ -79,8 +81,8 @@ module.exports = (io) => {
           console.log(err);
         } else {
           data.date = Date.now();
-          console.log(data);
-          io.to(data.room_id).emit("response", data);
+          console.log("send data"+data);  
+          socket.to(data.room_id).emit("response", data);
         }
       });
       

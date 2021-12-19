@@ -6,13 +6,13 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 const routes = [
   {
-    path: '/login', component: () => import('../views/Login.vue') ,
+    path: '/login', component: () => import('../views/Login.vue'),
   },
   {
     path: '/',
     component: () => import('../components/SideBar.vue'),
     children: [
-      { path: '/chat', component: () => import('../views/Chat.vue') }
+      { path: '/', component: () => import('../views/Chat.vue') }
     ],
     meta: {
       requiresAuth: true

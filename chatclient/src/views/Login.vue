@@ -154,7 +154,12 @@ export default {
     username: "",
     pass: '',
   }),
-  
+  beforeCreate() {
+    if(localStorage.getItem('jwt') !== null)
+    {
+      this.$router.push('/')
+    }
+  },
   methods: {
     async Login() {
       let params = {
@@ -169,7 +174,7 @@ export default {
           localStorage.setItem("jwt", token);
           if (token) {
             console.log("success");
-            this.$router.push('/chat')
+            this.$router.push('/')
           }
         })
         .catch((err) => {

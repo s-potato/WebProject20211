@@ -54,15 +54,8 @@
               multiple
             >
               <template v-for="(item, index) in group">
-                <v-list-item :key="item.name">
-                  <v-badge
-                    bordered
-                    bottom
-                    color="green"
-                    dot
-                    offset-x="22"
-                    offset-y="26"
-                  >
+                <v-list-item :key="item.name" @click="setID(item.id)">
+                  <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
                     <v-list-item-avatar>
                       <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
                     </v-list-item-avatar>
@@ -88,7 +81,7 @@
               multiple
             >
               <template v-for="(item, index) in direct">
-                <v-list-item :key="item.friend.username">
+                <v-list-item :key="item.friend.username" @click="setID(item.room._id)">
                   <v-badge
                     bordered
                     bottom
@@ -166,7 +159,7 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </v-app-bar>
-          <div style="overflow: auto; max-height: 52%">
+          <!-- <div style="overflow: auto; max-height: 52%">
             <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
               <v-badge
                 bordered
@@ -217,9 +210,32 @@
                 </v-avatar>
               </v-badge>
             </v-app-bar>
-          </div>
-          <div style="overflow: auto; max-height: 52%" v-for="message in messages" :key="message.date">
-            <v-app-bar  color="rgba(0,0,0,0)" flat v-if="message.sender === user.username">
+          </div> -->
+          <div style="overflow: auto; max-height: 52%">
+          <div v-for="message in messages" :key="message.date">
+            <v-app-bar color="rgba(0,0,0,0)" flat v-if="message.sender === user.username">
+              <v-spacer></v-spacer>
+              <v-card class="mr-2 recept" max-width="350px" color="blue" dark>
+                <v-list-item>
+                  <v-list-item-content>
+                    <div>{{message.message}}</div>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card>
+              <v-badge
+                bordered
+                bottom
+                color="green"
+                dot
+                offset-x="10"
+                offset-y="10"
+              >
+                <v-avatar size="30" elevation="10">
+                  <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
+                </v-avatar>
+              </v-badge>
+            </v-app-bar>
+            <v-app-bar  color="rgba(0,0,0,0)" flat v-else>
               <v-badge
                 bordered
                 bottom
@@ -272,28 +288,7 @@
                 </v-list>
               </v-menu>
             </v-app-bar>
-            <v-app-bar color="rgba(0,0,0,0)" flat v-else>
-              <v-spacer></v-spacer>
-              <v-card class="mr-2 recept" max-width="350px" color="blue" dark>
-                <v-list-item>
-                  <v-list-item-content>
-                    <div>{{message.message}}</div>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
-              <v-badge
-                bordered
-                bottom
-                color="green"
-                dot
-                offset-x="10"
-                offset-y="10"
-              >
-                <v-avatar size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
-                </v-avatar>
-              </v-badge>
-            </v-app-bar>
+          </div>
           </div>
           <v-text-field
             v-model="message"
@@ -304,6 +299,7 @@
             clearable
             label="Message"
             type="text"
+            @keyup.enter="sendMessage"
             @click:append-outer="sendMessage"
             @click:clear="clearMessage"
           ></v-text-field>
@@ -383,6 +379,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 
 export default {
+
   data() {
     let token = localStorage.getItem("jwt");
     let decoded = VueJwtDecode.decode(token);
@@ -398,6 +395,7 @@ export default {
       message: '',
       marker: true,
       iconIndex: 0,
+      idChoose: '',
       files: [
           { text: 'Landing_page.zip', icon: ' mdi-cloud-upload' },
           { text: 'Requirements.pdf', icon: ' mdi-cloud-upload' },
@@ -412,6 +410,13 @@ export default {
   created() {
     this.socket.on('connect',()=>{
       this.socket.emit('userconnected', {username: this.user.username})
+    }),
+    this.socket.on('response', (data) => {
+      console.log(data);
+      if(data.room_id === this.idChoose){
+        this.messages.push(data);
+        console.log(this.messages);
+      }
     })
   },
   computed: {
@@ -419,35 +424,37 @@ export default {
         return this.$vuetify.theme.dark ? "dark" : "light";
     }
   },
-  mounted: function() {
+  mounted: function (){
     let params = {
-        username: this.user.username
-      };
+      username: this.user.username
+    };
+    // show group list
     axios.post("http://localhost:8000/users/rooms",params)
       .then(response => {
+        if (response.data[0]) {
+          this.idChoose = response.data[0].id;
+          let params = {
+            id: this.idChoose
+          };
+          axios.post("http://localhost:8000/rooms/messages",params)
+            .then(response => {
+            this.messages = response.data
+            })
+            .catch((err) => {
+              console.log(err);
+            })
+        }
         this.group = response.data;
-        // console.log(this.group);
       })
       .catch((err) => {
         console.log(err);
       })
+    
+    // show direct list
     axios.post("http://localhost:8000/users/directs",params)
       .then(response => {
         this.direct = response.data;
         // console.log(this.group);
-      })
-      .catch((err) => {
-        console.log(err);
-      }),
-    params = {
-        id: "61a5a73fc8981fc37875aaa1"
-      };
-    axios.post("http://localhost:8000/rooms/messages",params)
-      .then(response => {
-        // console.log(response);
-        this.messages = response.data
-        console.log(this.messages[2].sender === this.user.username);
-        console.log(typeof this.user)
       })
       .catch((err) => {
         console.log(err);
@@ -459,6 +466,7 @@ export default {
       this.$router.push("/login");
     },
     sendMessage () {
+      this.socket.emit("chat message", {room_id: this.idChoose, sender: this.user.username, message: this.message});
       this.resetIcon()
       this.clearMessage()
     },
@@ -471,9 +479,24 @@ export default {
     joinGroup() {
       //TODO:
     },
-    sendRequest() {
+    sendRequest() { 
       //TODO:
-    }
+    },
+    setID(id) {
+      // show message list
+      this.idChoose = id
+      let params = {
+        id: this.idChoose
+      };
+      axios.post("http://localhost:8000/rooms/messages",params)
+      .then(response => {
+        // console.log(response);
+        this.messages = response.data
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    },
   }
 }
 </script>
