@@ -158,8 +158,8 @@ UserSchema.statics.search = function (params, cb) {
         } else {
             let data = []
             result.forEach(function(element){
-                var eleobj = element.toObject();
-                if (eleobj.friends.find((ele) =>  ele.friend.username == params.username)){
+                let eleobj = element.toObject();
+                if (eleobj.friends && eleobj.friends.find((ele) =>  ele.friend.username == params.username)){
                     eleobj.isFriend = true;
                 }
                 delete eleobj.friends;
