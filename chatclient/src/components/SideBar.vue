@@ -33,23 +33,21 @@
                                     >
                                         <v-list-item-group>
                                         <template v-for="(item, index) in findUsers">
-                                            <v-list-item :key="item.username">
-                                            <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
-                                                <v-list-item-avatar>
-                                                <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
-                                                </v-list-item-avatar>
-                                            </v-badge>
-                                            <template>
-                                                <v-list-item-content>
-                                                <v-list-item-title
-                                                    v-text="item.username"
-                                                ></v-list-item-title>
-                                                </v-list-item-content>
-                                            </template>
-                                            <!-- <v-btn color="blue" icon class="mt-n5 mr-n2" outlined max-height="35" max-width="35" @click="item.icon = !item.icon">
-                                                <v-icon small v-if="item.icon == true" >fas fa-plus</v-icon>
-                                                <v-icon small v-else>mdi-check</v-icon>
-                                            </v-btn> -->
+                                            <v-list-item :key="item.username" :disabled="item.isFriend" @click="sendRequest(item.username, index)">
+                                                <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
+                                                    <v-list-item-avatar>
+                                                    <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                                                    </v-list-item-avatar>
+                                                </v-badge>
+                                                <template>
+                                                    <v-list-item-content>
+                                                    <v-list-item-title
+                                                        v-text="item.username"
+                                                    ></v-list-item-title>
+                                                    </v-list-item-content>
+                                                </template>
+                                                <v-icon small v-if="item.isFriend === true" >mdi-check</v-icon>
+                                                <v-icon small v-else>fas fa-plus</v-icon>
                                             </v-list-item>
                                             <v-divider v-if="index < items.length - 1" :key="index"></v-divider>
                                         </template>
@@ -103,29 +101,26 @@
                                         <h2 class="ml-4">Pending</h2>
                                         <v-divider></v-divider>
                                         <v-list>
-                                            <v-list-item>
+                                            <v-list-item v-for="item in pending" :key=item.id>
                                                 <v-list-item-avatar>
-                                                <img
-                                                    src="https://cdn.vuetifyjs.com/images/john.jpg"
-                                                    alt="John"
-                                                >
+                                                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
                                                 </v-list-item-avatar>
                                                 <v-list-item-content>
-                                                <v-list-item-title>John Leider</v-list-item-title>
+                                                <v-list-item-title>{{item.requester.username}}</v-list-item-title>
                                                 </v-list-item-content>
                                                 <v-spacer></v-spacer>
                                                 <v-btn
                                                     @click="menu = false"
                                                     outlined
                                                 >
-                                                    Cancel
+                                                    Decline
                                                 </v-btn>
                                                 <v-btn
                                                     class="ml-2"
                                                     outlined
-                                                    @click="menu = false"
+                                                    @click="acceptRequest(item._id)"
                                                 >
-                                                    Save
+                                                    Accept
                                                 </v-btn>
                                             </v-list-item>
                                         </v-list>
@@ -182,7 +177,22 @@ export default {
                 }],
             search: '',
             findUsers: [],
+            pending: [],
         }
+    },
+    mounted: function (){
+        let params = {
+        username: this.user.username
+        };  
+        // show pending list
+        axios.post("http://localhost:8000/users/inrequest",params)
+        .then(response => {
+            this.pending = response.data;
+            // console.log(this.group);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     },
     methods: {
         Search() {
@@ -196,6 +206,29 @@ export default {
                 this.findUsers = response.data
                 console.log(this.findUsers)
             })
+            .catch((err) => {
+                console.log(err);
+            })
+        },
+        sendRequest(friendName, index) {
+            this.findUsers[index].isFriend = true;
+            let params = {
+                friendname: friendName,
+                username: this.user.username
+            };
+            axios.post("http://localhost:8000/users/sendrequest",params)
+            .then()
+            .catch((err) => {
+                console.log(err);
+            })
+        },
+        acceptRequest(id) {
+            let params = {
+                request_id: id
+            };
+            console.log(id)
+            axios.post("http://localhost:8000/users/acceptrequest",params)
+            .then()
             .catch((err) => {
                 console.log(err);
             })
