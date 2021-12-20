@@ -1,4 +1,3 @@
-
 <template>
   <q-page>
     <q-toolbar dense class="bg-purple text-white toolbal">
@@ -98,7 +97,7 @@ export default defineComponent({
     },
     format_date(value){
          if (value) {
-           return moment(String(value)).format('MM/DD/YYYY hh:mm')
+           return moment(String(value)).format('hh:mm')
         }
     },
   },

@@ -159,68 +159,19 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </v-app-bar>
-          <!-- <div style="overflow: auto; max-height: 52%">
-            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-16">
-              <v-badge
-                bordered
-                bottom
-                color="green"
-                dot
-                offset-x="10"
-                offset-y="10"
-              >
-                <v-avatar class="mt-n5" size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
-                </v-avatar>
-              </v-badge>
-              <v-card class="mt-10 ml-2" max-width="350px">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <div class="mb-4">
-                      Fernando shared 3 photos :<br /><br />
-                      <v-avatar size="60" tile class="mr-2">
-                        <v-img src="1.jpg"></v-img>
-                      </v-avatar>
-                      <v-avatar size="60" tile class="mr-2">
-                        <v-img src="2.jpg"></v-img>
-                      </v-avatar>
-                      <v-avatar size="60" tile>
-                        <v-img src="3.jpg"></v-img>
-                      </v-avatar>
-                    </div>
-                    <v-list-item-subtitle>12 mins ago</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
-            </v-app-bar>
-            <v-app-bar color="rgba(0,0,0,0)" flat class="mb-8">
-              <v-spacer></v-spacer>
-              <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-                <v-list-item>
-                  <v-list-item-content>
-                    <div class="mb-4">
-                      There many variations of passages of Loreama
-                    </div>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
-              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
-                <v-avatar size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
-                </v-avatar>
-              </v-badge>
-            </v-app-bar>
-          </div> -->
           <div style="overflow: auto; max-height: 52%">
           <div v-for="message in messages" :key="message.date">
             <v-app-bar color="rgba(0,0,0,0)" flat v-if="message.sender === user.username"  @mouseover="active = true" @mouseleave="active = false">
               <v-spacer></v-spacer>
-              <v-menu left bottom>
+              
+              <v-menu left bottom :offset-x="offset" >
+             
                 <template  v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" >
                     <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
                   </v-btn>
                 </template>
+               
                 <v-list>
                   <v-list-item clickable>
                     <v-list-item-title>
@@ -243,23 +194,23 @@
                       Delete</v-list-item-title>
                   </v-list-item>
                 </v-list>
+             
               </v-menu>
+              
               <v-icon class="mr-2" v-show="active">far fa-grin-beam</v-icon>
               <v-card class="mr-2 recept" max-width="350px" color="blue" dark>
-                <v-list-item>
-                  <v-list-item-content>
-                    <div>{{message.message}}</div>
-                  </v-list-item-content>
-                </v-list-item>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-list-item v-bind="attrs" v-on="on">
+                      <v-list-item-content>
+                        <div>{{message.message}}</div>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                  <span> {{format_date(message.date)}}</span>
+                </v-tooltip>
               </v-card>
-              <v-badge
-                bordered
-                bottom
-                color="green"
-                dot
-                offset-x="10"
-                offset-y="10"
-              >
+              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
                 <v-avatar size="30" elevation="10">
                   <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
                 </v-avatar>
@@ -272,16 +223,23 @@
                 </v-avatar>
               </v-badge>
               <v-card class="ml-2 sender" max-width="350px">
-                <v-list-item>
-                  <v-list-item-content>
-                    <div>
-                      {{message.message}}
-                    </div>
-                  </v-list-item-content>
-                </v-list-item>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-list-item v-bind="attrs" v-on="on">
+                      <v-list-item-content>
+                        <div>{{message.message}}</div>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                  <span> {{format_date(message.date)}}</span>
+                </v-tooltip>
               </v-card>
-              <v-icon class="ml-2" v-show="active">far fa-grin-beam</v-icon>
-              <v-menu left bottom>
+              <template>
+                <div class="w-full h-full flex flex-row justify-center items-center">
+                  <SiEmojiPopover />
+                </div>
+              </template>
+              <v-menu left bottom :offset-x="offset">
                 <template  v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" >
                     <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
@@ -322,12 +280,14 @@
             clearable
             label="Message"
             type="text"
+            class="chatbar"
+            :class = "isActive ? 'half' : 'full'"
             @keyup.enter="sendMessage"
             @click:append-outer="sendMessage"
             @click:clear="clearMessage"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" :sm="isActive ? '3' : '0'" :lg="isActive ? '3' : '0'">
+        <v-col cols="12" :sm="isActive ? '3' : '0'" :lg="isActive ? '3' : '0'" v-show="isActive">
           <v-card class="text-center mt-8 mb-3" shaped>
             <v-badge
               bordered
@@ -400,15 +360,20 @@
 import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
 import io from 'socket.io-client';
+import moment from 'moment';
+import { SiEmojiPopover } from "si-grenoble";
 
 export default {
-
+  components: {
+    SiEmojiPopover
+  },
   data() {
     let token = localStorage.getItem("jwt");
     let decoded = VueJwtDecode.decode(token);
     this.user = decoded;
 
     return {
+      offset: true,
       active: false,
       user: decoded,
       isDirect: false,
@@ -521,6 +486,12 @@ export default {
         console.log(err);
       })
     },
+    format_date(value){
+         if (value) {
+           return moment(value).format('h:mm');
+        }
+    },
+    
   }
 }
 </script>
@@ -533,5 +504,16 @@ export default {
 }
 .recept{
   border-radius: 50px 50px 1px;
+}
+.chatbar{
+  position: absolute;
+  bottom: 0;
+  margin-left: 5px;
+}
+.half{
+  width: 47%;
+}
+.full{
+  width: 72%;
 }
 </style>
