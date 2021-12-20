@@ -26,7 +26,7 @@ router.post('/login', function (req, res, next) {
         }
         else {
             result.comparePassword(req.body.password, function (err2, isMatch) {
-                if (err2)
+                if (err2 || !isMatch)
                     res.status(500).json({ status: "error", message: "Mismatch", data: req.body.username });
                 else {
                     let token = jwt.sign({username: req.body.username, _id: result._id }, process.env.SECRET, {expiresIn: '1d'});
