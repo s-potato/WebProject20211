@@ -234,11 +234,7 @@
                   <span> {{format_date(message.date)}}</span>
                 </v-tooltip>
               </v-card>
-              <template>
-                <div class="w-full h-full flex flex-row justify-center items-center">
-                  <SiEmojiPopover />
-                </div>
-              </template>
+              <!-- <SiEmojiPopover /> -->
               <v-menu left bottom :offset-x="offset">
                 <template  v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" >
@@ -361,12 +357,10 @@ import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
 import io from 'socket.io-client';
 import moment from 'moment';
-import { SiEmojiPopover } from "si-grenoble";
+// import { SiEmojiPopover } from "si-grenoble";
 
 export default {
-  components: {
-    SiEmojiPopover
-  },
+
   data() {
     let token = localStorage.getItem("jwt");
     let decoded = VueJwtDecode.decode(token);
