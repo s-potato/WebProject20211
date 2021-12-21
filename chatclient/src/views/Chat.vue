@@ -197,7 +197,14 @@
              
               </v-menu>
               
-              <v-icon class="mr-2" v-show="active">far fa-grin-beam</v-icon>
+              <v-menu left bottom :offset-x="offset"> 
+                <template  v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon v-show="active">far fa-grin-beam</v-icon>
+                  </v-btn>
+                </template>
+                <VuemojiPicker @emojiClick="handleEmojiClick" />
+              </v-menu>
               <v-card class="mr-2 recept" max-width="350px" color="blue" dark>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
@@ -234,7 +241,14 @@
                   <span> {{format_date(message.date)}}</span>
                 </v-tooltip>
               </v-card>
-              <!-- <SiEmojiPopover /> -->
+              <v-menu left bottom :offset-x="offset"> 
+                <template  v-slot:activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on" class="ml-2">
+                    <v-icon v-show="active">far fa-grin-beam</v-icon>
+                  </v-btn>
+                </template>
+                <VuemojiPicker @emojiClick="handleEmojiClick" />
+              </v-menu>
               <v-menu left bottom :offset-x="offset">
                 <template  v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" >
@@ -279,6 +293,7 @@
             class="chatbar"
             :class = "isActive ? 'half' : 'full'"
             @keyup.enter="sendMessage"
+            @click:append="showIcon"
             @click:append-outer="sendMessage"
             @click:clear="clearMessage"
           ></v-text-field>
@@ -357,15 +372,17 @@ import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
 import io from 'socket.io-client';
 import moment from 'moment';
-// import { SiEmojiPopover } from "si-grenoble";
+import { VuemojiPicker} from 'vuemoji-picker'
 
 export default {
-
+  components: {
+    VuemojiPicker
+  },
   data() {
     let token = localStorage.getItem("jwt");
     let decoded = VueJwtDecode.decode(token);
     this.user = decoded;
-
+  
     return {
       offset: true,
       active: false,
@@ -485,7 +502,12 @@ export default {
            return moment(value).format('h:mm');
         }
     },
-    
+    handleEmojiClick() {
+      // TODO
+    },
+    showIcon() {
+      // TODO
+    }
   }
 }
 </script>

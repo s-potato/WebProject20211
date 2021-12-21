@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@fortawesome/vue-fontawesome": "^2.0.6",
+    "@vue/composition-api": "^1.4.2",
     "~": "file:fontawesome/fontawesome-free/css/all/css",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
@@ -19,6 +20,7 @@
     "vue-emoji-picker": "^1.0.3",
     "vue-jwt-decode": "^0.1.0",
     "vue-router": "^3.2.0",
+    "vuemoji-picker": "^0.0.7",
     "vuetify": "^2.4.0",
     "vuex": "^3.4.0"
   },
