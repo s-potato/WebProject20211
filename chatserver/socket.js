@@ -81,8 +81,11 @@ module.exports = (io) => {
           console.log(err);
         } else {
           data.date = Date.now();
-          console.log("send data"+data);  
+          console.log("send data"+data);
           io.to(data.room_id).emit("response", data);
+          /*update room.updateat
+
+          */
         }
       });
       

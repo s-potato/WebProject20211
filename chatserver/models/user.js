@@ -13,6 +13,7 @@ var UserSchema = new mongoose.Schema({
         required: true,
     },
     //display_name: { type : String, }
+    // avatar 
     password: {
         type: String,
         require: true,
@@ -81,10 +82,10 @@ UserSchema.methods.comparePassword = function (candidatePassword, cb) {
     });
 };
 
-UserSchema.methods.createRoom = function (name, cb) {
+UserSchema.methods.createRoom = function (data, cb) {
     var user = this;
     Room.create(
-        { name: name, owner: user._id, users: [user._id] },
+        { name: data.name, owner: user._id, users: [user._id] },
         function (err, result) {
             if (err) {
                 cb(err);
@@ -99,6 +100,43 @@ UserSchema.methods.createRoom = function (name, cb) {
         }
     );
 };
+
+UserSchema.methods.addListIntoGroup = function(data, cb){
+    Room.findById(data.room_id , (err, result) => {
+        if (err || !result) {
+            cb({ err: "Can't query" });
+        }else{ 
+            for (let i =0 ; i < data.members.length; i++)
+            {
+                User.addToGroup({room_id: result._id, username: data.members[i].username}, (err, result) => 
+                {
+                    if (err) cb(err);
+                    else cb(result);
+                })
+            }
+        }
+    })
+}
+
+UserSchema.statics.addToGroup = function(data, cb) {
+    Room.findById(data.room_id , (err, result) => {
+        if (err || !result) {
+            cb({ err: "Can't query" });
+        }else{
+            User.findOne({username: data.username}, (err, user)=>{
+                user.rooms.push(result._id);
+                result.users.push(user._id);
+                result.save(function (err) {
+                    if (err) console.log(err);
+                });
+                user.save(function (err) {
+                    if (err) console.log(err);
+                });
+                cb(null, { status: "Success" });
+            })
+        }
+    })
+}
 
 UserSchema.statics.getRoomsList = function (user, cb) {
     User.findOne({ username: user.username })
@@ -149,6 +187,7 @@ UserSchema.methods.joinRoom = function (room, cb) {
     });
 };
 
+
 UserSchema.statics.search = function (params, cb) {
     User.find({ username: { $regex: ".*" + params.term + ".*" } })
     .where('username').ne(params.username)
@@ -170,46 +209,6 @@ UserSchema.statics.search = function (params, cb) {
         }
     });
 };
-
-
-
-/* UserSchema.statics.addFriend = function (friend_id, cb) {
-    var user = this;
-    User.findById( friend_id, function (err, result) {
-        if (err || !result) {
-            cb({ err: "Can't query" });
-        } else {    
-            if (
-                user.friends &&
-                user.friends.find(
-                    (element) => String(element.friend) === String(result._id)
-                )
-            ) {
-                cb({ status: "Existed.", message: "User is already friend." });
-            } else {
-                Room.create(
-                    { isDirect: true, users: [user._id, result._id] },
-                    (err, room) => {
-                        if (err) {
-                            console.log("error here");
-                            cb(err);
-                        } else {
-                            result.friends.push({ friend: user._id, room: room._id });
-                            user.friends.push({ friend: result._id, room: room._id });
-                            result.save(function (err) {
-                                if (err) console.log(err);
-                            });
-                            user.save(function (err) {
-                                if (err) console.log(err);
-                            });
-                            cb(null, { status: "Success" });
-                        }
-                    }
-                );
-            }
-        }
-    });
-}; */
 
 UserSchema.statics.addFriend = function(users, cb) {
     User.findById(users.requester, (err, requester)=>{

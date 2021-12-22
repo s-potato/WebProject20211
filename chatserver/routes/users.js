@@ -49,17 +49,24 @@ router.post('/rooms', function (req, res, next) {
 })
 
 router.post('/createroom', (req, res, next) => {
-    User.findOne({ username: req.body.username }, function (err, result) {
-        if (err || !result) {
+    User.findOne({ username: req.body.username }, function (err, user) {
+        if (err || !user) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
         }
         else {
-            result.createRoom( req.body.roomname, (err, result) => {
+            user.createRoom( {name: req.body.roomname}, (err, result) => {
                 if (err) {
                     res.status(500).json(err);
                 }
                 else {
-                    res.json(result);
+                    if (req.body.members) {
+                        user.addListIntoGroup({room_id: result._id, members: req.body.members}, (err, result)=>{
+                            res.json(result);
+                        })
+                    }
+                    else {
+                        res.json(result);
+                    }
                 }
             })
         }

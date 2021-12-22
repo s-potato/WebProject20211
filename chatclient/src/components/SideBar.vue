@@ -22,7 +22,7 @@
                                     <v-toolbar color="primary" dark>Add Friend</v-toolbar>
                                     <v-text-field
                                         v-model="search"
-                                        label="Outlined"
+                                        label="Search"
                                         outlined
                                         @keyup = "Search"
                                     ></v-text-field>
@@ -91,7 +91,7 @@
                                 <v-menu
                                     v-model="menu"
                                     :close-on-content-click="false"
-                                    :nudge-width="320"
+                                    :nudge-width="400"
                                     offset-x
                                     >
                                     <template v-slot:activator="{ on, attrs }">

@@ -4,11 +4,65 @@
       <v-row>
         <v-col cols="12" sm="3" lg="3" class="border">
           <v-app-bar flat color="rgba(0,0,0,0,0)">
-            <v-btn title color="white" block>
-              <v-icon left color="blue">fas fa-plus</v-icon>
-              <v-divider class="mx-3" vertical></v-divider>
-              New conversation
-            </v-btn>
+            <v-dialog transition="dialog-top-transition" max-width="600">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn title color="white" block v-bind="attrs" v-on="on">
+                  <v-icon left color="blue">fas fa-plus</v-icon>
+                  <v-divider class="mx-3" vertical></v-divider>
+                  New conversation
+                </v-btn>
+              </template>
+              <template v-slot:default="dialog">
+                <v-card>
+                  <v-toolbar color="primary" dark>Create Group</v-toolbar>
+                  <v-text-field
+                      v-model="groupName"
+                      label="Group name"
+                      outlined
+                  ></v-text-field>
+                  <v-list
+                    two-line
+                    color="rgba(0,0,0,0)"
+                    style="overflow: auto; height: 40%"
+                  >
+                    <v-list-item-group>
+                      <template v-for="(item, index) in direct">
+                        <v-list-item :key="item.friend._id"  @click="addIntoGroupList(item.friend)">
+                          <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
+                            <v-list-item-avatar>
+                              <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                            </v-list-item-avatar>
+                          </v-badge>
+                          <template>
+                            <v-list-item-content>
+                              <v-list-item-title
+                                v-text="item.friend.username"
+                              ></v-list-item-title>
+                            </v-list-item-content>
+                          </template>
+                          <!-- <v-btn color="blue" icon class="mt-n5 mr-n2" outlined max-height="35" max-width="35" @click="item.icon = !item.icon">
+                            <v-icon small v-if="item.icon == true"
+                              >fas fa-plus</v-icon
+                            >
+                            <v-icon small v-else>mdi-check</v-icon>
+                          </v-btn> -->
+                        </v-list-item>
+                        <v-divider
+                          v-if="index < direct.length - 1"
+                          :key="index"
+                        ></v-divider>
+                      </template>
+                    </v-list-item-group>
+                  </v-list>
+                  <v-card-actions color="primary" class="justify-end">
+                    <v-btn text @click="createGroup">Confirm</v-btn>
+                  </v-card-actions>
+                  <v-card-actions class="justify-end">
+                    <v-btn text @click="dialog.value = false">Close</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
           </v-app-bar>
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-toolbar-title class="title">Chat</v-toolbar-title>
@@ -31,12 +85,12 @@
           </v-app-bar>
           <v-row class="mt-1 mb-1">
             <v-col color="rgba(0,0,0,0,0)">
-              <v-btn title color="white" block @click="isDirect = false">
+              <v-btn title :color="isDirect ? 'white' : 'grey'" block @click="isDirect = false">
                 Group
               </v-btn>
             </v-col>
-            <v-col color="rgba(0,0,0,0,0)">
-              <v-btn title color="white" block @click="isDirect = true">
+            <v-col>
+              <v-btn title :color="isDirect ? 'grey' : 'white'"  block @click="isDirect = true">
                 Direct
               </v-btn>
             </v-col>
@@ -49,12 +103,9 @@
           >
             <v-list-item-group
               v-if="isDirect == false"
-              v-model="selected"
-              active-class="blue lighten-4"
-              multiple
             >
               <template v-for="(item, index) in group">
-                <v-list-item :key="item.name" @click="setID(item.id)">
+                <v-list-item :key="item.name" @click="setID(item.id,item.name)">
                   <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
                     <v-list-item-avatar>
                       <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
@@ -76,12 +127,9 @@
             </v-list-item-group>
             <v-list-item-group
               v-else
-              v-model="selected"
-              active-class="blue lighten-4"
-              multiple
             >
               <template v-for="(item, index) in direct">
-                <v-list-item :key="item.friend.username" @click="setID(item.room._id)">
+                <v-list-item :key="item.friend.username" @click="setID(item.room._id,item.friend.username)">
                   <v-badge
                     bordered
                     bottom
@@ -130,14 +178,14 @@
               </v-avatar>
             </v-badge>
             <v-toolbar-title class="title pl-0 ml-2 mt-n4">
-              Fernando Gaucho
+              {{this.nameChoose}}
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-title class="title pl-0 mr-2 mt-n4">
               Members :
             </v-toolbar-title>
             <v-btn
-              color="blue"
+              color = "blue"
               icon
               class="mt-n5 mr-n2"
               outlined
@@ -205,7 +253,9 @@
                 </template>
                 <VuemojiPicker @emojiClick="handleEmojiClick" />
               </v-menu>
-              <v-card class="mr-2 recept" max-width="350px" color="blue" dark>
+              <div class="name">
+              <div class="ml-sm-8">Hieu</div>
+              <v-card class="mr-2 recept" max-width="350px" color="blue" dark> 
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
                     <v-list-item v-bind="attrs" v-on="on">
@@ -217,6 +267,7 @@
                   <span> {{format_date(message.date)}}</span>
                 </v-tooltip>
               </v-card>
+              </div>
               <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
                 <v-avatar size="30" elevation="10">
                   <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
@@ -224,11 +275,13 @@
               </v-badge>
             </v-app-bar>
             <v-app-bar  color="rgba(0,0,0,0)" flat v-else  @mouseover="active = true" @mouseleave="active = false">
+              <!-- <div class="subtitle">{{message.sender}}</div> -->
               <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
                 <v-avatar size="30" elevation="10">
                   <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
                 </v-avatar>
               </v-badge>
+              
               <v-card class="ml-2 sender" max-width="350px">
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
@@ -293,7 +346,6 @@
             class="chatbar"
             :class = "isActive ? 'half' : 'full'"
             @keyup.enter="sendMessage"
-            @click:append="showIcon"
             @click:append-outer="sendMessage"
             @click:clear="clearMessage"
           ></v-text-field>
@@ -313,10 +365,10 @@
               </v-avatar>
             </v-badge>
             <v-card-title class="layout justify-center"
-              >Fernando Gaucho</v-card-title
+              >{{this.nameChoose}}</v-card-title
             >
             <v-card-subtitle class="layout justify-center"
-              >CEO & Founder at Highly inc</v-card-subtitle
+              >Hello this is {{this.nameChoose}} room</v-card-subtitle
             >
             <v-list> </v-list>
           </v-card>
@@ -372,7 +424,7 @@ import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
 import io from 'socket.io-client';
 import moment from 'moment';
-import { VuemojiPicker} from 'vuemoji-picker'
+import { VuemojiPicker } from 'vuemoji-picker'
 
 export default {
   components: {
@@ -396,6 +448,7 @@ export default {
       marker: true,
       iconIndex: 0,
       idChoose: '',
+      groupUsers: [],
       files: [
           { text: 'Landing_page.zip', icon: ' mdi-cloud-upload' },
           { text: 'Requirements.pdf', icon: ' mdi-cloud-upload' },
@@ -404,7 +457,10 @@ export default {
       group: [],
       direct: [],
       messages: [],
-      socket: io('http://localhost:8000')
+      socket: io('http://localhost:8000'),
+      addGroupList: [],
+      groupName: '',
+      nameChoose: '',
     }
   },
   created() {
@@ -433,6 +489,7 @@ export default {
       .then(response => {
         if (response.data[0]) {
           this.idChoose = response.data[0].id;
+          this.nameChoose = response.data[0].name;
           let params = {
             id: this.idChoose
           };
@@ -454,7 +511,7 @@ export default {
     axios.post("http://localhost:8000/users/directs",params)
       .then(response => {
         this.direct = response.data;
-        // console.log(this.group);
+        console.log(this.direct);
       })
       .catch((err) => {
         console.log(err);
@@ -482,9 +539,10 @@ export default {
     sendRequest() { 
       //TODO:
     },
-    setID(id) {
+    setID(id,name) {
       // show message list
       this.idChoose = id
+      this.nameChoose = name
       let params = {
         id: this.idChoose
       };
@@ -502,11 +560,26 @@ export default {
            return moment(value).format('h:mm');
         }
     },
-    handleEmojiClick() {
-      // TODO
+    handleEmojiClick(EmojiClickEventDetail) {
+      console.log(EmojiClickEventDetail);
     },
-    showIcon() {
-      // TODO
+    addIntoGroupList(friend) {
+      this.addGroupList.push(friend);
+    },
+    createGroup(){
+      let params = {
+        username: this.user.username,
+        roomname: this.groupName,
+        members: this.addGroupList
+      };
+      this.groupName = '',
+      axios.post("http://localhost:8000/users/createroom",params)
+      .then(
+        this.$router.go()
+      )
+      .catch((err) => {
+        console.log(err);
+      })
     }
   }
 }
@@ -531,5 +604,10 @@ export default {
 }
 .full{
   width: 72%;
+}
+.subtitle{
+  size: '1rem';
+  font-weight: '400';
+  letter-spacing: '.009375em';
 }
 </style>
