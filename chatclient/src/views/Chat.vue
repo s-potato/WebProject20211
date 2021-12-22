@@ -209,12 +209,12 @@
           </v-app-bar>
           <div style="overflow: auto; max-height: 52%">
           <div v-for="message in messages" :key="message.date">
-            <v-app-bar color="rgba(0,0,0,0)" flat v-if="message.sender === user.username"  @mouseover="active = true" @mouseleave="active = false">
+            <v-app-bar class="space" color="rgba(0,0,0,0)" flat v-if="message.sender === user.username"  @mouseover="active = true" @mouseleave="active = false">
               <v-spacer></v-spacer>
               
               <v-menu left bottom :offset-x="offset" >
              
-                <template  v-slot:activator="{ on, attrs }">
+                <template class="space1" v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on" >
                     <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
                   </v-btn>
@@ -245,7 +245,7 @@
              
               </v-menu>
               
-              <v-menu left bottom :offset-x="offset"> 
+              <v-menu class="space1" left bottom :offset-x="offset"> 
                 <template  v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon v-show="active">far fa-grin-beam</v-icon>
@@ -253,8 +253,8 @@
                 </template>
                 <VuemojiPicker @emojiClick="handleEmojiClick" />
               </v-menu>
-              <div class="name">
-              <div class="ml-sm-8">Hieu</div>
+              <div >
+              <div class="name">{{message.sender}}</div>
               <v-card class="mr-2 recept" max-width="350px" color="blue" dark> 
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
@@ -268,7 +268,7 @@
                 </v-tooltip>
               </v-card>
               </div>
-              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+              <v-badge class="space" bordered bottom color="green" dot offset-x="10" offset-y="10">
                 <v-avatar size="30" elevation="10">
                   <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
                 </v-avatar>
@@ -610,4 +610,15 @@ export default {
   font-weight: '400';
   letter-spacing: '.009375em';
 }
+.name{
+  color: grey;
+  font-family: "Times New Roman", Times, serif;
+  padding-left: 30px;
+  margin-top: 10px;
+}
+.space{
+  margin-top: 50px ;
+  margin-bottom: 20px;
+}
+
 </style>
