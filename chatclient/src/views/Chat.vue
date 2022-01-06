@@ -482,7 +482,7 @@
           :lg="isActive ? '3' : '0'"
           v-show="isActive"
         >
-          <v-app-bar v-if="isSearch == true" flat color="rgba(0,0,0,0,0)">
+          <!-- <v-app-bar v-if="isSearch == true" flat color="rgba(0,0,0,0,0)">
             <v-row>
             <v-col class="mt-6" cols="12" sm="8" lg="8">
             <v-text-field
@@ -497,7 +497,68 @@
             <v-btn class="mt-8 " depressed @click="isSearch = !isSearch"> Cancel </v-btn>
             </v-col>
             </v-row>
-          </v-app-bar>
+          </v-app-bar> -->
+          <v-card class="text-center mt-8 mb-3" shaped>
+            <v-badge
+              bordered
+              bottom
+              color="green"
+              dot
+              offset-x="11"
+              offset-y="13"
+            >
+              <v-avatar class="mt-n7" size="60" elevation="10">
+                <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
+              </v-avatar>
+            </v-badge>
+            <v-card-title class="layout justify-center"
+              >{{this.nameChoose}}</v-card-title
+            >
+            <v-card-subtitle class="layout justify-center"
+              >Hello this is {{this.nameChoose}} room</v-card-subtitle>
+               <v-list> </v-list>
+          </v-card>
+          <v-expansion-panels v-model="panel" multiple>
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <h3>Information</h3>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content> </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <h3>Images(14)</h3>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content> </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <h3>Files(3)</h3>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-list shaped>
+                  <v-list-item-group>
+                    <v-list-item v-for="(item, i) in files" :key="i">
+                      <v-list-item-icon>
+                        <v-icon v-text="item.icon" color="green"></v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title
+                          v-text="item.text"
+                        ></v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <h3>Pinned items</h3>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content> </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
         </v-col>
       </v-row>
     </v-container>
