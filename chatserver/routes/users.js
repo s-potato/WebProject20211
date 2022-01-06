@@ -92,11 +92,16 @@ router.post('/joinroom', (req, res, next) => {
 })
 
 router.post('/find', (req, res, next)=>{
-    User.search(req.body, (err, result)=>{
+    User.findOne({username: req.body.username}, (err, result)=>{
         if (err) {
             res.status(500).json(err);
         } else {
-            res.json(result);
+            User.search({...req.body, _id: result._id}, (err, result)=>{
+                if (err) {
+                } else {
+                    res.json(result);
+                }
+            })
         }
     })
 })

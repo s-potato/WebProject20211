@@ -20,28 +20,10 @@
                                 </Dialog>
                             </v-list-item-content>
                         </v-list-item>
-                        <v-list-item router to="/">
+                        <v-list-item>
                             <v-list-item-content>
-                                <v-icon class="mb-2" color="grey">
-                                    fas fa-calendar-day
-                                </v-icon>
+                                <Profile></Profile>
                             </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item router to="/">
-                            <v-list-item-content>
-                                <v-icon class="mb-2" color="blue">
-                                    fas fa-comment-alt
-                                </v-icon>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item router to="/">
-                            <v-badge color="blue" dot overlap>
-                                <v-list-item-content>
-                                    <v-icon class="mb-2" color="blue">
-                                        fas fa-bell
-                                    </v-icon>
-                                </v-list-item-content>
-                            </v-badge>
                         </v-list-item>
                     </v-list>
                     <v-list style="position: absolute; bottom:0" class="ml-5" flat>
@@ -60,7 +42,7 @@
                                         <h2 class="ml-4">Pending</h2>
                                         <v-divider></v-divider>
                                         <v-list>
-                                            <v-list-item v-for="item in pending" :key=item.id>
+                                            <v-list-item v-for="(item,index) in pending" :key=item.id>
                                                 <v-list-item-avatar>
                                                 <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
                                                 </v-list-item-avatar>
@@ -77,7 +59,7 @@
                                                 <v-btn
                                                     class="ml-2"
                                                     outlined
-                                                    @click="acceptRequest(item._id)"
+                                                    @click="acceptRequest(item._id,index)"
                                                 >
                                                     Accept
                                                 </v-btn>
@@ -118,10 +100,12 @@
 import axios from 'axios';
 import VueJwtDecode from "vue-jwt-decode";
 import Dialog from './Dialog.vue';
+import Profile from './Profile.vue';
 
 export default {
     components: {
-        Dialog
+        Dialog,
+        Profile,
     },
     data () {
         let token = localStorage.getItem("jwt");
@@ -152,14 +136,11 @@ export default {
         axios.post("http://localhost:8000/users/inrequest",params)
         .then(response => {
             this.pending = response.data;
-            // console.log(this.group);
         })
         .catch((err) => {
             console.log(err);
         })
     },
-    // computed: {
-    // },
     methods: {
         sendRequest(friendName) {
             let params = {
@@ -174,14 +155,13 @@ export default {
                 console.log(err);
             })
         },
-        acceptRequest(id) {
+        acceptRequest(id,index) {
             let params = {
                 request_id: id
             };
-            console.log(id)
             axios.post("http://localhost:8000/users/acceptrequest",params)
             .then(
-                console.log('success')
+                this.pending.splice(index, 1)
             )
             .catch((err) => {
                 console.log(err);

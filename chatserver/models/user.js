@@ -196,16 +196,27 @@ UserSchema.statics.search = function (params, cb) {
             cb({ err: "Can't query" });
         } else {
             let data = []
-            result.forEach(function(element){
-                let eleobj = element.toObject();
-                if (eleobj.friends && eleobj.friends.find((ele) =>  ele.friend.username == params.username)){
-                    eleobj.isFriend = true;
-                }
-                delete eleobj.friends;
-                console.log(eleobj);
-                data.push(eleobj);
+            Request.find({requester: params._id}).exec((err, requests)=> {
+                result.forEach(function(element){
+                    let eleobj = element.toObject();
+                    if (eleobj.friends && eleobj.friends.find((ele) =>  ele.friend.username == params.username)){
+                        eleobj.isFriend = true;
+                        eleobj.isRequested = true;
+                    } else {
+                        if (requests && requests.find((element) => String(element.request_to) === String(eleobj._id))) {
+                            eleobj.isRequested = true;
+                        } else {
+                            eleobj.isRequested = false;
+                        }
+                        eleobj.isFriend = false;
+                    }
+                    delete eleobj.friends;
+                    console.log(eleobj);
+                    data.push(eleobj);
+                })
+                cb(null, data);
             })
-            cb(null, data);
+            
         }
     });
 };
