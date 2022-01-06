@@ -16,9 +16,9 @@
                 <v-card>
                   <v-toolbar color="primary" dark>Create Group</v-toolbar>
                   <v-text-field
-                      v-model="groupName"
-                      label="Group name"
-                      outlined
+                    v-model="groupName"
+                    label="Group name"
+                    outlined
                   ></v-text-field>
                   <v-list
                     two-line
@@ -27,10 +27,22 @@
                   >
                     <v-list-item-group>
                       <template v-for="(item, index) in direct">
-                        <v-list-item :key="item.friend._id"  @click="addIntoGroupList(item.friend)">
-                          <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
+                        <v-list-item
+                          :key="item.friend._id"
+                          @click="addIntoGroupList(item.friend)"
+                        >
+                          <v-badge
+                            bordered
+                            bottom
+                            color="green"
+                            dot
+                            offset-x="22"
+                            offset-y="26"
+                          >
                             <v-list-item-avatar>
-                              <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                              <v-img
+                                :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                              ></v-img>
                             </v-list-item-avatar>
                           </v-badge>
                           <template>
@@ -85,12 +97,22 @@
           </v-app-bar>
           <v-row class="mt-1 mb-1">
             <v-col color="rgba(0,0,0,0,0)">
-              <v-btn title :color="isDirect ? 'white' : 'grey'" block @click="isDirect = false">
+              <v-btn
+                title
+                :color="isDirect ? 'white' : 'grey'"
+                block
+                @click="isDirect = false"
+              >
                 Group
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn title :color="isDirect ? 'grey' : 'white'"  block @click="isDirect = true">
+              <v-btn
+                title
+                :color="isDirect ? 'grey' : 'white'"
+                block
+                @click="isDirect = true"
+              >
                 Direct
               </v-btn>
             </v-col>
@@ -101,35 +123,12 @@
             color="rgba(0,0,0,0)"
             style="overflow: auto; height: 40%"
           >
-            <v-list-item-group
-              v-if="isDirect == false"
-            >
+            <v-list-item-group v-if="isDirect == false">
               <template v-for="(item, index) in group">
-                <v-list-item :key="item.name" @click="setID(item.id,item.name)">
-                  <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
-                    <v-list-item-avatar>
-                      <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
-                    </v-list-item-avatar>
-                  </v-badge>
-                  <template>
-                    <v-list-item-content>
-                      <v-list-item-title
-                        v-text="item.name"
-                      ></v-list-item-title>
-                    </v-list-item-content>
-                  </template>
-                </v-list-item>
-                <v-divider
-                  v-if="index < group.length - 1"
-                  :key="index"
-                ></v-divider>
-              </template>
-            </v-list-item-group>
-            <v-list-item-group
-              v-else
-            >
-              <template v-for="(item, index) in direct">
-                <v-list-item :key="item.friend.username" @click="setID(item.room._id,item.friend.username)">
+                <v-list-item
+                  :key="item.name"
+                  @click="setID(item.id, item.name)"
+                >
                   <v-badge
                     bordered
                     bottom
@@ -139,7 +138,41 @@
                     offset-y="26"
                   >
                     <v-list-item-avatar>
-                      <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                      <v-img
+                        :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                      ></v-img>
+                    </v-list-item-avatar>
+                  </v-badge>
+                  <template>
+                    <v-list-item-content>
+                      <v-list-item-title v-text="item.name"></v-list-item-title>
+                    </v-list-item-content>
+                  </template>
+                </v-list-item>
+                <v-divider
+                  v-if="index < group.length - 1"
+                  :key="index"
+                ></v-divider>
+              </template>
+            </v-list-item-group>
+            <v-list-item-group v-else>
+              <template v-for="(item, index) in direct">
+                <v-list-item
+                  :key="item.friend.username"
+                  @click="setID(item.room._id, item.friend.username)"
+                >
+                  <v-badge
+                    bordered
+                    bottom
+                    color="green"
+                    dot
+                    offset-x="22"
+                    offset-y="26"
+                  >
+                    <v-list-item-avatar>
+                      <v-img
+                        :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                      ></v-img>
                     </v-list-item-avatar>
                   </v-badge>
                   <template>
@@ -178,14 +211,14 @@
               </v-avatar>
             </v-badge>
             <v-toolbar-title class="title pl-0 ml-2 mt-n4">
-              {{this.nameChoose}}
+              {{ this.nameChoose }}
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-title class="title pl-0 mr-2 mt-n4">
               Members :
             </v-toolbar-title>
             <v-btn
-              color = "blue"
+              color="blue"
               icon
               class="mt-n5 mr-n2"
               outlined
@@ -198,6 +231,63 @@
               <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
             </v-avatar>
             <v-divider vertical inset class="mt-n1"></v-divider>
+
+            <v-dialog transition="dialog-bottom-transition" max-width="600">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="black"
+                  icon
+                  class="mt-n5"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-link-variant</v-icon>
+                </v-btn>
+              </template>
+              <template v-slot:default="dialog">
+                <v-card>
+                  <v-toolbar color="black" dark>Get link</v-toolbar>
+                  <div class="mt-8">
+                    <v-card-text>
+                      <v-row>
+                        <v-col cols="12" sm="9" lg="9">
+                          <a
+                            :href="currentUrl"
+                            class="text-dark"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            ref="mylink"
+                          >
+                            {{ currentUrl }}
+                          </a>
+                        </v-col>
+                        <v-col cols="12" sm="3" lg="3">
+                          <v-btn
+                            title
+                            color="white"
+                            @click="copyURL(currentUrl)"
+                            block
+                          >
+                            Copy
+                          </v-btn>
+                        </v-col></v-row
+                      >
+                    </v-card-text>
+                  </div>
+                  <v-card-actions class="justify-end">
+                    <v-btn text @click="dialog.value = false">Close</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
+            <v-btn
+                  color="black"
+                  icon
+                  class="mt-n5"
+                  @click="isSearch = !isSearch"
+                >
+                  <v-icon>mdi-magnify</v-icon>
+                </v-btn>
             <v-btn
               color="black"
               icon
@@ -207,26 +297,34 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </v-app-bar>
+          
           <div style="overflow: auto; max-height: 52%">
-          <div v-for="message in messages" :key="message.date">
-            <v-app-bar class="space" color="rgba(0,0,0,0)" flat v-if="message.sender === user.username"  @mouseover="active = true" @mouseleave="active = false">
-              <v-spacer></v-spacer>
-              
-              <v-menu left bottom :offset-x="offset" >
-             
-                <template class="space1" v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" >
-                    <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
-                  </v-btn>
-                </template>
-               
-                <v-list>
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-share</v-icon>
-                      Reply</v-list-item-title>
-                  </v-list-item >
-                  <!-- <v-list-item clickable>
+            <div v-for="message in messages" :key="message.date">
+              <v-app-bar
+                class="space"
+                color="rgba(0,0,0,0)"
+                flat
+                v-if="message.sender === user.username"
+                @mouseover="active = true"
+                @mouseleave="active = false"
+              >
+                <v-spacer></v-spacer>
+
+                <v-menu left bottom :offset-x="offset">
+                  <template class="space1" v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
+                    </v-btn>
+                  </template>
+
+                  <v-list>
+                    <v-list-item clickable>
+                      <v-list-item-title>
+                        <v-icon>mdi-share</v-icon>
+                        Reply</v-list-item-title
+                      >
+                    </v-list-item>
+                    <!-- <v-list-item clickable>
                     <v-list-item-title>
                       <v-icon>mdi-circle-edit-outline</v-icon>
                       Edit</v-list-item-title>
@@ -236,85 +334,112 @@
                       <v-icon>mdi-content-copy</v-icon>
                       Copy</v-list-item-title>
                   </v-list-item> -->
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-delete</v-icon>
-                      Delete</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-             
-              </v-menu>
-              
-              <v-menu class="space1" left bottom :offset-x="offset"> 
-                <template  v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on">
-                    <v-icon v-show="active">far fa-grin-beam</v-icon>
-                  </v-btn>
-                </template>
-                <VuemojiPicker @emojiClick="handleEmojiClick" />
-              </v-menu>
-              <div >
-              <div class="name">{{message.sender}}</div>
-              <v-card class="mr-2 recept" max-width="350px" color="blue" dark> 
-                <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-list-item v-bind="attrs" v-on="on">
-                      <v-list-item-content>
-                        <div>{{message.message}}</div>
-                      </v-list-item-content>
+                    <v-list-item clickable>
+                      <v-list-item-title>
+                        <v-icon>mdi-delete</v-icon>
+                        Delete</v-list-item-title
+                      >
                     </v-list-item>
-                  </template>
-                  <span> {{format_date(message.date)}}</span>
-                </v-tooltip>
-              </v-card>
-              </div>
-              <v-badge class="space" bordered bottom color="green" dot offset-x="10" offset-y="10">
-                <v-avatar size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
-                </v-avatar>
-              </v-badge>
-            </v-app-bar>
-            <v-app-bar  color="rgba(0,0,0,0)" flat v-else  @mouseover="active = true" @mouseleave="active = false">
-              <!-- <div class="subtitle">{{message.sender}}</div> -->
-              <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
-                <v-avatar size="30" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
-                </v-avatar>
-              </v-badge>
-              
-              <v-card class="ml-2 sender" max-width="350px">
-                <v-tooltip top>
+                  </v-list>
+                </v-menu>
+
+                <v-menu class="space1" left bottom :offset-x="offset">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-list-item v-bind="attrs" v-on="on">
-                      <v-list-item-content>
-                        <div>{{message.message}}</div>
-                      </v-list-item-content>
-                    </v-list-item>
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon v-show="active">far fa-grin-beam</v-icon>
+                    </v-btn>
                   </template>
-                  <span> {{format_date(message.date)}}</span>
-                </v-tooltip>
-              </v-card>
-              <v-menu left bottom :offset-x="offset"> 
-                <template  v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" class="ml-2">
-                    <v-icon v-show="active">far fa-grin-beam</v-icon>
-                  </v-btn>
-                </template>
-                <VuemojiPicker @emojiClick="handleEmojiClick" />
-              </v-menu>
-              <v-menu left bottom :offset-x="offset">
-                <template  v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on" >
-                    <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
-                  </v-btn>
-                </template>
-                <v-list>
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-share</v-icon>
-                      Reply</v-list-item-title>
-                  </v-list-item >
-                  <!-- <v-list-item clickable>
+                  <VuemojiPicker @emojiClick="handleEmojiClick" />
+                </v-menu>
+                <div>
+                  <div class="name">{{ message.sender }}</div>
+                  <v-card
+                    class="mr-2 recept"
+                    max-width="350px"
+                    color="blue"
+                    dark
+                  >
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-list-item v-bind="attrs" v-on="on">
+                          <v-list-item-content>
+                            <div>{{ message.message }}</div>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </template>
+                      <span> {{ format_date(message.date) }}</span>
+                    </v-tooltip>
+                  </v-card>
+                </div>
+                <v-badge
+                  class="space"
+                  bordered
+                  bottom
+                  color="green"
+                  dot
+                  offset-x="10"
+                  offset-y="10"
+                >
+                  <v-avatar size="30" elevation="10">
+                    <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
+                  </v-avatar>
+                </v-badge>
+              </v-app-bar>
+              <v-app-bar
+                color="rgba(0,0,0,0)"
+                flat
+                v-else
+                @mouseover="active = true"
+                @mouseleave="active = false"
+              >
+                <!-- <div class="subtitle">{{message.sender}}</div> -->
+                <v-badge
+                  bordered
+                  bottom
+                  color="green"
+                  dot
+                  offset-x="10"
+                  offset-y="10"
+                >
+                  <v-avatar size="30" elevation="10">
+                    <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
+                  </v-avatar>
+                </v-badge>
+
+                <v-card class="ml-2 sender" max-width="350px">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-list-item v-bind="attrs" v-on="on">
+                        <v-list-item-content>
+                          <div>{{ message.message }}</div>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </template>
+                    <span> {{ format_date(message.date) }}</span>
+                  </v-tooltip>
+                </v-card>
+                <v-menu left bottom :offset-x="offset">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on" class="ml-2">
+                      <v-icon v-show="active">far fa-grin-beam</v-icon>
+                    </v-btn>
+                  </template>
+                  <VuemojiPicker @emojiClick="handleEmojiClick" />
+                </v-menu>
+                <v-menu left bottom :offset-x="offset">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item clickable>
+                      <v-list-item-title>
+                        <v-icon>mdi-share</v-icon>
+                        Reply</v-list-item-title
+                      >
+                    </v-list-item>
+                    <!-- <v-list-item clickable>
                     <v-list-item-title>
                       <v-icon>mdi-circle-edit-outline</v-icon>
                       Edit</v-list-item-title>
@@ -324,15 +449,16 @@
                       <v-icon>mdi-content-copy</v-icon>
                       Copy</v-list-item-title>
                   </v-list-item> -->
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-delete</v-icon>
-                      Delete</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
-            </v-app-bar>
-          </div>
+                    <v-list-item clickable>
+                      <v-list-item-title>
+                        <v-icon>mdi-delete</v-icon>
+                        Delete</v-list-item-title
+                      >
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-app-bar>
+            </div>
           </div>
           <v-text-field
             v-model="message"
@@ -344,75 +470,34 @@
             label="Message"
             type="text"
             class="chatbar"
-            :class = "isActive ? 'half' : 'full'"
+            :class="isActive ? 'half' : 'full'"
             @keyup.enter="sendMessage"
             @click:append-outer="sendMessage"
             @click:clear="clearMessage"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" :sm="isActive ? '3' : '0'" :lg="isActive ? '3' : '0'" v-show="isActive">
-          <v-card class="text-center mt-8 mb-3" shaped>
-            <v-badge
-              bordered
-              bottom
-              color="green"
-              dot
-              offset-x="11"
-              offset-y="13"
+        <v-col
+          cols="12"
+          :sm="isActive ? '3' : '0'"
+          :lg="isActive ? '3' : '0'"
+          v-show="isActive"
+        >
+          <v-app-bar v-if="isSearch == true" flat color="rgba(0,0,0,0,0)">
+            <v-row>
+            <v-col class="mt-6" cols="12" sm="8" lg="8">
+            <v-text-field
+              filled
+              label="Search Here"
+              append-icon="mdi-magnify"
+              color="grey"
             >
-              <v-avatar class="mt-n7" size="60" elevation="10">
-                <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
-              </v-avatar>
-            </v-badge>
-            <v-card-title class="layout justify-center"
-              >{{this.nameChoose}}</v-card-title
-            >
-            <v-card-subtitle class="layout justify-center"
-              >Hello this is {{this.nameChoose}} room</v-card-subtitle
-            >
-            <v-list> </v-list>
-          </v-card>
-          <v-expansion-panels v-model="panel" multiple>
-            <v-expansion-panel>
-              <v-expansion-panel-header>
-                <h3>Information</h3>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content> </v-expansion-panel-content>
-            </v-expansion-panel>
-            <v-expansion-panel>
-              <v-expansion-panel-header>
-                <h3>Images(14)</h3>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content> </v-expansion-panel-content>
-            </v-expansion-panel>
-            <v-expansion-panel>
-              <v-expansion-panel-header>
-                <h3>Files(3)</h3>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-list shaped>
-                  <v-list-item-group>
-                    <v-list-item v-for="(item, i) in files" :key="i">
-                      <v-list-item-icon>
-                        <v-icon v-text="item.icon" color="green"></v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-content>
-                        <v-list-item-title
-                          v-text="item.text"
-                        ></v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-            <v-expansion-panel>
-              <v-expansion-panel-header>
-                <h3>Pinned items</h3>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content> </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
+            </v-text-field>
+            </v-col>
+            <v-col cols="12" sm="4" lg="4">
+            <v-btn class="mt-8 " depressed @click="isSearch = !isSearch"> Cancel </v-btn>
+            </v-col>
+            </v-row>
+          </v-app-bar>
         </v-col>
       </v-row>
     </v-container>
@@ -421,20 +506,20 @@
 
 <script>
 import VueJwtDecode from "vue-jwt-decode";
-import axios from 'axios';
-import io from 'socket.io-client';
-import moment from 'moment';
-import { VuemojiPicker } from 'vuemoji-picker'
+import axios from "axios";
+import io from "socket.io-client";
+import moment from "moment";
+import { VuemojiPicker } from "vuemoji-picker";
 
 export default {
   components: {
-    VuemojiPicker
+    VuemojiPicker,
   },
   data() {
     let token = localStorage.getItem("jwt");
     let decoded = VueJwtDecode.decode(token);
     this.user = decoded;
-  
+
     return {
       offset: true,
       active: false,
@@ -444,121 +529,136 @@ export default {
       selected: [2],
       panel: [2],
       show: false,
-      message: '',
+      message: "",
       marker: true,
       iconIndex: 0,
-      idChoose: '',
+      idChoose: "",
       groupUsers: [],
       files: [
-          { text: 'Landing_page.zip', icon: ' mdi-cloud-upload' },
-          { text: 'Requirements.pdf', icon: ' mdi-cloud-upload' },
-          { text: 'Uwagi.docx', icon: ' mdi-cloud-upload' },
+        { text: "Landing_page.zip", icon: " mdi-cloud-upload" },
+        { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
+        { text: "Uwagi.docx", icon: " mdi-cloud-upload" },
       ],
       group: [],
       direct: [],
       messages: [],
-      socket: io('http://localhost:8000'),
+      socket: io("http://localhost:8000"),
       addGroupList: [],
-      groupName: '',
-      nameChoose: '',
-    }
+      groupName: "",
+      nameChoose: "",
+      // get Link
+      currentUrl: "",
+      // search
+      isSearch: false,
+    };
   },
   created() {
-    this.socket.on('connect',()=>{
-      this.socket.emit('userconnected', {username: this.user.username})
+    this.socket.on("connect", () => {
+      this.socket.emit("userconnected", { username: this.user.username });
     }),
-    this.socket.on('response', (data) => {
-      console.log(data);
-      if(data.room_id === this.idChoose){
-        this.messages.push(data);
-        console.log(this.messages);
-      }
-    })
+      this.socket.on("response", (data) => {
+        console.log(data);
+        if (data.room_id === this.idChoose) {
+          this.messages.push(data);
+          console.log(this.messages);
+        }
+      });
+    // get Link
+    this.currentUrl = window.location.href;
+    //
   },
   computed: {
     theme() {
-        return this.$vuetify.theme.dark ? "dark" : "light";
-    }
+      return this.$vuetify.theme.dark ? "dark" : "light";
+    },
   },
-  mounted: function (){
+  mounted: function () {
     let params = {
-      username: this.user.username
+      username: this.user.username,
     };
     // show group list
-    axios.post("http://localhost:8000/users/rooms",params)
-      .then(response => {
+    axios
+      .post("http://localhost:8000/users/rooms", params)
+      .then((response) => {
         if (response.data[0]) {
           this.idChoose = response.data[0].id;
           this.nameChoose = response.data[0].name;
           let params = {
-            id: this.idChoose
+            id: this.idChoose,
           };
-          axios.post("http://localhost:8000/rooms/messages",params)
-            .then(response => {
-            this.messages = response.data
+          axios
+            .post("http://localhost:8000/rooms/messages", params)
+            .then((response) => {
+              this.messages = response.data;
             })
             .catch((err) => {
               console.log(err);
-            })
+            });
         }
         this.group = response.data;
       })
       .catch((err) => {
         console.log(err);
-      })
-    
+      });
+
     // show direct list
-    axios.post("http://localhost:8000/users/directs",params)
-      .then(response => {
+    axios
+      .post("http://localhost:8000/users/directs", params)
+      .then((response) => {
         this.direct = response.data;
         console.log(this.direct);
       })
       .catch((err) => {
         console.log(err);
-      })
+      });
   },
   methods: {
     logUserOut() {
       localStorage.removeItem("jwt");
       this.$router.push("/login");
     },
-    sendMessage () {
-      this.socket.emit("chat message", {room_id: this.idChoose, sender: this.user.username, message: this.message});
-      this.resetIcon()
-      this.clearMessage()
+    sendMessage() {
+      this.socket.emit("chat message", {
+        room_id: this.idChoose,
+        sender: this.user.username,
+        message: this.message,
+      });
+      this.resetIcon();
+      this.clearMessage();
     },
     clearMessage() {
-      this.message = ''
+      this.message = "";
     },
-    resetIcon () {
-      this.iconIndex = 0
+    resetIcon() {
+      this.iconIndex = 0;
     },
     joinGroup() {
       //TODO:
     },
-    sendRequest() { 
+    sendRequest() {
       //TODO:
     },
-    setID(id,name) {
+    setID(id, name) {
       // show message list
-      this.idChoose = id
-      this.nameChoose = name
+      this.idChoose = id;
+      this.nameChoose = name;
       let params = {
-        id: this.idChoose
+        id: this.idChoose,
       };
-      axios.post("http://localhost:8000/rooms/messages",params)
-      .then(response => {
-        // console.log(response);
-        this.messages = response.data
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+      axios
+        .post("http://localhost:8000/rooms/messages", params)
+        .then((response) => {
+          // console.log(response);
+          this.messages = response.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    format_date(value){
-         if (value) {
-           return moment(value).format('h:mm');
-        }
+    format_date(value) {
+      if (value) {
+        return moment(value).format("h:mm");
+      }
     },
     handleEmojiClick(EmojiClickEventDetail) {
       console.log(EmojiClickEventDetail);
@@ -566,23 +666,32 @@ export default {
     addIntoGroupList(friend) {
       this.addGroupList.push(friend);
     },
-    createGroup(){
+    createGroup() {
       let params = {
         username: this.user.username,
         roomname: this.groupName,
-        members: this.addGroupList
+        members: this.addGroupList,
       };
-      this.groupName = '',
-      axios.post("http://localhost:8000/users/createroom",params)
-      .then(
-        this.$router.go()
-      )
-      .catch((err) => {
-        console.log(err);
-      })
-    }
-  }
-}
+      (this.groupName = ""),
+        axios
+          .post("http://localhost:8000/users/createroom", params)
+          .then(this.$router.go())
+          .catch((err) => {
+            console.log(err);
+          });
+    },
+    // get link
+    async copyURL(mytext) {
+      try {
+        await navigator.clipboard.writeText(mytext);
+        // alert('Copied');
+      } catch ($e) {
+        alert("Cannot copy");
+      }
+      //
+    },
+  },
+};
 </script>
 <style scoped>
 .boder {
@@ -591,34 +700,39 @@ export default {
 .sender {
   border-radius: 1px 50px 50px;
 }
-.recept{
+.recept {
   border-radius: 50px 50px 1px;
 }
-.chatbar{
+.chatbar {
   position: absolute;
   bottom: 0;
   margin-left: 5px;
 }
-.half{
+.half {
   width: 47%;
 }
-.full{
+.full {
   width: 72%;
 }
-.subtitle{
-  size: '1rem';
-  font-weight: '400';
-  letter-spacing: '.009375em';
+.subtitle {
+  size: "1rem";
+  font-weight: "400";
+  letter-spacing: ".009375em";
 }
-.name{
+.name {
   color: grey;
   font-family: "Times New Roman", Times, serif;
   padding-left: 30px;
   margin-top: 10px;
 }
-.space{
-  margin-top: 50px ;
+.space {
+  margin-top: 50px;
   margin-bottom: 20px;
 }
 
+
+.cb{
+  margin-right: 80px;
+  
+}
 </style>
