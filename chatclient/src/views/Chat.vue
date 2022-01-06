@@ -292,7 +292,7 @@
             </v-btn>
           </v-app-bar>
           
-          <div style="overflow: auto; max-height: 52%">
+          <div style="overflow: auto; max-height: 82%">
             <div v-for="message in messages" :key="message.date">
               <v-app-bar
                 class="space"
