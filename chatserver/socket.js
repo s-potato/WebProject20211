@@ -83,7 +83,7 @@ module.exports = (io) => {
           data.date = Date.now();
           console.log("send data"+data);
           io.to(data.room_id).emit("response", data);
-          /*update room.updateat
+          /*update room.update at
 
           */
         }

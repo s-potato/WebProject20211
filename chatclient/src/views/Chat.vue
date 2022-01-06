@@ -217,16 +217,10 @@
             <v-toolbar-title class="title pl-0 mr-2 mt-n4">
               Members :
             </v-toolbar-title>
-            <v-btn
-              color="blue"
-              icon
-              class="mt-n5 mr-n2"
-              outlined
-              max-height="35"
-              max-width="35"
-            >
-              <v-icon small>fas fa-plus</v-icon>
-            </v-btn>
+            <Dialog
+            :fab="true"
+            :class="fabButton">
+            </Dialog>
             <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
               <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
             </v-avatar>
@@ -506,14 +500,16 @@
 
 <script>
 import VueJwtDecode from "vue-jwt-decode";
-import axios from "axios";
-import io from "socket.io-client";
-import moment from "moment";
-import { VuemojiPicker } from "vuemoji-picker";
+import axios from 'axios';
+import io from 'socket.io-client';
+import moment from 'moment';
+import { VuemojiPicker } from 'vuemoji-picker'
+import Dialog from '../components/Dialog.vue'
 
 export default {
   components: {
     VuemojiPicker,
+    Dialog,
   },
   data() {
     let token = localStorage.getItem("jwt");
@@ -672,7 +668,7 @@ export default {
         roomname: this.groupName,
         members: this.addGroupList,
       };
-      (this.groupName = ""),
+      this.groupName = "",
         axios
           .post("http://localhost:8000/users/createroom", params)
           .then(this.$router.go())
@@ -692,6 +688,7 @@ export default {
     },
   },
 };
+
 </script>
 <style scoped>
 .boder {

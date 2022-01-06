@@ -13,52 +13,11 @@
                     <v-list flat>
                         <v-list-item>
                             <v-list-item-content>
-                                <v-dialog transition="dialog-top-transition" max-width="600">
-                                <template v-slot:activator="{ on, attrs }">
-                                    <v-icon left color="blue" v-bind="attrs" v-on="on">fas fa-plus</v-icon>
-                                </template>
-                                <template v-slot:default="dialog">
-                                    <v-card>
-                                    <v-toolbar color="primary" dark>Add Friend</v-toolbar>
-                                    <v-text-field
-                                        v-model="search"
-                                        label="Search"
-                                        outlined
-                                        @keyup = "Search"
-                                    ></v-text-field>
-                                    <v-list
-                                        two-line
-                                        color="rgba(0,0,0,0)"
-                                        style="overflow: auto; height: 40%"
-                                    >
-                                        <v-list-item-group>
-                                        <template v-for="(item, index) in findUsers">
-                                            <v-list-item :key="item.username" :disabled="item.isFriend" @click="sendRequest(item.username, index)">
-                                                <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
-                                                    <v-list-item-avatar>
-                                                    <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
-                                                    </v-list-item-avatar>
-                                                </v-badge>
-                                                <template>
-                                                    <v-list-item-content>
-                                                    <v-list-item-title
-                                                        v-text="item.username"
-                                                    ></v-list-item-title>
-                                                    </v-list-item-content>
-                                                </template>
-                                                <v-icon small v-if="item.isFriend === true" >mdi-check</v-icon>
-                                                <v-icon small v-else>fas fa-plus</v-icon>
-                                            </v-list-item>
-                                            <v-divider v-if="index < items.length - 1" :key="index"></v-divider>
-                                        </template>
-                                        </v-list-item-group>
-                                    </v-list>
-                                    <v-card-actions class="justify-end">
-                                        <v-btn text @click="dialog.value = false">Close</v-btn>
-                                    </v-card-actions>
-                                    </v-card>
-                                </template>
-                                </v-dialog>
+                                <Dialog
+                                  :username='user.username'
+                                  :icon="true"
+                                  @sendRequest='sendRequest'>
+                                </Dialog>
                             </v-list-item-content>
                         </v-list-item>
                         <v-list-item router to="/">
@@ -158,7 +117,12 @@
 <script>
 import axios from 'axios';
 import VueJwtDecode from "vue-jwt-decode";
+import Dialog from './Dialog.vue';
+
 export default {
+    components: {
+        Dialog
+    },
     data () {
         let token = localStorage.getItem("jwt");
         let decoded = VueJwtDecode.decode(token);
@@ -175,7 +139,7 @@ export default {
                     title: "Ali Connors",
                     icon: true,
                 }],
-            search: '',
+            term: '',
             findUsers: [],
             pending: [],
         }
@@ -194,30 +158,18 @@ export default {
             console.log(err);
         })
     },
+    // computed: {
+    // },
     methods: {
-        Search() {
-            let params = {
-                term: this.search,
-                username: this.user.username
-            };
-            axios.post("http://localhost:8000/users/find",params)
-            .then(response => {
-                // console.log(response);
-                this.findUsers = response.data
-                console.log(this.findUsers)
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-        },
-        sendRequest(friendName, index) {
-            this.findUsers[index].isFriend = true;
+        sendRequest(friendName) {
             let params = {
                 friendname: friendName,
                 username: this.user.username
             };
             axios.post("http://localhost:8000/users/sendrequest",params)
-            .then()
+            .then(
+                console.log('success send')
+            )
             .catch((err) => {
                 console.log(err);
             })
@@ -228,7 +180,9 @@ export default {
             };
             console.log(id)
             axios.post("http://localhost:8000/users/acceptrequest",params)
-            .then()
+            .then(
+                console.log('success')
+            )
             .catch((err) => {
                 console.log(err);
             })
