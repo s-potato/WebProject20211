@@ -9,7 +9,15 @@ var MessageSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    type: {
+        type: String,
+        default: "text"
+    },
     content: String,
+    file: {
+        data: Buffer,
+        filename: String
+    },
     created_at: { type: Date, default: Date.now },
 });
 

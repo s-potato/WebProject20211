@@ -21,6 +21,13 @@ var RoomSchema = new mongoose.Schema({
     updated_at: { type: Date, default: Date.now },
 });
 
+RoomSchema.pre("save", function(next){
+    if (this.isModified("messages")) {
+        this.updated_at = Date.now();
+        next();
+    }
+})
+
 RoomSchema.statics.getMembersList = function (room, cb) {
     Room.findById(room.id).populate('users').exec(function (err, result) {
         if (err || !result) {cb({err: "Can't query"})}
@@ -47,8 +54,14 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
             let response = [];
             for (let i = 0; i < result.messages.length; i++) {
                 let temp = {};
-                temp.message = result.messages[i].content;
+                temp._id = result.messages[i]._id;
                 temp.room = result.messages[i].room.name;
+                temp.type = result.messages[i].type;
+                if (temp.type === "text") {
+                    temp.message = result.messages[i].content;
+                } else {
+                    temp.file = result.messages[i].file;
+                }
                 temp.sender = result.messages[i].sender.username;
                 temp.date = result.messages[i].created_at.getTime();
                 response.push(temp);

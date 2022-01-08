@@ -12,8 +12,9 @@ var UserSchema = new mongoose.Schema({
         trim: true,
         required: true,
     },
-    //display_name: { type : String, }
-    // avatar 
+    display_name: { type : String
+    },
+    avatar: Buffer,
     password: {
         type: String,
         require: true,
