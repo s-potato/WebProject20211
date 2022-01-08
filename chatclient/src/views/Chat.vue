@@ -292,7 +292,7 @@
             </v-btn>
           </v-app-bar>
           
-          <div style="overflow: auto; max-height: 82%">
+          <div style="overflow: auto; max-height: 82%; height:750px">
             <div v-for="message in messages" :key="message.date">
               <v-app-bar
                 class="space"
@@ -453,21 +453,23 @@
                 </v-menu>
               </v-app-bar>
             </div>
-          </div>
+          </div>        
           <v-text-field
             v-model="message"
             append-icon="mdi-emoticon"
-            :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
+            prepend-icon="fas fa-plus"
             filled
             clear-icon="mdi-close-circle"
             clearable
             label="Message"
             type="text"
             class="chatbar"
+            :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
+            :rules="[rules.required]"
             :class="isActive ? 'half' : 'full'"
             @keyup.enter="sendMessage"
             @click:append-outer="sendMessage"
-            @click:clear="clearMessage"
+            @click:prepend="sendMessage"
           ></v-text-field>
         </v-col>
         <v-col cols="12" :sm="isActive ? '3' : '0'" :lg="isActive ? '3' : '0'" v-show="isActive" >
@@ -603,6 +605,9 @@ export default {
       currentUrl: "",
       // search
       isSearch: false,
+      rules: {
+          required: value => !!value || 'Required.',
+      }
     };
   },
   created() {
@@ -610,10 +615,8 @@ export default {
       this.socket.emit("userconnected", { username: this.user.username });
     }),
       this.socket.on("response", (data) => {
-        console.log(data);
         if (data.room_id === this.idChoose) {
           this.messages.push(data);
-          console.log(this.messages);
         }
       });
     // get Link
@@ -659,7 +662,6 @@ export default {
       .post("http://localhost:8000/users/directs", params)
       .then((response) => {
         this.direct = response.data;
-        console.log(this.direct);
       })
       .catch((err) => {
         console.log(err);
@@ -701,7 +703,6 @@ export default {
       axios
         .post("http://localhost:8000/rooms/messages", params)
         .then((response) => {
-          // console.log(response);
           this.messages = response.data;
         })
         .catch((err) => {
