@@ -399,7 +399,8 @@
                     <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
                   </v-avatar>
                 </v-badge>
-
+                <div>
+                <div class="name">{{ message.sender }}</div>
                 <v-card class="ml-2 sender" max-width="350px">
                   <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
@@ -412,6 +413,7 @@
                     <span> {{ format_date(message.date) }}</span>
                   </v-tooltip>
                 </v-card>
+                </div>
                 <v-menu left bottom :offset-x="offset">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on" class="ml-2">
@@ -560,7 +562,7 @@
 <script>
 import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
-import io from 'socket.io-client';
+import socket from '../socket';
 import moment from 'moment';
 import { VuemojiPicker } from 'vuemoji-picker'
 import Dialog from '../components/Dialog.vue'
@@ -597,7 +599,6 @@ export default {
       group: [],
       direct: [],
       messages: [],
-      socket: io("http://localhost:8000"),
       addGroupList: [],
       groupName: "",
       nameChoose: "",
@@ -611,8 +612,8 @@ export default {
     };
   },
   created() {
-    this.socket.on("connect", () => {
-      this.socket.emit("userconnected", { username: this.user.username });
+    socket.on("connect", () => {
+      socket.emit("userconnected", { username: this.user.username });
     }),
       this.socket.on("response", (data) => {
         if (data.room_id === this.idChoose) {
@@ -673,7 +674,7 @@ export default {
       this.$router.push("/login");
     },
     sendMessage() {
-      this.socket.emit("chat message", {
+      socket.emit("chat message", {
         room_id: this.idChoose,
         sender: this.user.username,
         message: this.message,
