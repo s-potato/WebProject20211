@@ -318,16 +318,6 @@
                         Reply</v-list-item-title
                       >
                     </v-list-item>
-                    <!-- <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-circle-edit-outline</v-icon>
-                      Edit</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-content-copy</v-icon>
-                      Copy</v-list-item-title>
-                  </v-list-item> -->
                     <v-list-item clickable>
                       <v-list-item-title>
                         <v-icon>mdi-delete</v-icon>
@@ -455,9 +445,48 @@
                 </v-menu>
               </v-app-bar>
             </div>
-          </div>        
+          </div>
+          <VuemojiPicker v-show="pickEmojiShow" @emojiClick="handleEmojiClick" class="emojiPicker" :class="isActive ? 'leftEmoji' : 'rightEmoji' "/>
+          <v-btn-toggle
+            v-model="icon"
+            borderless
+            v-if="openMenuChat"
+          >
+            <v-btn @click="openMenuChat = !openMenuChat" class="mr-5">
+              <v-icon right class="mr-5">
+                fas fa-window-close
+              </v-icon>
+
+              <span class="hidden-sm-and-down">Close</span>
+            </v-btn>
+
+            <v-btn class="mr-5">
+              <v-icon right class="mr-5">
+                fas fa-images
+              </v-icon>
+
+              <span class="hidden-sm-and-down">Image</span>
+            </v-btn>
+
+            <v-btn class="mr-5">
+              <v-icon right class="mr-5">
+                fas fa-file-upload
+              </v-icon>
+
+              <span class="hidden-sm-and-down">Files</span>
+            </v-btn>
+
+            <v-btn class="mr-5">
+              <v-icon right class="mr-5">
+                fas fa-video
+              </v-icon>
+
+              <span class="hidden-sm-and-down">Video</span>
+            </v-btn>
+          </v-btn-toggle>     
           <v-text-field
             v-model="message"
+            v-else
             append-icon="mdi-emoticon"
             prepend-icon="fas fa-plus"
             filled
@@ -471,7 +500,8 @@
             :class="isActive ? 'half' : 'full'"
             @keyup.enter="sendMessage"
             @click:append-outer="sendMessage"
-            @click:prepend="sendMessage"
+            @click:append="pickEmojiShow = !pickEmojiShow"
+            @click:prepend="openMenuChat = !openMenuChat"
           ></v-text-field>
         </v-col>
         <v-col cols="12" :sm="isActive ? '3' : '0'" :lg="isActive ? '3' : '0'" v-show="isActive" >
@@ -608,7 +638,9 @@ export default {
       isSearch: false,
       rules: {
           required: value => !!value || 'Required.',
-      }
+      },
+      openMenuChat:false,
+      pickEmojiShow: false,
     };
   },
   created() {
@@ -717,6 +749,7 @@ export default {
     },
     handleEmojiClick(EmojiClickEventDetail) {
       console.log(EmojiClickEventDetail);
+      this.pickEmojiShow = false;
     },
     addIntoGroupList(friend) {
       this.addGroupList.push(friend);
@@ -789,6 +822,18 @@ export default {
 
 .cb{
   margin-right: 80px;
-  
+}
+
+.emojiPicker{
+  position: absolute;
+  bottom: 87px;
+}
+
+.rightEmoji{
+  right: 50px;
+}
+
+.leftEmoji{
+  right: 450px;
 }
 </style>
