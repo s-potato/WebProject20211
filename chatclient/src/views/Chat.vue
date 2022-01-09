@@ -220,6 +220,7 @@
             <Dialog
             :fab="true"
             :class="fabButton">
+            <v-toolbar color="primary" dark>Add friend to group</v-toolbar>
             </Dialog>
             <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
               <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
@@ -291,11 +292,11 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </v-app-bar>
-          
           <div style="overflow: auto; max-height: 82%; height:750px">
             <div v-for="message in messages" :key="message.date">
+              <!-- user send -->
               <v-app-bar
-                class="space"
+                class="space content"
                 color="rgba(0,0,0,0)"
                 flat
                 v-if="message.sender === user.username"
@@ -303,7 +304,6 @@
                 @mouseleave="active = false"
               >
                 <v-spacer></v-spacer>
-
                 <v-menu left bottom :offset-x="offset">
                   <template class="space1" v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
@@ -342,16 +342,14 @@
                 </v-menu>
                 <div>
                   <div class="name">{{ message.sender }}</div>
-                  <v-card
-                    class="mr-2 recept"
-                    max-width="350px"
-                    color="blue"
-                    dark
-                  >
-                    <v-tooltip top>
+                  <span v-if="message.type === 'image'" class="content">
+                    <img :src="message.file.data" class="messageimg"/>
+                  </span>
+                  <v-card  v-else class="mr-2 recept" max-width="350px" color="blue" dark>
+                    <v-tooltip top >
                       <template v-slot:activator="{ on, attrs }">
                         <v-list-item v-bind="attrs" v-on="on">
-                          <v-list-item-content>
+                          <v-list-item-content class="content">
                             <div>{{ message.message }}</div>
                           </v-list-item-content>
                         </v-list-item>
@@ -374,14 +372,15 @@
                   </v-avatar>
                 </v-badge>
               </v-app-bar>
+              <!-- other send -->
               <v-app-bar
+                class="content"
                 color="rgba(0,0,0,0)"
                 flat
                 v-else
                 @mouseover="active = true"
                 @mouseleave="active = false"
               >
-                <!-- <div class="subtitle">{{message.sender}}</div> -->
                 <v-badge
                   bordered
                   bottom
@@ -395,19 +394,22 @@
                   </v-avatar>
                 </v-badge>
                 <div>
-                <div class="name">{{ message.sender }}</div>
-                <v-card class="ml-2 sender" max-width="350px">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-list-item v-bind="attrs" v-on="on">
-                        <v-list-item-content>
-                          <div>{{ message.message }}</div>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </template>
-                    <span> {{ format_date(message.date) }}</span>
-                  </v-tooltip>
-                </v-card>
+                  <div class="name">{{ message.sender }}</div>
+                  <span v-if="message.type === 'image'" class="content">
+                    <img :src="message.file.data" class="messageimg"/>
+                  </span>
+                  <v-card  v-else class="mr-2 sender" max-width="350px">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-list-item v-bind="attrs" v-on="on">
+                          <v-list-item-content class="content">
+                            <div>{{ message.message }}</div>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </template>
+                      <span> {{ format_date(message.date) }}</span>
+                    </v-tooltip>
+                  </v-card>
                 </div>
                 <v-menu left bottom :offset-x="offset">
                   <template v-slot:activator="{ on, attrs }">
@@ -461,23 +463,26 @@
               <v-icon right class="mr-5">
                 fas fa-window-close
               </v-icon>
-
               <span class="hidden-sm-and-down">Close</span>
             </v-btn>
 
-            <v-btn class="mr-5">
+            <v-btn class="mr-5" @click="chooseImg">
               <v-icon right class="mr-5">
                 fas fa-images
               </v-icon>
-
               <span class="hidden-sm-and-down">Image</span>
             </v-btn>
+            <input
+              ref="inputImg"
+              type="file"
+              accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+              @change="uploadImage()"
+              style="display: none;">
 
             <v-btn class="mr-5">
               <v-icon right class="mr-5">
                 fas fa-file-upload
               </v-icon>
-
               <span class="hidden-sm-and-down">Files</span>
             </v-btn>
 
@@ -485,7 +490,6 @@
               <v-icon right class="mr-5">
                 fas fa-video
               </v-icon>
-
               <span class="hidden-sm-and-down">Video</span>
             </v-btn>
           </v-btn-toggle>     
@@ -665,6 +669,7 @@ export default {
         console.log(data);
         if (data.room_id === this.idChoose) {
           this.messages.push(data);
+          console.log(data);
         }
       });
     // get Link
@@ -822,6 +827,31 @@ export default {
     getPin(message){
       this.pinList.push(message)
       console.log(message)
+    },
+    async chooseImg() {
+      this.$refs.inputImg.click()
+    },
+    uploadImage() {
+      const file = document.querySelector('input[type=file]').files[0]
+      const reader = new FileReader()
+
+      let rawImg;
+      reader.onloadend = () => {
+        rawImg = reader.result;
+        console.log(rawImg);
+        socket.emit("image message", {
+        room_id: this.idChoose,
+        sender: this.user.username,
+        file: {
+          data: rawImg,
+          filename: file.name
+        },
+        type: "image"
+      });
+      }
+      reader.readAsDataURL(file);
+      // console.log(file)
+
     }
   },
 };
@@ -861,24 +891,33 @@ export default {
 }
 .space {
   margin-top: 50px;
-  margin-bottom: 20px;
 }
-
-
 .cb{
   margin-right: 80px;
 }
-
 .emojiPicker{
   position: absolute;
   bottom: 87px;
 }
-
 .rightEmoji{
   right: 50px;
 }
-
 .leftEmoji{
   right: 450px;
+}
+.content::v-deep {
+  height: max-content !important;
+  word-break: break-word;
+}
+>>> .v-toolbar__content {
+  height: max-content !important;
+}
+.messageimg {
+  border: 1px solid #555;
+  display: block;
+  max-width:250px;
+  max-height:250px;
+  width: auto;
+  height: auto;
 }
 </style>
