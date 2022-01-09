@@ -127,7 +127,9 @@
               <template v-for="(item, index) in group">
                 <v-list-item
                   :key="item.name"
-                  @click="setID(item.id, item.name),infoRoom(item.id, item.name)"
+                  @click="
+                    setID(item.id, item.name), infoRoom(item.id, item.name)
+                  "
                 >
                   <v-badge
                     bordered
@@ -274,13 +276,13 @@
               </template>
             </v-dialog>
             <v-btn
-                  color="black"
-                  icon
-                  class="mt-n5"
-                  @click="isSearch = !isSearch"
-                >
-                  <v-icon>mdi-magnify</v-icon>
-                </v-btn>
+              color="black"
+              icon
+              class="mt-n5"
+              @click="isSearch = !isSearch"
+            >
+              <v-icon>mdi-magnify</v-icon>
+            </v-btn>
             <v-btn
               color="black"
               icon
@@ -311,26 +313,27 @@
                       </v-btn>
                     </template>
 
-                    <v-list>
-                      <v-list-item clickable v-on:click="getPin(message.message)">
-                        <v-list-item-title>
-                          <v-icon>mdi-pin</v-icon>
-                          Pin</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item clickable >
-                        <v-list-item-title>
-                          <v-icon>mdi-share</v-icon>
-                          Reply</v-list-item-title
-                        >
-                      </v-list-item>
-                      <v-list-item clickable>
-                        <v-list-item-title>
-                          <v-icon>mdi-delete</v-icon>
-                          Delete</v-list-item-title
-                        >
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
+                  <v-list>
+                    <v-list-item clickable v-on:click="getPin(message.message)">
+                      <v-list-item-title>
+                        <v-icon>mdi-pin</v-icon>
+                        Pin</v-list-item-title
+                      >
+                    </v-list-item>
+                    <v-list-item clickable v-on:click="isReply = true,getUser(message.sender)">
+                      <v-list-item-title>
+                        <v-icon>mdi-share</v-icon>
+                        Reply</v-list-item-title
+                      >
+                    </v-list-item>
+                    <v-list-item clickable>
+                      <v-list-item-title>
+                        <v-icon>mdi-delete</v-icon>
+                        Delete</v-list-item-title
+                      >
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
 
                   <v-menu class="space1" left bottom :offset-x="offset">
                     <template v-slot:activator="{ on, attrs }">
@@ -428,7 +431,7 @@
                     </v-btn>
                   </template>
                   <v-list>
-                    <v-list-item clickable>
+                    <v-list-item clickable >
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
@@ -455,12 +458,23 @@
               </v-app-bar>
             </div>
           </div>
-          <VuemojiPicker v-show="pickEmojiShow" @emojiClick="handleEmojiClick" class="emojiPicker" :class="isActive ? 'leftEmoji' : 'rightEmoji' "/>
-          <v-btn-toggle
-            v-model="icon"
-            borderless
-            v-if="openMenuChat"
-          >
+          <VuemojiPicker
+            v-show="pickEmojiShow"
+            @emojiClick="handleEmojiClick"
+            class="emojiPicker"
+            :class="isActive ? 'leftEmoji' : 'rightEmoji'"
+          />
+          <!-- <reply v-if="isReply == true" :isReply=isReply>
+            <v-icon class="btn" icon clickable v-on:click="isReply != isReply" >mdi-close-circle-outline</v-icon>
+          </reply> -->
+            <div class="reply" v-if="isReply == true">
+              <v-icon style="color: white">mdi-share</v-icon>
+              Reply to {{this.replyUser}}
+              <v-icon class="btn" icon clickable v-on:click="isReply = !isReply"
+                >mdi-close-circle-outline</v-icon
+              >
+            </div>
+          <v-btn-toggle v-model="icon" borderless v-if="openMenuChat">
             <v-btn @click="openMenuChat = !openMenuChat" class="mr-5">
               <v-icon right class="mr-5">
                 fas fa-window-close
@@ -482,19 +496,17 @@
               style="display: none;">
 
             <v-btn class="mr-5">
-              <v-icon right class="mr-5">
-                fas fa-file-upload
-              </v-icon>
+              <v-icon right class="mr-5"> fas fa-file-upload </v-icon>
+
               <span class="hidden-sm-and-down">Files</span>
             </v-btn>
 
             <v-btn class="mr-5">
-              <v-icon right class="mr-5">
-                fas fa-video
-              </v-icon>
+              <v-icon right class="mr-5"> fas fa-video </v-icon>
+
               <span class="hidden-sm-and-down">Video</span>
             </v-btn>
-          </v-btn-toggle>     
+          </v-btn-toggle>
           <v-text-field
             v-model="message"
             v-else
@@ -513,31 +525,39 @@
             @click:append-outer="sendMessage"
             @click:append="pickEmojiShow = !pickEmojiShow"
             @click:prepend="openMenuChat = !openMenuChat"
-          ></v-text-field>
+          >
+          </v-text-field>
         </v-col>
-        <v-col cols="12" :sm="isActive ? '3' : '0'" :lg="isActive ? '3' : '0'" v-show="isActive" >
+        <v-col
+          cols="12"
+          :sm="isActive ? '3' : '0'"
+          :lg="isActive ? '3' : '0'"
+          v-show="isActive"
+        >
           <v-app-bar v-if="isSearch == true" flat color="rgba(0,0,0,0,0)">
             <v-row>
-            <v-col class="mt-6" cols="12" sm="8" lg="8">
-            <v-text-field
-              filled
-              label="Search Here"
-              append-icon="mdi-magnify"
-              color="grey"
-            >
-            </v-text-field>
-            </v-col>
-            <v-col cols="12" sm="4" lg="4">
-            <v-btn class="mt-8 " depressed @click="isSearch = !isSearch"> Cancel </v-btn>
-            </v-col>
+              <v-col class="mt-6" cols="12" sm="8" lg="8">
+                <v-text-field
+                  filled
+                  label="Search Here"
+                  append-icon="mdi-magnify"
+                  color="grey"
+                >
+                </v-text-field>
+              </v-col>
+              <v-col cols="12" sm="4" lg="4">
+                <v-btn class="mt-8" depressed @click="isSearch = !isSearch">
+                  Cancel
+                </v-btn>
+              </v-col>
             </v-row>
           </v-app-bar>
           <div v-else>
             <extension
-            :pinList="pinList"
-            :isDirect="isDirect"
-            :members="this.groupUsers"
-            :nameChoose="this.nameChoose"
+              :pinList="pinList"
+              :isDirect="isDirect"
+              :members="this.groupUsers"
+              :nameChoose="this.nameChoose"
             ></extension>
           </div>
         </v-col>
@@ -578,6 +598,8 @@ export default {
       marker: true,
       iconIndex: 0,
       idChoose: "",
+      replyUser: "",
+      isReply: false,
       groupUsers: [],
       pinList:[],
       group: [],
@@ -591,9 +613,9 @@ export default {
       // search
       isSearch: false,
       rules: {
-          required: value => !!value || 'Required.',
+        required: (value) => !!value || "Required.",
       },
-      openMenuChat:false,
+      openMenuChat: false,
       pickEmojiShow: false,
     };
   },
@@ -643,7 +665,7 @@ export default {
             .post("http://localhost:8000/rooms/members", params)
             .then((response) => {
               this.groupUsers = response.data;
-              console.log(this.groupUsers)
+              console.log(this.groupUsers);
             })
             .catch((err) => {
               console.log(err);
@@ -719,7 +741,7 @@ export default {
         .post("http://localhost:8000/rooms/members", params)
         .then((response) => {
           this.groupUsers = response.data;
-          console.log( this.groupUsers)
+          console.log(this.groupUsers);
         })
         .catch((err) => {
           console.log(err);
@@ -743,7 +765,7 @@ export default {
         roomname: this.groupName,
         members: this.addGroupList,
       };
-      this.groupName = "",
+      (this.groupName = ""),
         axios
           .post("http://localhost:8000/users/createroom", params)
           .then(this.$router.go())
@@ -760,6 +782,10 @@ export default {
         alert("Cannot copy");
       }
       //
+    },
+    getUser(data){
+      this.replyUser = data;
+      console.log(data)
     },
     getPin(message){
       this.pinList.push(message)
@@ -791,7 +817,6 @@ export default {
     }
   },
 };
-
 </script>
 <style scoped>
 .boder {
@@ -855,5 +880,16 @@ export default {
   max-height:250px;
   width: auto;
   height: auto;
+}
+.reply{
+    border: 2px solid;
+    border-radius: 50px 50px 1px;
+    background-color:grey;
+    color: white;
+}
+.btn {
+  background-color: grey;
+  left: 666px;
+  color: white;
 }
 </style>
