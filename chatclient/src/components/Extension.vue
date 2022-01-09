@@ -18,8 +18,42 @@
         <v-expansion-panel-header>
           <h3>Member</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> 
-          {{this.members}}
+        <v-expansion-panel-content style="overflow: auto; height:121px;"> 
+          <v-list
+            color="rgba(0,0,0,0)"
+          >
+            <v-list-item-group>
+              <template v-for="(item, index) in members">
+                <v-list-item
+                  :key="index"
+                >
+                  <v-badge
+                    bordered
+                    bottom
+                    color="green"
+                    dot
+                    offset-x="22"
+                    offset-y="26"
+                  >
+                    <v-list-item-avatar>
+                      <v-img
+                        :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                      ></v-img>
+                    </v-list-item-avatar>
+                  </v-badge>
+                  <template>
+                    <v-list-item-content>
+                      <v-list-item-title v-text="item.username"></v-list-item-title>
+                    </v-list-item-content>
+                  </template>
+                </v-list-item>
+                <v-divider
+                  v-if="index < members.length - 1"
+                  :key="index"
+                ></v-divider>
+              </template>
+            </v-list-item-group>
+          </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel>
@@ -56,7 +90,6 @@
     </v-expansion-panels>
   </div>
   <div class="extension" v-else>
-    <!-- <v-btn @click="test">Button</v-btn> -->
     <v-card class="text-center mt-8 mb-3" shaped>
       <v-badge bordered bottom color="green" dot offset-x="11" offset-y="13">
         <v-avatar class="mt-n7" size="60" elevation="10">

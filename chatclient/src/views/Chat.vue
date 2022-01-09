@@ -588,11 +588,10 @@
               </v-expansion-panel>
             </v-expansion-panels> -->
             <extension
-            v-bind="idChoose"
-            :pinList=pinList
-            :isDirect=isDirect
-            :members=this.groupUsers
-            :nameChoose=this.nameChoose
+            :pinList="pinList"
+            :isDirect="isDirect"
+            :members="this.groupUsers"
+            :nameChoose="this.nameChoose"
             ></extension>
           </div>
         </v-col>
@@ -666,12 +665,10 @@ export default {
         console.log(data);
         if (data.room_id === this.idChoose) {
           this.messages.push(data);
-          // this.groupUsers.push(data);
         }
       });
     // get Link
     this.currentUrl = window.location.href;
-    //
   },
   computed: {
     theme() {
@@ -704,7 +701,7 @@ export default {
             .post("http://localhost:8000/rooms/members", params)
             .then((response) => {
               this.groupUsers = response.data;
-              console.log(this.grouUsers)
+              console.log(this.groupUsers)
             })
             .catch((err) => {
               console.log(err);
@@ -780,7 +777,7 @@ export default {
         .post("http://localhost:8000/rooms/members", params)
         .then((response) => {
           this.groupUsers = response.data;
-          console.log(response.data)
+          console.log( this.groupUsers)
         })
         .catch((err) => {
           console.log(err);
