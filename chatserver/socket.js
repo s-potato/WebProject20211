@@ -113,7 +113,7 @@ module.exports = (io) => {
           data.date = Date.now();
           data.type = "image";
           console.log("send data" + data);
-          io.to(data.room_id).emit("image response", data);
+          io.to(data.room_id).emit("response", data);
         }
       });
     });

@@ -12,7 +12,7 @@
         </template>
         <template v-slot:default="dialog">
             <v-card>
-            <v-toolbar color="primary" dark>Add Friend</v-toolbar>
+            <slot></slot>
             <v-text-field v-model="term" label="Search" outlined @keyup = "Search" ></v-text-field>
             <v-list two-line color="rgba(0,0,0,0)" style="overflow: auto; height: 40%">
                 <v-list-item-group>

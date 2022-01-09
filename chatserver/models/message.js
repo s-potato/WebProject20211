@@ -15,7 +15,7 @@ var MessageSchema = new mongoose.Schema({
     },
     content: String,
     file: {
-        data: Buffer,
+        data: String,
         filename: String
     },
     created_at: { type: Date, default: Date.now },

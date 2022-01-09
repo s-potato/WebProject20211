@@ -219,7 +219,11 @@
             <v-toolbar-title class="title pl-0 mr-2 mt-n4">
               Members :
             </v-toolbar-title>
-            <Dialog :fab="true" :class="fabButton"> </Dialog>
+            <Dialog
+            :fab="true"
+            :class="fabButton">
+            <v-toolbar color="primary" dark>Add friend to group</v-toolbar>
+            </Dialog>
             <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
               <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
             </v-avatar>
@@ -290,10 +294,11 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </v-app-bar>
-          <div style="overflow: auto; max-height: 82%; height: 750px">
+          <div style="overflow: auto; max-height: 82%; height:750px">
             <div v-for="message in messages" :key="message.date">
+              <!-- user send -->
               <v-app-bar
-                class="space"
+                class="space content"
                 color="rgba(0,0,0,0)"
                 flat
                 v-if="message.sender === user.username"
@@ -301,7 +306,6 @@
                 @mouseleave="active = false"
               >
                 <v-spacer></v-spacer>
-
                 <v-menu left bottom :offset-x="offset">
                   <template class="space1" v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
@@ -341,16 +345,14 @@
                 </v-menu>
                 <div>
                   <div class="name">{{ message.sender }}</div>
-                  <v-card
-                    class="mr-2 recept"
-                    max-width="350px"
-                    color="blue"
-                    dark
-                  >
-                    <v-tooltip top>
+                  <span v-if="message.type === 'image'" class="content">
+                    <img :src="message.file.data" class="messageimg"/>
+                  </span>
+                  <v-card  v-else class="mr-2 recept" max-width="350px" color="blue" dark>
+                    <v-tooltip top >
                       <template v-slot:activator="{ on, attrs }">
                         <v-list-item v-bind="attrs" v-on="on">
-                          <v-list-item-content>
+                          <v-list-item-content class="content">
                             <div>{{ message.message }}</div>
                           </v-list-item-content>
                         </v-list-item>
@@ -373,14 +375,15 @@
                   </v-avatar>
                 </v-badge>
               </v-app-bar>
+              <!-- other send -->
               <v-app-bar
+                class="content"
                 color="rgba(0,0,0,0)"
                 flat
                 v-else
                 @mouseover="active = true"
                 @mouseleave="active = false"
               >
-                <!-- <div class="subtitle">{{message.sender}}</div> -->
                 <v-badge
                   bordered
                   bottom
@@ -395,11 +398,14 @@
                 </v-badge>
                 <div>
                   <div class="name">{{ message.sender }}</div>
-                  <v-card class="ml-2 sender" max-width="350px">
+                  <span v-if="message.type === 'image'" class="content">
+                    <img :src="message.file.data" class="messageimg"/>
+                  </span>
+                  <v-card  v-else class="mr-2 sender" max-width="350px">
                     <v-tooltip top>
                       <template v-slot:activator="{ on, attrs }">
                         <v-list-item v-bind="attrs" v-on="on">
-                          <v-list-item-content>
+                          <v-list-item-content class="content">
                             <div>{{ message.message }}</div>
                           </v-list-item-content>
                         </v-list-item>
@@ -468,16 +474,24 @@
             </div>
           <v-btn-toggle v-model="icon" borderless v-if="openMenuChat">
             <v-btn @click="openMenuChat = !openMenuChat" class="mr-5">
-              <v-icon right class="mr-5"> fas fa-window-close </v-icon>
-
+              <v-icon right class="mr-5">
+                fas fa-window-close
+              </v-icon>
               <span class="hidden-sm-and-down">Close</span>
             </v-btn>
 
-            <v-btn class="mr-5">
-              <v-icon right class="mr-5"> fas fa-images </v-icon>
-
+            <v-btn class="mr-5" @click="chooseImg">
+              <v-icon right class="mr-5">
+                fas fa-images
+              </v-icon>
               <span class="hidden-sm-and-down">Image</span>
             </v-btn>
+            <input
+              ref="inputImg"
+              type="file"
+              accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+              @change="uploadImage()"
+              style="display: none;">
 
             <v-btn class="mr-5">
               <v-icon right class="mr-5"> fas fa-file-upload </v-icon>
@@ -679,6 +693,7 @@ export default {
         console.log(data);
         if (data.room_id === this.idChoose) {
           this.messages.push(data);
+          console.log(data);
         }
       });
     // get Link
@@ -833,13 +848,38 @@ export default {
       }
       //
     },
-    getPin(message) {
-      this.pinList.push(message);
-      console.log(message);
-    },
     getUser(data){
       this.replyUser = data;
       console.log(data)
+    },
+    getPin(message){
+      this.pinList.push(message)
+      console.log(message)
+    },
+    async chooseImg() {
+      this.$refs.inputImg.click()
+    },
+    uploadImage() {
+      const file = document.querySelector('input[type=file]').files[0]
+      const reader = new FileReader()
+
+      let rawImg;
+      reader.onloadend = () => {
+        rawImg = reader.result;
+        console.log(rawImg);
+        socket.emit("image message", {
+        room_id: this.idChoose,
+        sender: this.user.username,
+        file: {
+          data: rawImg,
+          filename: file.name
+        },
+        type: "image"
+      });
+      }
+      reader.readAsDataURL(file);
+      // console.log(file)
+
     }
   },
 };
@@ -878,33 +918,41 @@ export default {
 }
 .space {
   margin-top: 50px;
-  margin-bottom: 20px;
 }
-
+.cb{
+  margin-right: 80px;
+}
+.emojiPicker{
+  position: absolute;
+  bottom: 87px;
+}
+.rightEmoji{
+  right: 50px;
+}
+.leftEmoji{
+  right: 450px;
+}
+.content::v-deep {
+  height: max-content !important;
+  word-break: break-word;
+}
+>>> .v-toolbar__content {
+  height: max-content !important;
+}
+.messageimg {
+  border: 1px solid #555;
+  display: block;
+  max-width:250px;
+  max-height:250px;
+  width: auto;
+  height: auto;
+}
 .reply{
     border: 2px solid;
     border-radius: 50px 50px 1px;
     background-color:grey;
     color: white;
 }
-
-.cb {
-  margin-right: 80px;
-}
-
-.emojiPicker {
-  position: absolute;
-  bottom: 87px;
-}
-
-.rightEmoji {
-  right: 50px;
-}
-
-.leftEmoji {
-  right: 450px;
-}
-
 .btn {
   background-color: grey;
   left: 666px;
