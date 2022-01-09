@@ -647,7 +647,8 @@ export default {
     socket.on("connect", () => {
       socket.emit("userconnected", { username: this.user.username });
     }),
-      this.socket.on("response", (data) => {
+      socket.on("response", (data) => {
+        console.log(data);
         if (data.room_id === this.idChoose) {
           this.messages.push(data);
         }
