@@ -127,7 +127,7 @@
               <template v-for="(item, index) in group">
                 <v-list-item
                   :key="item.name"
-                  @click="setID(item.id, item.name)"
+                  @click="setID(item.id, item.name),infoRoom(item.id, item.name)"
                 >
                   <v-badge
                     bordered
@@ -312,7 +312,12 @@
                   </template>
 
                   <v-list>
-                    <v-list-item clickable>
+                    <v-list-item clickable v-on:click="getPin(message.message)">
+                      <v-list-item-title>
+                        <v-icon>mdi-pin</v-icon>
+                        Pin</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item clickable >
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
@@ -522,7 +527,7 @@
             </v-row>
           </v-app-bar>
           <div v-else>
-            <v-card class="text-center mt-8 mb-3" shaped>
+            <!-- <v-card class="text-center mt-8 mb-3" shaped>
               <v-badge
                 bordered
                 bottom
@@ -540,8 +545,8 @@
               >
               <v-card-subtitle class="layout justify-center"
                 >Hello this is {{this.nameChoose}} room</v-card-subtitle>
-            </v-card>
-            <v-expansion-panels v-model="panel" multiple>
+            </v-card> -->
+            <!-- <v-expansion-panels v-model="panel" multiple>
               <v-expansion-panel>
                 <v-expansion-panel-header>
                   <h3>Information</h3>
@@ -581,7 +586,14 @@
                 </v-expansion-panel-header>
                 <v-expansion-panel-content> </v-expansion-panel-content>
               </v-expansion-panel>
-            </v-expansion-panels>
+            </v-expansion-panels> -->
+            <extension
+            v-bind="idChoose"
+            :pinList=pinList
+            :isDirect=isDirect
+            :members=this.groupUsers
+            :nameChoose=this.nameChoose
+            ></extension>
           </div>
         </v-col>
       </v-row>
@@ -594,13 +606,15 @@ import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
 import socket from '../socket';
 import moment from 'moment';
-import { VuemojiPicker } from 'vuemoji-picker'
-import Dialog from '../components/Dialog.vue'
+import { VuemojiPicker } from 'vuemoji-picker';
+import Dialog from '../components/Dialog.vue';
+import Extension from '../components/Extension.vue';
 
 export default {
   components: {
     VuemojiPicker,
     Dialog,
+    Extension,
   },
   data() {
     let token = localStorage.getItem("jwt");
@@ -614,18 +628,19 @@ export default {
       isDirect: false,
       isActive: true,
       selected: [2],
-      panel: [2],
+      // panel: [2],
       show: false,
       message: "",
       marker: true,
       iconIndex: 0,
       idChoose: "",
       groupUsers: [],
-      files: [
-        { text: "Landing_page.zip", icon: " mdi-cloud-upload" },
-        { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
-        { text: "Uwagi.docx", icon: " mdi-cloud-upload" },
-      ],
+      pinList:[],
+      // files: [
+      //   { text: "Landing_page.zip", icon: " mdi-cloud-upload" },
+      //   { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
+      //   { text: "Uwagi.docx", icon: " mdi-cloud-upload" },
+      // ],
       group: [],
       direct: [],
       messages: [],
@@ -650,6 +665,7 @@ export default {
       this.socket.on("response", (data) => {
         if (data.room_id === this.idChoose) {
           this.messages.push(data);
+          // this.groupUsers.push(data);
         }
       });
     // get Link
@@ -679,6 +695,15 @@ export default {
             .post("http://localhost:8000/rooms/messages", params)
             .then((response) => {
               this.messages = response.data;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          axios
+            .post("http://localhost:8000/rooms/members", params)
+            .then((response) => {
+              this.groupUsers = response.data;
+              console.log(this.grouUsers)
             })
             .catch((err) => {
               console.log(err);
@@ -737,6 +762,24 @@ export default {
         .post("http://localhost:8000/rooms/messages", params)
         .then((response) => {
           this.messages = response.data;
+          // console.log(response.data)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    infoRoom(id, name) {
+      // show message list
+      this.idChoose = id;
+      this.nameChoose = name;
+      let params = {
+        id: this.idChoose,
+      };
+      axios
+        .post("http://localhost:8000/rooms/members", params)
+        .then((response) => {
+          this.groupUsers = response.data;
+          console.log(response.data)
         })
         .catch((err) => {
           console.log(err);
@@ -778,6 +821,10 @@ export default {
       }
       //
     },
+    getPin(message){
+      this.pinList.push(message)
+      console.log(message)
+    }
   },
 };
 
