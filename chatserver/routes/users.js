@@ -9,6 +9,35 @@ router.post('/', auth.isAuthorized, function (req, res, next) {
     res.json({username: req.body.decoded.username});
 });
 
+router.post('/info', function(req, res, next) {
+    User.findOne({username: req.body.username}, '+email', (err, result) => {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!"})
+        } else {
+            res.json(result)
+        }
+    })
+})
+
+router.post('/updateinfo', function(req, res, next) {
+    User.findOne({username: req.body.username}, (err, result)=> {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!"})
+        } else {
+            if (typeof req.body.display_name != 'undefined'){
+                result.display_name = req.body.display_name;
+            }
+            if (typeof req.body.avatar != 'undefined'){
+                result.avatar = req.body.avatar;
+            }
+            result.save(function (err) {
+                if (err) console.log(err);
+            });
+            res.json({status: "success"});
+        }
+    })
+})
+
 router.post('/register', function (req, res, next) {
     User.create(req.body, function (err, result) {
         if (err) //if error, return status: error, data: err
@@ -189,5 +218,24 @@ router.post('/outrequest', (req, res, next)=>{
         }
     })
 })
+
+
+    router.post('/pinmessage', (req,res,next) => {
+        User.findOne( { username: req.body.username }, function (err, result) {
+            if (err || !result) {
+                res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+            }
+            else {
+                Request.Pinmessage( {room_id: req.body.room_id, message_id: req.body.message_id },(err, result) => {
+                    if (err) {
+                        res.status(500).json(err);
+                    }
+                    else {
+                        res.json(result);
+                    }
+                })
+            }
+        })
+    })
 
 module.exports = router;

@@ -2,8 +2,7 @@
     <v-dialog transition="dialog-top-transition" max-width="600">
         <template v-slot:activator="{ on, attrs }">
             <v-btn
-              :icon="icon"
-              :fab="fab"
+              icon
               color="blue"              
               v-bind="attrs"
               v-on="on">
@@ -12,7 +11,7 @@
         </template>
         <template v-slot:default="dialog">
             <v-card>
-            <v-toolbar color="primary" dark>Add Friend</v-toolbar>
+            <v-toolbar color="primary" dark>Add friend to group</v-toolbar>
             <v-text-field v-model="term" label="Search" outlined @keyup = "Search" ></v-text-field>
             <v-list two-line color="rgba(0,0,0,0)" style="overflow: auto; height: 40%">
                 <v-list-item-group>
@@ -20,7 +19,7 @@
                     <v-list-item :key="item.username" :disabled="item.isFriend || item.isRequested" @click="sendRequest(item.username, index)">
                         <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
                             <v-list-item-avatar>
-                            <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                            <v-img :src="`https://cdn.vuetifyjs.com/images/lists/1.jpg`"></v-img>
                             </v-list-item-avatar>
                         </v-badge>
                         <template>
