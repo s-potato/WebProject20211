@@ -127,7 +127,9 @@
               <template v-for="(item, index) in group">
                 <v-list-item
                   :key="item.name"
-                  @click="setID(item.id, item.name),infoRoom(item.id, item.name)"
+                  @click="
+                    setID(item.id, item.name), infoRoom(item.id, item.name)
+                  "
                 >
                   <v-badge
                     bordered
@@ -217,10 +219,7 @@
             <v-toolbar-title class="title pl-0 mr-2 mt-n4">
               Members :
             </v-toolbar-title>
-            <Dialog
-            :fab="true"
-            :class="fabButton">
-            </Dialog>
+            <Dialog :fab="true" :class="fabButton"> </Dialog>
             <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
               <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
             </v-avatar>
@@ -275,13 +274,13 @@
               </template>
             </v-dialog>
             <v-btn
-                  color="black"
-                  icon
-                  class="mt-n5"
-                  @click="isSearch = !isSearch"
-                >
-                  <v-icon>mdi-magnify</v-icon>
-                </v-btn>
+              color="black"
+              icon
+              class="mt-n5"
+              @click="isSearch = !isSearch"
+            >
+              <v-icon>mdi-magnify</v-icon>
+            </v-btn>
             <v-btn
               color="black"
               icon
@@ -291,8 +290,7 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </v-app-bar>
-          
-          <div style="overflow: auto; max-height: 82%; height:750px">
+          <div style="overflow: auto; max-height: 82%; height: 750px">
             <div v-for="message in messages" :key="message.date">
               <v-app-bar
                 class="space"
@@ -315,9 +313,10 @@
                     <v-list-item clickable v-on:click="getPin(message.message)">
                       <v-list-item-title>
                         <v-icon>mdi-pin</v-icon>
-                        Pin</v-list-item-title>
+                        Pin</v-list-item-title
+                      >
                     </v-list-item>
-                    <v-list-item clickable >
+                    <v-list-item clickable v-on:click="isReply = true,getUser(message.sender)">
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
@@ -395,19 +394,19 @@
                   </v-avatar>
                 </v-badge>
                 <div>
-                <div class="name">{{ message.sender }}</div>
-                <v-card class="ml-2 sender" max-width="350px">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-list-item v-bind="attrs" v-on="on">
-                        <v-list-item-content>
-                          <div>{{ message.message }}</div>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </template>
-                    <span> {{ format_date(message.date) }}</span>
-                  </v-tooltip>
-                </v-card>
+                  <div class="name">{{ message.sender }}</div>
+                  <v-card class="ml-2 sender" max-width="350px">
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-list-item v-bind="attrs" v-on="on">
+                          <v-list-item-content>
+                            <div>{{ message.message }}</div>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </template>
+                      <span> {{ format_date(message.date) }}</span>
+                    </v-tooltip>
+                  </v-card>
                 </div>
                 <v-menu left bottom :offset-x="offset">
                   <template v-slot:activator="{ on, attrs }">
@@ -424,7 +423,7 @@
                     </v-btn>
                   </template>
                   <v-list>
-                    <v-list-item clickable>
+                    <v-list-item clickable >
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
@@ -451,44 +450,47 @@
               </v-app-bar>
             </div>
           </div>
-          <VuemojiPicker v-show="pickEmojiShow" @emojiClick="handleEmojiClick" class="emojiPicker" :class="isActive ? 'leftEmoji' : 'rightEmoji' "/>
-          <v-btn-toggle
-            v-model="icon"
-            borderless
-            v-if="openMenuChat"
-          >
+          <VuemojiPicker
+            v-show="pickEmojiShow"
+            @emojiClick="handleEmojiClick"
+            class="emojiPicker"
+            :class="isActive ? 'leftEmoji' : 'rightEmoji'"
+          />
+          <!-- <reply v-if="isReply == true" :isReply=isReply>
+            <v-icon class="btn" icon clickable v-on:click="isReply != isReply" >mdi-close-circle-outline</v-icon>
+          </reply> -->
+            <div class="reply" v-if="isReply == true">
+              <v-icon style="color: white">mdi-share</v-icon>
+              Reply to {{this.replyUser}}
+              <v-icon class="btn" icon clickable v-on:click="isReply = !isReply"
+                >mdi-close-circle-outline</v-icon
+              >
+            </div>
+          <v-btn-toggle v-model="icon" borderless v-if="openMenuChat">
             <v-btn @click="openMenuChat = !openMenuChat" class="mr-5">
-              <v-icon right class="mr-5">
-                fas fa-window-close
-              </v-icon>
+              <v-icon right class="mr-5"> fas fa-window-close </v-icon>
 
               <span class="hidden-sm-and-down">Close</span>
             </v-btn>
 
             <v-btn class="mr-5">
-              <v-icon right class="mr-5">
-                fas fa-images
-              </v-icon>
+              <v-icon right class="mr-5"> fas fa-images </v-icon>
 
               <span class="hidden-sm-and-down">Image</span>
             </v-btn>
 
             <v-btn class="mr-5">
-              <v-icon right class="mr-5">
-                fas fa-file-upload
-              </v-icon>
+              <v-icon right class="mr-5"> fas fa-file-upload </v-icon>
 
               <span class="hidden-sm-and-down">Files</span>
             </v-btn>
 
             <v-btn class="mr-5">
-              <v-icon right class="mr-5">
-                fas fa-video
-              </v-icon>
+              <v-icon right class="mr-5"> fas fa-video </v-icon>
 
               <span class="hidden-sm-and-down">Video</span>
             </v-btn>
-          </v-btn-toggle>     
+          </v-btn-toggle>
           <v-text-field
             v-model="message"
             v-else
@@ -507,23 +509,31 @@
             @click:append-outer="sendMessage"
             @click:append="pickEmojiShow = !pickEmojiShow"
             @click:prepend="openMenuChat = !openMenuChat"
-          ></v-text-field>
+          >
+          </v-text-field>
         </v-col>
-        <v-col cols="12" :sm="isActive ? '3' : '0'" :lg="isActive ? '3' : '0'" v-show="isActive" >
+        <v-col
+          cols="12"
+          :sm="isActive ? '3' : '0'"
+          :lg="isActive ? '3' : '0'"
+          v-show="isActive"
+        >
           <v-app-bar v-if="isSearch == true" flat color="rgba(0,0,0,0,0)">
             <v-row>
-            <v-col class="mt-6" cols="12" sm="8" lg="8">
-            <v-text-field
-              filled
-              label="Search Here"
-              append-icon="mdi-magnify"
-              color="grey"
-            >
-            </v-text-field>
-            </v-col>
-            <v-col cols="12" sm="4" lg="4">
-            <v-btn class="mt-8 " depressed @click="isSearch = !isSearch"> Cancel </v-btn>
-            </v-col>
+              <v-col class="mt-6" cols="12" sm="8" lg="8">
+                <v-text-field
+                  filled
+                  label="Search Here"
+                  append-icon="mdi-magnify"
+                  color="grey"
+                >
+                </v-text-field>
+              </v-col>
+              <v-col cols="12" sm="4" lg="4">
+                <v-btn class="mt-8" depressed @click="isSearch = !isSearch">
+                  Cancel
+                </v-btn>
+              </v-col>
             </v-row>
           </v-app-bar>
           <div v-else>
@@ -588,10 +598,10 @@
               </v-expansion-panel>
             </v-expansion-panels> -->
             <extension
-            :pinList="pinList"
-            :isDirect="isDirect"
-            :members="this.groupUsers"
-            :nameChoose="this.nameChoose"
+              :pinList="pinList"
+              :isDirect="isDirect"
+              :members="this.groupUsers"
+              :nameChoose="this.nameChoose"
             ></extension>
           </div>
         </v-col>
@@ -602,18 +612,20 @@
 
 <script>
 import VueJwtDecode from "vue-jwt-decode";
-import axios from 'axios';
-import socket from '../socket';
-import moment from 'moment';
-import { VuemojiPicker } from 'vuemoji-picker';
-import Dialog from '../components/Dialog.vue';
-import Extension from '../components/Extension.vue';
+import axios from "axios";
+import socket from "../socket";
+import moment from "moment";
+import { VuemojiPicker } from "vuemoji-picker";
+import Dialog from "../components/Dialog.vue";
+import Extension from "../components/Extension.vue";
+// import Reply from "../components/Reply.vue";
 
 export default {
   components: {
     VuemojiPicker,
     Dialog,
     Extension,
+    // Reply,
   },
   data() {
     let token = localStorage.getItem("jwt");
@@ -633,8 +645,10 @@ export default {
       marker: true,
       iconIndex: 0,
       idChoose: "",
+      replyUser: "",
+      isReply: false,
       groupUsers: [],
-      pinList:[],
+      pinList: [],
       // files: [
       //   { text: "Landing_page.zip", icon: " mdi-cloud-upload" },
       //   { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
@@ -651,9 +665,9 @@ export default {
       // search
       isSearch: false,
       rules: {
-          required: value => !!value || 'Required.',
+        required: (value) => !!value || "Required.",
       },
-      openMenuChat:false,
+      openMenuChat: false,
       pickEmojiShow: false,
     };
   },
@@ -701,7 +715,7 @@ export default {
             .post("http://localhost:8000/rooms/members", params)
             .then((response) => {
               this.groupUsers = response.data;
-              console.log(this.groupUsers)
+              console.log(this.groupUsers);
             })
             .catch((err) => {
               console.log(err);
@@ -777,7 +791,7 @@ export default {
         .post("http://localhost:8000/rooms/members", params)
         .then((response) => {
           this.groupUsers = response.data;
-          console.log( this.groupUsers)
+          console.log(this.groupUsers);
         })
         .catch((err) => {
           console.log(err);
@@ -801,7 +815,7 @@ export default {
         roomname: this.groupName,
         members: this.addGroupList,
       };
-      this.groupName = "",
+      (this.groupName = ""),
         axios
           .post("http://localhost:8000/users/createroom", params)
           .then(this.$router.go())
@@ -819,13 +833,16 @@ export default {
       }
       //
     },
-    getPin(message){
-      this.pinList.push(message)
-      console.log(message)
+    getPin(message) {
+      this.pinList.push(message);
+      console.log(message);
+    },
+    getUser(data){
+      this.replyUser = data;
+      console.log(data)
     }
   },
 };
-
 </script>
 <style scoped>
 .boder {
@@ -864,21 +881,33 @@ export default {
   margin-bottom: 20px;
 }
 
+.reply{
+    border: 2px solid;
+    border-radius: 50px 50px 1px;
+    background-color:grey;
+    color: white;
+}
 
-.cb{
+.cb {
   margin-right: 80px;
 }
 
-.emojiPicker{
+.emojiPicker {
   position: absolute;
   bottom: 87px;
 }
 
-.rightEmoji{
+.rightEmoji {
   right: 50px;
 }
 
-.leftEmoji{
+.leftEmoji {
   right: 450px;
+}
+
+.btn {
+  background-color: grey;
+  left: 666px;
+  color: white;
 }
 </style>
