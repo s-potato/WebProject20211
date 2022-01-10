@@ -28,14 +28,14 @@
                             label="User Name" :value="user.username"
                             readonly></v-text-field>
                         <v-text-field
-                            :value="user.display_name"
+                            v-model="displayname"
                             label="Display Name"></v-text-field>
                         <v-text-field
                             label="Email Address" :value="user.email"
                             readonly></v-text-field>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="primary" :loading="loading" @click="dialog.value = false; updateName;">
+                        <v-btn color="primary" :loading="loading" @click="dialog.value = false; updateName();">
                             <v-icon left dark>check</v-icon>
                             Save Changes
                         </v-btn>
@@ -59,17 +59,18 @@
         let decoded = VueJwtDecode.decode(token);
         this.user = decoded;
         return{
+            displayname: "",
             user: decoded,
         }
     },
     mounted: function (){
         let params = {
             username: this.user.username
-        };  
-        // show pending list
+        };
         axios.post("http://localhost:8000/users/info",params)
         .then(response => {
             this.user = response.data;
+            this.displayname = this.user.display_name;
             console.log(this.user)
         })
         .catch((err) => {
@@ -102,10 +103,10 @@
             reader.readAsDataURL(file);
         },
         updateName() {
-            console.log(this.user.display_name)
+            console.log(this.displayname)
             let params = {
                 username: this.user.username,
-                display_name: this.user.display_name
+                display_name: this.displayname
             };
                 axios
                 .post("http://localhost:8000/users/updateinfo", params)

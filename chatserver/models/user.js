@@ -65,7 +65,7 @@ UserSchema.methods.setStatus = function (status) {
 // TODO: khi demo thi bat len
 UserSchema.pre('save', function (next) {
     var user = this;
-    if (user.display_name || user.display_name == ''){
+    if (!user.display_name || user.display_name == ''){
         user.display_name = user.username
     }
     if (!user.isModified('password')) return next();
