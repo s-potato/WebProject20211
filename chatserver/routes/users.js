@@ -226,7 +226,7 @@ router.post('/outrequest', (req, res, next)=>{
                 res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
             }
             else {
-                Request.Pinmessage( {room_id: req.body.room_id, message_id: req.body.message_id },(err, result) => {
+                result.pinMessage({room_id: req.body.room_id, message_id: req.body.message_id } ,(err, result) => {
                     if (err) {
                         res.status(500).json(err);
                     }

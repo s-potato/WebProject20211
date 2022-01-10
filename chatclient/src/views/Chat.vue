@@ -220,7 +220,8 @@
               Members :
             </v-toolbar-title>
             <AddGroup
-              :username='user.username'>
+              :username='user.username'
+              :members="this.groupUsers">
             </AddGroup>
             <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
               <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
@@ -293,7 +294,7 @@
             </v-btn>
           </v-app-bar>
           <div style="overflow: auto; max-height: 82%; height:750px">
-            <div v-for="(message,index) in messages" :key="message.date">
+            <div v-for="message in messages" :key="message.date">
               <!-- user send -->
               <v-app-bar
                 class="space content"
@@ -305,16 +306,16 @@
               >
                 <v-spacer></v-spacer>
                 <!-- sub message -->
-                <div v-if="active == true">
+
                   <v-menu left bottom :offset-x="offset">
                     <template class="space1" v-slot:activator="{ on, attrs }">
                       <v-btn icon v-bind="attrs" v-on="on" >
-                        <v-icon> fas fa-ellipsis-h</v-icon>
+                        <v-icon v-show="active"> fas fa-ellipsis-h</v-icon>
                       </v-btn>
                     </template>
 
                   <v-list>
-                    <v-list-item clickable v-on:click="getPin(message.message)">
+                    <v-list-item clickable v-on:click="addPin(message._id)">
                       <v-list-item-title>
                         <v-icon>mdi-pin</v-icon>
                         Pin</v-list-item-title
@@ -338,12 +339,11 @@
                   <v-menu class="space1" left bottom :offset-x="offset">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn icon v-bind="attrs" v-on="on">
-                        <v-icon>far fa-grin-beam</v-icon>
+                        <v-icon v-show="active">far fa-grin-beam</v-icon>
                       </v-btn>
                     </template>
                     <VuemojiPicker @emojiClick="handleEmojiClick" />
                   </v-menu>
-                </div>
                 <!-- chat message -->
                 <div>
                   <div class="name">{{ message.sender }}</div>
@@ -355,7 +355,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-list-item v-bind="attrs" v-on="on">
                           <v-list-item-content class="content">
-                            <div>{{ message.message}} {{active[index]}}</div>
+                            <div>{{ message.message}}</div>
                           </v-list-item-content>
                         </v-list-item>
                       </template>
@@ -597,7 +597,7 @@ export default {
       message: "",
       marker: true,
       iconIndex: 0,
-      idChoose: "",
+      idRoomChoose: "",
       replyUser: "",
       isReply: false,
       groupUsers: [],
@@ -624,10 +624,8 @@ export default {
       socket.emit("userconnected", { username: this.user.username });
     }),
       socket.on("response", (data) => {
-        console.log(data);
-        if (data.room_id === this.idChoose) {
+        if (data.room_id === this.idRoomChoose) {
           this.messages.push(data);
-          console.log(data);
         }
       });
     // get Link
@@ -647,16 +645,15 @@ export default {
       .post("http://localhost:8000/users/rooms", params)
       .then((response) => {
         if (response.data[0]) {
-          this.idChoose = response.data[0].id;
+          this.idRoomChoose = response.data[0].id;
           this.nameChoose = response.data[0].name;
           let params = {
-            id: this.idChoose,
+            id: this.idRoomChoose,
           };
           axios
             .post("http://localhost:8000/rooms/messages", params)
             .then((response) => {
               this.messages = response.data;
-              console.log(this.messages)
             })
             .catch((err) => {
               console.log(err);
@@ -665,7 +662,6 @@ export default {
             .post("http://localhost:8000/rooms/members", params)
             .then((response) => {
               this.groupUsers = response.data;
-              console.log(this.groupUsers);
             })
             .catch((err) => {
               console.log(err);
@@ -694,7 +690,7 @@ export default {
     },
     sendMessage() {
       socket.emit("chat message", {
-        room_id: this.idChoose,
+        room_id: this.idRoomChoose,
         sender: this.user.username,
         message: this.message,
       });
@@ -715,16 +711,16 @@ export default {
     },
     setID(id, name) {
       // show message list
-      this.idChoose = id;
+      this.idRoomChoose = id;
       this.nameChoose = name;
       let params = {
-        id: this.idChoose,
+        id: this.idRoomChoose,
       };
       axios
         .post("http://localhost:8000/rooms/messages", params)
         .then((response) => {
           this.messages = response.data;
-          // console.log(response.data)
+          console.log(response.data)
         })
         .catch((err) => {
           console.log(err);
@@ -732,16 +728,15 @@ export default {
     },
     infoRoom(id, name) {
       // show message list
-      this.idChoose = id;
+      this.idRoomChoose = id;
       this.nameChoose = name;
       let params = {
-        id: this.idChoose,
+        id: this.idRoomChoose,
       };
       axios
         .post("http://localhost:8000/rooms/members", params)
         .then((response) => {
           this.groupUsers = response.data;
-          console.log(this.groupUsers);
         })
         .catch((err) => {
           console.log(err);
@@ -785,11 +780,22 @@ export default {
     },
     getUser(data){
       this.replyUser = data;
-      console.log(data)
+      // console.log(data)
     },
-    getPin(message){
-      this.pinList.push(message)
-      console.log(message)
+    addPin(messageId){
+      let params = {
+        username: this.user.username,
+        message_id: messageId,
+        room_id: this.idRoomChoose,
+      };
+      axios
+        .post("http://localhost:8000/users/pinmessage", params)
+        .then(
+          console.log("success")
+        )
+        .catch((err) => {
+          console.log(err);
+        });
     },
     async chooseImg() {
       this.$refs.inputImg.click()
@@ -801,9 +807,8 @@ export default {
       let rawImg;
       reader.onloadend = () => {
         rawImg = reader.result;
-        console.log(rawImg);
         socket.emit("image message", {
-        room_id: this.idChoose,
+        room_id: this.idRoomChoose,
         sender: this.user.username,
         file: {
           data: rawImg,
@@ -813,7 +818,6 @@ export default {
       });
       }
       reader.readAsDataURL(file);
-      // console.log(file)
     }
   },
 };

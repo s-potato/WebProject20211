@@ -20,13 +20,12 @@ var RoomSchema = new mongoose.Schema({
       ref: "Message",
     },
   ],
-  
   pinMessages: [
      {
          type: mongoose.Schema.Types.ObjectId,
          ref: "Message",
      }
-  ] ,
+  ],
   isDirect: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },

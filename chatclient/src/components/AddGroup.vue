@@ -16,7 +16,7 @@
             <v-list two-line color="rgba(0,0,0,0)" style="overflow: auto; height: 40%">
                 <v-list-item-group>
                 <template v-for="(item, index) in findUsers">
-                    <v-list-item :key="item.username" :disabled="item.isFriend || item.isRequested" @click="sendRequest(item.username, index)">
+                    <v-list-item :key="item.username" :disabled="item.isFriend || item.isRequested" @click="sendRequest()">
                         <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
                             <v-list-item-avatar>
                             <v-img :src="`https://cdn.vuetifyjs.com/images/lists/1.jpg`"></v-img>
@@ -29,8 +29,7 @@
                             ></v-list-item-title>
                             </v-list-item-content>
                         </template>
-                        <v-icon small v-if="item.isFriend === true" >fas fa-user-friends</v-icon>
-                        <v-icon small v-else-if="item.isRequested === true" >fas fa-user-clock</v-icon>
+                        <v-icon small v-if="item.inGroup === true" >fas fa-check</v-icon>
                         <v-icon small v-else>fas fa-user-plus</v-icon>
                     </v-list-item>
                     <v-divider v-if="index < findUsers.length - 1" :key="index"></v-divider>
@@ -51,8 +50,7 @@ export default {
     name: 'dialog',
     props: {
         username: String,
-        icon: Boolean,
-        fab: Boolean,
+        members: Array,
     },
     data() {
         return {
@@ -66,19 +64,30 @@ export default {
                 term: this.term,
                 username: this.username
             };
+            let findUsers = []
             axios.post("http://localhost:8000/users/find",params)
             .then(response => {
-                console.log(response)
-                return this.findUsers = response.data
+                findUsers = response.data
+                for( var i = 0; i < findUsers.length; i++) {
+                    if (!findUsers[i].isFriend)
+                        findUsers.splice(i,1);
+                }
+                for( i = 0; i < findUsers.length; i++) {
+                    for( var y = 0; y < this.members.length; y++) {
+                        if(findUsers[i].username === this.members[y].username)
+                            findUsers[i].inGroup = true
+                    }
+                }
+                return this.findUsers = findUsers
             })
             .catch((err) => {
                 console.log(err);
             })
         },
-        sendRequest(username, index){
-            this.findUsers[index].isRequested = true
-            this.$emit('sendRequest',username)
-        }
+        // sendRequest(username, index){
+        //     this.findUsers[index].isRequested = true
+        //     this.$emit('sendRequest',username)
+        // }
     }
 }
 </script>

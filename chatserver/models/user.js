@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Room = require("./room");
 const Request = require("./request")
+const Message = require("./message")
 
 var UserSchema = new mongoose.Schema({
     username: {
@@ -162,54 +163,46 @@ UserSchema.statics.addToGroup = function(data, cb) {
 }; 
 
 
-    UserSchema.statics.pinMessage = function(data,cb){
+    UserSchema.methods.pinMessage = function(data,cb){
         Room.findById(data.room_id, (err, result) => {
             if (err || !result) {
-            cb({ err: "Can't query" });
-        }else{
+                cb({ err: "Can't query" });
+            } else {
             Message.findById(data.message_id , (err,message) =>{
-                result.pinMessages.push(message);
-                result.save( function (err) {
-                    if (err) console.log(err);
-                });
-                cb(null, { status: "Success" });
+                if (err || !message) {
+                    cb({ err: "Can't query" });
+                }
+                else {
+                    result.pinMessages.push(message._id);
+                    console.log(result)
+                    result.save( function (err) {
+                        if (err) console.log(err);
+                    });
+                    cb(null, { status: "Success" });
+                }
             })
         }
         })        
     }
 
-/* UserSchema.statics.pinMessage = function (message, cb){
-    Message.findOne({_id: message.id} , function(err, result){
-        if (err || !result) {
+/* 
+    UserSchema.statics.pinMessage = function(message,cb){
+        Room.findById(message.room._id, (err, result) => {
+            if (err || !result) {
             cb({ err: "Can't query" });
-        } else{
-            if (!result.isPin) {
-                result.isPin = true;
-                cb(null, { status: "Success" });
-            }else{
-                cb({ status: "Existed.", message: "Message is already pinned!" });
-            }
+        }else{
+            Message.findById(message._id , (err,message1) =>{
+                result.pinMessages.push(message1);
+                result.save( function (err) {
+                    if (err) console.log(err);
+                });
+                cb({ status: "Success" });
+            })
         }
-    })
-} 
+        })        
+    }
+*/
 
-UserSchema.statics.unpinMessage = function (message, cb){
-    Message.findOne({_id: message.id} , function(err, result){
-        if (err || !result) {
-            cb({ err: "Can't query" });
-        } else{
-            if (result.isPin) {
-                result.isPin = false;
-                cb(null, { status: "Success" });
-            }else{
-                cb({ status: "Cann't unpinned.", message: "Message is not pinned!" });
-            }
-        }
-    })
-} */
-/*
-    getPinlist -> room.js
- */
 UserSchema.methods.joinRoom = function (room, cb) {
     var user = this;
     Room.findOne({ _id: room.id }, function (err, result) {
