@@ -116,8 +116,25 @@ module.exports = (io) => {
           io.to(data.room_id).emit("response", data);
         }
       });
-    });
+    })
+    /*
+    ,
+    socket.on("Accept f-request", (data) => {
+      //data has directroom_id 
+      io.to(data.room_id).emit("Accepted");
+    }),
+
+    socket.on("Add member",(data) =>{
+      io.to(data.room_id).emit("A member added");
+    }),
+    
+    socket.on("Typing",(data) => {
+
+    }),
 
 
+
+    */
+    ;
   });
 };

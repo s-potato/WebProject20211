@@ -17,7 +17,6 @@
                                   :username='user.username'
                                   :icon="true"
                                   @sendRequest='sendRequest'>
-                                  <v-toolbar color="primary" dark>Add Friend</v-toolbar>
                                 </Dialog>
                             </v-list-item-content>
                         </v-list-item>

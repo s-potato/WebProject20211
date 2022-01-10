@@ -22,22 +22,20 @@
                                 ref="inputAvatar"
                                 type="file"
                                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                style="display: none;">
+                                style="display: none;" @click="changeAvatar">
                         </v-flex>
                         <v-text-field
-                            v-model="userName"
-                            label="User Name"
+                            label="User Name" :value="user.username"
                             readonly></v-text-field>
                         <v-text-field
-                            v-model="displayName"
-                            label="Dispay Name"></v-text-field>
+                            :value="user.display_name"
+                            label="Display Name"></v-text-field>
                         <v-text-field
-                            v-model="email"
-                            label="Email Address"
+                            label="Email Address" :value="user.email"
                             readonly></v-text-field>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="primary" :loading="loading" @click.native="update" @click="dialog.value = false">
+                        <v-btn color="primary" :loading="loading" @click="dialog.value = false; updateName;">
                             <v-icon left dark>check</v-icon>
                             Save Changes
                         </v-btn>
@@ -48,20 +46,73 @@
     </v-dialog>
 </template>
 
+
 <script>
+
+  import axios from 'axios';
+  import VueJwtDecode from "vue-jwt-decode";
+
   export default {
     name: 'profile',
-
     data () {
-        return {
-            userName: 'John',
-            displayName: 'Doe',
-            email: 'john@doe.com',
+        let token = localStorage.getItem("jwt");
+        let decoded = VueJwtDecode.decode(token);
+        this.user = decoded;
+        return{
+            user: decoded,
         }
+    },
+    mounted: function (){
+        let params = {
+            username: this.user.username
+        };  
+        // show pending list
+        axios.post("http://localhost:8000/users/info",params)
+        .then(response => {
+            this.user = response.data;
+            console.log(this.user)
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     },
     methods: {
         openAvatarPicker() {
             this.$refs.inputAvatar.click()
+        },
+        changeAvatar(){
+            const file = document.querySelector('input[type=file]').files[0]
+            const reader = new FileReader()
+
+            let rawImg;
+            reader.onloadend = () => {
+                rawImg = reader.result;
+                console.log(rawImg);
+                let params = {
+                    username: this.user.username,
+                    avatar: rawImg
+                };
+                axios
+                .post("http://localhost:8000/users/updateinfo", params)
+                .then(this.$router.go())
+                .catch((err) => {
+                console.log(err);
+                });
+            }
+            reader.readAsDataURL(file);
+        },
+        updateName() {
+            console.log(this.user.display_name)
+            let params = {
+                username: this.user.username,
+                display_name: this.user.display_name
+            };
+                axios
+                .post("http://localhost:8000/users/updateinfo", params)
+                .then()
+                .catch((err) => {
+                console.log(err);
+                });
         }
     }
   }

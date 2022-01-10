@@ -219,11 +219,9 @@
             <v-toolbar-title class="title pl-0 mr-2 mt-n4">
               Members :
             </v-toolbar-title>
-            <Dialog
-            :fab="true"
-            :class="fabButton">
-            <v-toolbar color="primary" dark>Add friend to group</v-toolbar>
-            </Dialog>
+            <AddGroup
+              :username='user.username'>
+            </AddGroup>
             <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
               <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
             </v-avatar>
@@ -295,7 +293,7 @@
             </v-btn>
           </v-app-bar>
           <div style="overflow: auto; max-height: 82%; height:750px">
-            <div v-for="message in messages" :key="message.date">
+            <div v-for="(message,index) in messages" :key="message.date">
               <!-- user send -->
               <v-app-bar
                 class="space content"
@@ -303,15 +301,17 @@
                 flat
                 v-if="message.sender === user.username"
                 @mouseover="active = true"
-                @mouseleave="active = false"
+                @mouseout="active = false"
               >
                 <v-spacer></v-spacer>
-                <v-menu left bottom :offset-x="offset">
-                  <template class="space1" v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon v-show="active">fas fa-ellipsis-h</v-icon>
-                    </v-btn>
-                  </template>
+                <!-- sub message -->
+                <div v-if="active == true">
+                  <v-menu left bottom :offset-x="offset">
+                    <template class="space1" v-slot:activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on" >
+                        <v-icon> fas fa-ellipsis-h</v-icon>
+                      </v-btn>
+                    </template>
 
                   <v-list>
                     <v-list-item clickable v-on:click="getPin(message.message)">
@@ -335,14 +335,16 @@
                   </v-list>
                 </v-menu>
 
-                <v-menu class="space1" left bottom :offset-x="offset">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on">
-                      <v-icon v-show="active">far fa-grin-beam</v-icon>
-                    </v-btn>
-                  </template>
-                  <VuemojiPicker @emojiClick="handleEmojiClick" />
-                </v-menu>
+                  <v-menu class="space1" left bottom :offset-x="offset">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon>far fa-grin-beam</v-icon>
+                      </v-btn>
+                    </template>
+                    <VuemojiPicker @emojiClick="handleEmojiClick" />
+                  </v-menu>
+                </div>
+                <!-- chat message -->
                 <div>
                   <div class="name">{{ message.sender }}</div>
                   <span v-if="message.type === 'image'" class="content">
@@ -353,8 +355,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-list-item v-bind="attrs" v-on="on">
                           <v-list-item-content class="content">
-                            <div>{{ message.message }}
-                            </div>
+                            <div>{{ message.message}} {{active[index]}}</div>
                           </v-list-item-content>
                         </v-list-item>
                       </template>
@@ -384,7 +385,7 @@
                 flat
                 v-else
                 @mouseover="active = true"
-                @mouseleave="active = false"
+                @mouseout="active = false"
               >
                 <v-badge
                   bordered
@@ -408,8 +409,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-list-item v-bind="attrs" v-on="on">
                           <v-list-item-content class="content">
-                            <div>{{ message.message }}
-                            </div>
+                            <div>{{ message.message + message.active }}</div>
                           </v-list-item-content>
                         </v-list-item>
                       </template>
@@ -554,66 +554,6 @@
             </v-row>
           </v-app-bar>
           <div v-else>
-            <!-- <v-card class="text-center mt-8 mb-3" shaped>
-              <v-badge
-                bordered
-                bottom
-                color="green"
-                dot
-                offset-x="11"
-                offset-y="13"
-              >
-                <v-avatar class="mt-n7" size="60" elevation="10">
-                  <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
-                </v-avatar>
-              </v-badge>
-              <v-card-title class="layout justify-center"
-                >{{this.nameChoose}}</v-card-title
-              >
-              <v-card-subtitle class="layout justify-center"
-                >Hello this is {{this.nameChoose}} room</v-card-subtitle>
-            </v-card> -->
-            <!-- <v-expansion-panels v-model="panel" multiple>
-              <v-expansion-panel>
-                <v-expansion-panel-header>
-                  <h3>Information</h3>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content> </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-expansion-panel>
-                <v-expansion-panel-header>
-                  <h3>Images(14)</h3>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content> </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-expansion-panel>
-                <v-expansion-panel-header>
-                  <h3>Files(3)</h3>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-list shaped>
-                    <v-list-item-group>
-                      <v-list-item v-for="(item, i) in files" :key="i">
-                        <v-list-item-icon>
-                          <v-icon v-text="item.icon" color="green"></v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-content>
-                          <v-list-item-title
-                            v-text="item.text"
-                          ></v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-              <v-expansion-panel>
-                <v-expansion-panel-header>
-                  <h3>Pinned items</h3>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content> </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels> -->
             <extension
               :pinList="pinList"
               :isDirect="isDirect"
@@ -629,20 +569,18 @@
 
 <script>
 import VueJwtDecode from "vue-jwt-decode";
-import axios from "axios";
-import socket from "../socket";
-import moment from "moment";
-import { VuemojiPicker } from "vuemoji-picker";
-import Dialog from "../components/Dialog.vue";
-import Extension from "../components/Extension.vue";
-// import Reply from "../components/Reply.vue";
+import axios from 'axios';
+import socket from '../socket';
+import moment from 'moment';
+import { VuemojiPicker } from 'vuemoji-picker';
+import AddGroup from '../components/AddGroup.vue';
+import Extension from '../components/Extension.vue';
 
 export default {
   components: {
     VuemojiPicker,
-    Dialog,
     Extension,
-    // Reply,
+    AddGroup,
   },
   data() {
     let token = localStorage.getItem("jwt");
@@ -656,7 +594,6 @@ export default {
       isDirect: false,
       isActive: true,
       selected: [2],
-      // panel: [2],
       show: false,
       message: "",
       marker: true,
@@ -665,12 +602,7 @@ export default {
       replyUser: "",
       isReply: false,
       groupUsers: [],
-      pinList: [],
-      // files: [
-      //   { text: "Landing_page.zip", icon: " mdi-cloud-upload" },
-      //   { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
-      //   { text: "Uwagi.docx", icon: " mdi-cloud-upload" },
-      // ],
+      pinList:[],
       group: [],
       direct: [],
       messages: [],
@@ -727,6 +659,7 @@ export default {
             .post("http://localhost:8000/rooms/messages", params)
             .then((response) => {
               this.messages = response.data;
+              console.log(this.messages)
             })
             .catch((err) => {
               console.log(err);
@@ -887,7 +820,6 @@ export default {
       }
       reader.readAsDataURL(file);
       // console.log(file)
-
     }
   },
 };
