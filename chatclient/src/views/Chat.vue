@@ -362,6 +362,7 @@
                       <span> {{ format_date(message.date) }}</span>
                     </v-tooltip>
                   </v-card>
+                  <v-card class="emo">{{emo}}</v-card>
                 </div>
                 <v-badge
                   class="space"
@@ -617,6 +618,8 @@ export default {
       },
       openMenuChat: false,
       pickEmojiShow: false,
+      emo: "",
+      isEmo:false,
     };
   },
   created() {
@@ -750,6 +753,9 @@ export default {
     handleEmojiClick(EmojiClickEventDetail) {
       console.log(EmojiClickEventDetail);
       this.pickEmojiShow = false;
+      this.emo = EmojiClickEventDetail.unicode;
+      // this.isEmo = true;
+      console.log(this.emo);
     },
     addIntoGroupList(friend) {
       this.addGroupList.push(friend);
@@ -889,6 +895,12 @@ export default {
     border: 2px solid;
     border-radius: 50px 50px 1px;
     background-color:grey;
+    color: white;
+}
+.emo{
+    position: fixed;
+    border: 2px solid;
+    border-radius: 20px ;
     color: white;
 }
 .btn {

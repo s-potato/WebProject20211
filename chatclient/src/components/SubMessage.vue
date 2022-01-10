@@ -27,14 +27,14 @@
                   </v-list>
                 </v-menu>
 
-                <v-menu class="space1" left bottom :offset-x="offset">
+                <!-- <v-menu class="space1" left bottom :offset-x="offset">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on">
                       <v-icon v-show="message.active">far fa-grin-beam</v-icon>
                     </v-btn>
                   </template>
                   <VuemojiPicker @emojiClick="handleEmojiClick" />
-                </v-menu>
+                </v-menu> -->
 </template>
 <script>
 import { VuemojiPicker } from 'vuemoji-picker';
