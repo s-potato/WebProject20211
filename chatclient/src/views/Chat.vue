@@ -65,7 +65,7 @@
                     </v-list-item-group>
                   </v-list>
                   <v-card-actions color="primary" class="justify-end">
-                    <v-btn text @click="createGroup">Confirm</v-btn>
+                    <v-btn text @click="dialog.value = false, createGroup()">Confirm</v-btn>
                   </v-card-actions>
                   <v-card-actions class="justify-end">
                     <v-btn text @click="dialog.value = false">Close</v-btn>
@@ -124,7 +124,7 @@
             <v-list-item-group v-if="isDirect == false">
               <template v-for="(item, index) in group">
                 <v-list-item
-                  :key="item.name"
+                  :key="item.id"
                   @click="
                     setID(item.id, item.name), infoRoom(item.id, item.name)
                   "
@@ -220,6 +220,7 @@
             <AddGroup
               :username='user.username'
               :members="this.groupUsers"
+              :idRoomChoose="this.idRoomChoose"
               @addIntoGroup="addIntoGroup">
             </AddGroup>
             <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
@@ -460,9 +461,6 @@
             class="emojiPicker"
             :class="isActive ? 'leftEmoji' : 'rightEmoji'"
           />
-          <!-- <reply v-if="isReply == true" :isReply=isReply>
-            <v-icon class="btn" icon clickable v-on:click="isReply != isReply" >mdi-close-circle-outline</v-icon>
-          </reply> -->
             <div class="reply" v-if="isReply == true">
               <v-icon style="color: white">mdi-share</v-icon>
               Reply to {{this.replyUser}}
@@ -619,14 +617,53 @@ export default {
   created() {
     socket.on("connect", () => {
       socket.emit("userconnected", { username: this.user.username });
-    }),
-      socket.on("response", (data) => {
-        if (data.room_id === this.idRoomChoose) {
-          this.messages.push(data);
-        }
-      });
+    })
+    socket.on("response", (data) => {
+      if (data.room_id === this.idRoomChoose) {
+        this.messages.push(data);
+      }
+    })
+    socket.on("A member added", (data)=>{
+      if (data.room_id === this.idRoomChoose) {
+        let params = {
+          id: this.idRoomChoose,
+        };
+        axios
+          .post("http://localhost:8000/rooms/members", params)
+          .then((response) => {
+            this.groupUsers = response.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    })
+    socket.on("Join room",(data)=> {
+      let params = {
+        username: this.user.username,
+      };
+    // show group list
+      axios
+      .post("http://localhost:8000/users/rooms", params)
+      .then((response) => {
+        this.group = response.data;
+        socket.emit("Joined room", { room_id: data.room_id });
+      })
+    })
+    socket.on("Join direct room",(data)=> {
+      let params = {
+        username: this.user.username,
+      };
+    // show group list
+      axios
+      .post("http://localhost:8000/users/directs", params)
+      .then((response) => {
+        this.direct = response.data;
+        socket.emit("Joined room", { room_id: data.room_id });
+      })
+    })
     // get Link
-    this.currentUrl = window.location.href;
+    this.currentUrl = window.location.href
   },
   computed: {
     theme() {
@@ -683,7 +720,7 @@ export default {
   methods: {
     logUserOut() {
       localStorage.removeItem("jwt");
-      this.$router.push("/login");
+      this.$router.go("/login");
     },
     sendMessage() {
       socket.emit("chat message", {
@@ -742,7 +779,6 @@ export default {
       this.pickEmojiShow = false;
       this.emo = EmojiClickEventDetail.unicode;
       // this.isEmo = true;
-      console.log(this.emo);
     },
     addIntoGroupList(friend, index) {
       this.addGroupList.push(friend);
@@ -757,7 +793,13 @@ export default {
       (this.groupName = ""),
         axios
           .post("http://localhost:8000/users/createroom", params)
-          .then(this.$router.go())
+          .then( (response) => {
+            socket.emit("create group", {username: this.user.username, room_id: response.data._id, members: this.addGroupList})
+            this.direct.forEach(element => {
+              this.$set(element.friend, 'added', false);
+            });
+            this.addGroupList = []
+          })
           .catch((err) => {
             console.log(err);
           });
@@ -774,8 +816,8 @@ export default {
     },
     getUser(data){
       this.replyUser = data;
-      // console.log(data)
     },
+    
     addPin(messageId){
       let params = {
         username: this.user.username,
@@ -785,7 +827,7 @@ export default {
       axios
         .post("http://localhost:8000/users/pinmessage", params)
         .then(
-          console.log("success")
+          socket.emit("Pin message", {room_id: this.idRoomChoose})
         )
         .catch((err) => {
           console.log(err);

@@ -94,7 +94,6 @@ UserSchema.methods.createRoom = function (data, cb) {
             if (err) {
                 cb(err);
             } else {
-                console.log(user.rooms);
                 user.rooms.push(result._id);
                 user.save(function (err) {
                     if (err) console.log(err);
@@ -106,7 +105,7 @@ UserSchema.methods.createRoom = function (data, cb) {
 };
 
 UserSchema.methods.addListIntoGroup = function(data, cb){
-    Room.findById(data.room_id , (err, result) => {
+    Room.findById(data.room_id , async (err, result) => {
         if (err || !result) {
             cb({ err: "Can't query" });
         }else{ 
@@ -115,7 +114,6 @@ UserSchema.methods.addListIntoGroup = function(data, cb){
                 User.addToGroup({room_id: result._id, username: data.members[i].username}, (err, result) => 
                 {
                     if (err) cb(err);
-                    else cb(result);
                 })
             }
         }
@@ -128,15 +126,19 @@ UserSchema.statics.addToGroup = function(data, cb) {
             cb({ err: "Can't query" });
         }else{
             User.findOne({username: data.username}, (err, user)=>{
-                user.rooms.push(result._id);
-                result.users.push(user._id);
-                result.save(function (err) {
-                    if (err) console.log(err);
-                });
-                user.save(function (err) {
-                    if (err) console.log(err);
-                });
-                cb(null, { status: "Success" });
+                if (err || !user) {
+                    cb({ err: "Can't query" });
+                } else{
+                    user.rooms.push(result._id);
+                    result.users.push(user._id);
+                    result.save(function (err) {
+                        if (err) console.log(err);
+                    });
+                    user.save(function (err) {
+                        if (err) console.log(err);
+                    });
+                    cb(null, { status: "Success" });
+                }
             })
         }
     })
@@ -176,7 +178,6 @@ UserSchema.statics.pinMessage = function(data,cb){
                         result.pinMessages.push(message._id);
                         message.isPin = true ; 
                         message.save();
-                        console.log("Pin" + result.pinMessages[0]);
                         result.markModified('pinMessages');
                         result.save( function (err) {
                             if (err) console.log(err);
@@ -190,10 +191,10 @@ UserSchema.statics.pinMessage = function(data,cb){
     }
 
 
-/*UserSchema.statics.unPin = function(data,cb){
+UserSchema.statics.unPin = function(data,cb){
     Room.findById(data.room_id, (err,result) =>{
         if(err || !result){
-            cb({err :})
+            cb({err})
         }else {
             Message.findById(data.message_id ,(err,message) => {
                 if( err|| !message){
@@ -201,24 +202,18 @@ UserSchema.statics.pinMessage = function(data,cb){
                 }
                 else{
                     if ( message.isPin == true){
-                        let(i = 0; i < result.pinMessages.length();i++){
-                            if(result.pinMessages[i]._id === message._id)
-                            {
-                                result.pinMessages.splice(i,1);
-                                break;
-                            }
-                        }
+                        result.pinMessages.pull({_id: data.message_id}) 
                         message.isPin = false; 
                         message.save();
                         result.save();
-                    }else cb(null, {status : "Not pin"});
+                        cb(null, {status : "Unpined"});
+                    } else cb({status : "Not pin"});
                 }
             }) 
         }
     })
+} 
 
-}
-*/
 
 
 UserSchema.methods.joinRoom = function (room, cb) {
@@ -273,7 +268,6 @@ UserSchema.statics.search = function (params, cb) {
                         eleobj.isFriend = false;
                     }
                     delete eleobj.friends;
-                    console.log(eleobj);
                     data.push(eleobj);
                 })
                 cb(null, data);
@@ -305,7 +299,8 @@ UserSchema.statics.addFriend = function(users, cb) {
                                 requester.save(function (err) {
                                     if (err) console.log(err);
                                 });
-                                cb(null, { status: "Success", message: "Friend added successfully!" });
+                                cb(null, { status: "Success", message: "Friend added successfully!", _id: room._id, requester: requester.username,
+                                request_to: request_to.username });
                             }
                         }
                     );

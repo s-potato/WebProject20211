@@ -145,6 +145,7 @@
 
 <script>
 import axios from 'axios';
+import socket from '../socket';
 
 export default {
   username: '',
@@ -166,14 +167,14 @@ export default {
         username: this.username,
         password: this.password
       };
+      let username = params.username;
       axios
         .post("http://localhost:8000/users/login",params)
         .then(response => {
-          console.log(response);
           let token = response.data.data.jwt;
           localStorage.setItem("jwt", token);
           if (token) {
-            console.log("success");
+            socket.emit("userconnected", { username: username });
             this.$router.push('/')
           }
         })
@@ -192,12 +193,10 @@ export default {
       axios
         .post("http://localhost:8000/users/register", params)
         .then((response) => {
-          console.log(response.data.data);
           let token = response.data.token;
           if (token) {
             localStorage.setItem("jwt", token);
             this.$router.push("/chat");
-            console.log("success");
           } else {
             console.log("err");
           }

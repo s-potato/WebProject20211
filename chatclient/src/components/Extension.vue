@@ -1,5 +1,6 @@
 <template>
   <div class="extension" v-if="isDirect == false">
+    <!-- Groups -->
     <v-card class="text-center mt-8 mb-3" shaped>
       <v-badge bordered bottom color="green" dot offset-x="11" offset-y="13">
         <v-avatar class="mt-n7" size="60" elevation="10">
@@ -14,6 +15,7 @@
       >
     </v-card>
     <v-expansion-panels v-model="panel" multiple>
+      <!-- members -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Member</h3>
@@ -56,12 +58,14 @@
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <!-- theme -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Theme</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content> </v-expansion-panel-content>
       </v-expansion-panel>
+      <!-- Files -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Files(3)</h3>
@@ -81,11 +85,12 @@
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <!-- pinned messages -->
       <v-expansion-panel>
-        <v-expansion-panel-header @click="getPinList">
+        <v-expansion-panel-header>
           <h3>Pinned Message</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> 
+        <v-expansion-panel-content style="overflow: auto; height:181px;"> 
           <v-list three-line>
             <template v-for="(item, index) in pinList">
               <v-list-item
@@ -99,7 +104,7 @@
                   <v-list-item-subtitle v-html="item.sendUser"></v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon @click="unPin">
+                  <v-btn icon @click="unPin(item.id)">
                     <v-icon color="grey lighten-1">fas fa-trash-alt</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -111,6 +116,7 @@
     </v-expansion-panels>
   </div>
   <div class="extension" v-else>
+    <!-- Direct -->
     <v-card class="text-center mt-8 mb-3" shaped>
       <v-badge bordered bottom color="green" dot offset-x="11" offset-y="13">
         <v-avatar class="mt-n7" size="60" elevation="10">
@@ -125,6 +131,7 @@
       >
     </v-card>
     <v-expansion-panels v-model="panel" multiple>
+      <!-- Nickname -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Nickname</h3>
@@ -132,12 +139,14 @@
         <v-expansion-panel-content> 
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <!-- theme -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Theme</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content> </v-expansion-panel-content>
       </v-expansion-panel>
+      <!-- Files -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Files(3)</h3>
@@ -157,17 +166,19 @@
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <!-- Block -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Block</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content> </v-expansion-panel-content>
       </v-expansion-panel>
+      <!-- Pinned Message -->
       <v-expansion-panel>
-        <v-expansion-panel-header @click="getPinList">
+        <v-expansion-panel-header>
           <h3>Pinned Message</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> 
+        <v-expansion-panel-content style="overflow: auto; height:181px;"> 
           <v-list three-line>
             <template v-for="(item, index) in pinList">
               <v-list-item
@@ -181,7 +192,7 @@
                   <v-list-item-subtitle v-html="item.sendUser"></v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon @click="unPin">
+                  <v-btn icon @click="unPin(item.id)">
                     <v-icon color="grey lighten-1">fas fa-trash-alt</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -195,7 +206,9 @@
 </template>
 
 <script>
+import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
+// import socket from '../socket';
 export default {
   name: "extension",
   props:{
@@ -212,7 +225,15 @@ export default {
         type: String,
       }
   },
+  // created() {
+  //   socket.on("Pinned", () =>{
+  //     this.getPinList()
+  //   })
+  // },
   data() {
+    let token = localStorage.getItem("jwt");
+    let decoded = VueJwtDecode.decode(token);
+    this.user = decoded;
     return {
       panel: [2],
       files: [
@@ -220,8 +241,14 @@ export default {
         { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
         { text: "Uwagi.docx", icon: " mdi-cloud-upload" },
       ],
-      pinList: []
+      pinList: [],
     };
+  },
+  watch: {
+    idRoomChoose: function(newVal, oldVal) { // watch it
+      if(newVal != oldVal)
+        this.getPinList()
+    }
   },
   methods: {
     getPinList() {
@@ -244,9 +271,19 @@ export default {
           console.log(err);
         });
     },
-    unPin() {
-      
-    }
+    unPin(messageId){
+      let params = {
+        username: this.user.username,
+        message_id: messageId,
+        room_id: this.idRoomChoose,
+      };
+      axios
+        .post("http://localhost:8000/users/unpin", params)
+        .then()
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   }
 };
 </script>

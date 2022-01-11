@@ -4,7 +4,6 @@ const Message = require("./models/message");
 
 function addMessage(room, user, message, type, cb) {
   User.findOne({ username: user.username }, function (err, result) {
-    console.log(result);
     if (err || !result) { cb({ err: "Can't query" }) }
     else {
       user = result;
@@ -16,7 +15,6 @@ function addMessage(room, user, message, type, cb) {
             Message.create({ room: room._id, sender: user._id, content: message.body}, function (err3, result3) {
               if (err3) { cb(err3) }
               else {
-                console.log(result3);
                 room.messages.push(result3._id);
                 room.save(function (err) {
                   if (err) console.log(err);
@@ -28,7 +26,6 @@ function addMessage(room, user, message, type, cb) {
             Message.create({ room: room._id, sender: user._id, file: message.body, type: type }, function (err3, result3) {
               if (err3) { cb(err3) }
               else {
-                console.log(result3);
                 room.messages.push(result3._id);
                 room.save(function (err) {
                   if (err) console.log(err);
@@ -49,6 +46,7 @@ module.exports = (io) => {
     socket.on("userconnected", (data) => {
       username = data.username;
       console.log(username + " connected.");
+      socket.join(String(username)); //
       User.findOne({ username: data.username }, (err, result) => {
         if (!err && result) {
           result.status = true;
@@ -60,7 +58,6 @@ module.exports = (io) => {
       User.getDirectsList({ username: data.username }, (err, result) => {
         if (!err && result) {
           for (friend of result) {
-            console.log(friend.room._id);
             socket.join(String(friend.room._id));
           }
         }
@@ -68,7 +65,6 @@ module.exports = (io) => {
       User.getRoomsList({ username: data.username }, (err, result) => {
         if (!err && result) {
           for (group of result) {
-            console.log(group.id);
             socket.join(String(group.id));
           }
         }
@@ -89,13 +85,11 @@ module.exports = (io) => {
     });
 
     socket.on("chat message", (data) => {
-      console.log("message: " + data.message + " from " + data.sender);
       addMessage({ room_id: data.room_id }, { username: data.sender }, { body: data.message }, "text", (err, result) => {
         if (err) {
           console.log(err);
         } else {
           data.date = Date.now();
-          console.log("send data" + data);
           io.to(data.room_id).emit("response", data);
           /*update room.update at
           
@@ -105,36 +99,60 @@ module.exports = (io) => {
     });
 
     socket.on("image message", (data) => {
-      console.log("image: " + " from " + data.sender);
       addMessage({ room_id: data.room_id }, { username: data.sender }, { body: data.file }, "image", (err, result) => {
         if (err) {
           console.log(err);
         } else {
           data.date = Date.now();
           data.type = "image";
-          console.log("send data" + data);
           io.to(data.room_id).emit("response", data);
         }
       });
-    })
+    });
+
+    socket.on("Pin message", (data) => {
+      io.to(data.room_id).emit("Pinned");
+    });
+
     /*
-    ,
-    socket.on("Accept f-request", (data) => {
-      //data has directroom_id 
-      io.to(data.room_id).emit("Accepted");
-    }),
-
-    socket.on("Add member",(data) =>{
-      io.to(data.room_id).emit("A member added");
-    }),
+    socket.on("Unpin message", (data) => {
+      io.to.(data.room_id).emit("Unpinned");
+    })
     
-    socket.on("Typing",(data) => {
-
-    }),
-
-
 
     */
-    ;
-  });
+
+    socket.on("Add member",(data) =>{
+      io.to(data.room_id).emit("A member added", {room_id: data.room_id}); // refresh group
+      data.members.forEach(member =>{
+        io.to(member.username).emit("Join room", {room_id: data.room_id})
+      })
+    })
+
+    socket.on("Joined room", (data) => {
+      socket.join(String(data.room_id))
+    })
+
+    socket.on("create group", (data) => {
+      io.to(data.username).emit("Join room", {room_id: data.room_id})
+      data.members.forEach(member =>{
+        io.to(member.username).emit("Join room", {room_id: data.room_id})
+      })
+    })
+
+    socket.on("Accept f-request", (data) => {
+      io.to(data.requester).emit("Join direct room", {room_id: data.room_id});
+      io.to(data.request_to).emit("Join direct room", {room_id: data.room_id});
+    })
+
+    ,
+    socket.on("Send f-request", (data) => {
+      console.log(data)
+      console.log("wtf???" + data.request_to);
+      io.to(data.request_to).emit("F-request", (data));
+    })
+    /*
+     socket.on("Typing",(data) =>{
+    */
+  })
 };

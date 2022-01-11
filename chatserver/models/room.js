@@ -91,7 +91,6 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
 
 
  RoomSchema.statics.getPinList =  function (room,cb ){
-      console.log("roomid" + room.id);
        Room.findById(room.id).populate("pinMessages").exec( async function(err,result){
             if (err || !result) {
                 cb({ err: "Can't query" });
@@ -103,9 +102,10 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
                       if(err || !message){
                         cb({ err: "Can't query" });
                       }else{
+                        temp.id = message._id;
                         temp.sender = message.sender;
                         temp.type = message.type;
-                        if( message.type = "Text"){
+                        if( message.type == "text"){
                           temp.content = message.content;
                         }else{
                           temp.file = message.file;

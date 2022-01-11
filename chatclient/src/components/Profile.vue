@@ -71,7 +71,6 @@
         .then(response => {
             this.user = response.data;
             this.displayname = this.user.display_name;
-            console.log(this.user)
         })
         .catch((err) => {
             console.log(err);
@@ -88,7 +87,6 @@
             let rawImg;
             reader.onloadend = () => {
                 rawImg = reader.result;
-                console.log(rawImg);
                 let params = {
                     username: this.user.username,
                     avatar: rawImg
@@ -103,7 +101,6 @@
             reader.readAsDataURL(file);
         },
         updateName() {
-            console.log(this.displayname)
             let params = {
                 username: this.user.username,
                 display_name: this.displayname

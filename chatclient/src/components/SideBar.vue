@@ -13,6 +13,7 @@
                     <v-list flat>
                         <v-list-item>
                             <v-list-item-content>
+
                                 <Dialog
                                   :username='user.username'
                                   :icon="true"
@@ -101,6 +102,7 @@ import axios from 'axios';
 import VueJwtDecode from "vue-jwt-decode";
 import Dialog from './Dialog.vue';
 import Profile from './Profile.vue';
+import socket from '../socket';
 
 export default {
     components: {
@@ -141,15 +143,35 @@ export default {
             console.log(err);
         })
     },
+    created() {
+        socket.on("F-request", () => {
+            let params = {
+                username: this.user.username
+            };  
+            // show pending list
+            axios.post("http://localhost:8000/users/inrequest",params)
+            .then(response => {
+                console.log("aaaaaaaaaaaaaaa")
+                this.pending = response.data
+                console.log(this.pending)
+                console.log("2");
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        })
+
+    },
     methods: {
         sendRequest(friendName) {
             let params = {
                 friendname: friendName,
                 username: this.user.username
             };
+            console.log(params);
             axios.post("http://localhost:8000/users/sendrequest",params)
             .then(
-                console.log('success send')
+                socket.emit("Send f-request", {requester: this.user.username, request_to: friendName})
             )
             .catch((err) => {
                 console.log(err);
@@ -160,8 +182,10 @@ export default {
                 request_id: id
             };
             axios.post("http://localhost:8000/users/acceptrequest",params)
-            .then(
+            .then( (response) => {
+                socket.emit("Accept f-request", {room_id: response.data._id, requester: response.data.requester, request_to: response.data.request_to})
                 this.pending.splice(index, 1)
+                }
             )
             .catch((err) => {
                 console.log(err);

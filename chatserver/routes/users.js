@@ -90,12 +90,9 @@ router.post('/createroom', (req, res, next) => {
                 else {
                     if (req.body.members) {
                         user.addListIntoGroup({room_id: result._id, members: req.body.members}, (err, result)=>{
-                            res.json(result);
                         })
                     }
-                    else {
-                        res.json(result);
-                    }
+                    res.json(result);
                 }
             })
         }
@@ -219,7 +216,6 @@ router.post('/outrequest', (req, res, next)=>{
     })
 })
 
-
 router.post('/pinmessage', (req,res,next) => {
     User.findOne( { username: req.body.username }, function (err, result) {
         if (err || !result) {
@@ -238,14 +234,31 @@ router.post('/pinmessage', (req,res,next) => {
     })
 })
 
-/*
-    router.post('/unpin', (req,res,next) => {
-        User.findOne( { username: req.body.username }, function (err, result) {
+router.post('/unpin', (req,res,next) => {
+    User.findOne( { username: req.body.username }, function (err, result) {
+    if (err || !result) {
+        res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+    }
+    else {
+        User.unPin({room_id: req.body.room_id, message_id: req.body.message_id } ,(err, result) => {
+            if (err) {
+                res.status(500).json(err);
+            }
+            else {
+                res.json(result);
+            }
+        })
+    }
+})
+})
+
+router.post('/addtogroup', (req, res, next)=>{
+    User.findOne( { username: req.body.username }, function (err, result) {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
         }
         else {
-            User.unPin({room_id: req.body.room_id, message_id: req.body.message_id } ,(err, result) => {
+            result.addListIntoGroup({username: req.body.username, room_id: req.body.room_id, members: req.body.members}, (err, result) => {
                 if (err) {
                     res.status(500).json(err);
                 }
@@ -255,8 +268,6 @@ router.post('/pinmessage', (req,res,next) => {
             })
         }
     })
+})
 
-    })
-
- */
 module.exports = router;

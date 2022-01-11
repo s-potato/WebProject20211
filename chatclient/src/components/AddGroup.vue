@@ -37,7 +37,8 @@
                 </v-list-item-group>
             </v-list>
             <v-card-actions class="justify-end">
-                <v-btn text @click="dialog.value = false, add()">Close</v-btn>
+                <v-btn text @click="dialog.value = false, addGroup()">Add</v-btn>
+                <v-btn text @click="dialog.value = false">Close</v-btn>
             </v-card-actions>
             </v-card>
         </template>
@@ -45,12 +46,14 @@
 </template>
 
 <script>
+import socket from '../socket';
 import axios from 'axios';
 export default {
     name: 'dialog',
     props: {
         username: String,
         members: Array,
+        idRoomChoose: String,
     },
     data() {
         return {
@@ -75,7 +78,6 @@ export default {
                         i--;
                     }
                 }
-                // console.log(this.members)
                 for( i = 0; i < findUsers.length; i++) {
                     findUsers[i].added = false
                     for( var y = 0; y < this.members.length; y++) {
@@ -93,10 +95,22 @@ export default {
         },
         addIntoGroup(username,index){
             this.$set(this.findUsers[index], 'added', true);
-            this.addGroupList.push(username);
+            this.addGroupList.push( {"username": username});
         },
-        add(){
-            
+        addGroup(){
+            let params = {
+                username: this.username,
+                room_id: this.idRoomChoose,
+                members: this.addGroupList,
+            };
+            axios
+                .post("http://localhost:8000/users/addtogroup", params)
+                .then(
+                    socket.emit("Add member", {room_id: this.idRoomChoose, members: this.addGroupList})
+                )
+                .catch((err) => {
+                console.log(err);
+                });
         }
     }
 }
