@@ -82,10 +82,31 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel>
-        <v-expansion-panel-header>
+        <v-expansion-panel-header @click="getPinList">
           <h3>Pinned Message</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> {{this.pinList}}</v-expansion-panel-content>
+        <v-expansion-panel-content> 
+          <v-list three-line>
+            <template v-for="(item, index) in pinList">
+              <v-list-item
+                :key="index"
+              >
+                <v-list-item-avatar>
+                  <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title v-html="item.content"></v-list-item-title>
+                  <v-list-item-subtitle v-html="item.sendUser"></v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-btn icon @click="unPin">
+                    <v-icon color="grey lighten-1">fas fa-trash-alt</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
   </div>
@@ -123,16 +144,16 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-list shaped>
-            <v-list-item-group>
-              <v-list-item v-for="(item, i) in files" :key="i">
-                <v-list-item-icon>
-                  <v-icon v-text="item.icon" color="green"></v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title v-text="item.text"></v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
+            <template v-for="(item, i) in files">
+                <v-list-item :key="i">
+                  <v-list-item-icon>
+                    <v-icon v-text="item.icon" color="green"></v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title v-text="item.text"></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+            </template>
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -142,11 +163,39 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content> </v-expansion-panel-content>
       </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header @click="getPinList">
+          <h3>Pinned Message</h3>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content> 
+          <v-list three-line>
+            <template v-for="(item, index) in pinList">
+              <v-list-item
+                :key="index"
+              >
+                <v-list-item-avatar>
+                  <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title v-html="item.content"></v-list-item-title>
+                  <v-list-item-subtitle v-html="item.sendUser"></v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-btn icon @click="unPin">
+                    <v-icon color="grey lighten-1">fas fa-trash-alt</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
     </v-expansion-panels>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: "extension",
   props:{
@@ -159,10 +208,9 @@ export default {
         required: true
       },
       isDirect: Boolean,
-      pinList:{
-        type: Array,
-        required: true
-      },
+      idRoomChoose:{
+        type: String,
+      }
   },
   data() {
     return {
@@ -172,10 +220,34 @@ export default {
         { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
         { text: "Uwagi.docx", icon: " mdi-cloud-upload" },
       ],
+      pinList: []
     };
   },
   methods: {
-  },
+    getPinList() {
+      let params = {
+        id: this.idRoomChoose,
+      };
+      axios
+        .post("http://localhost:8000/rooms/pins", params)
+        .then((response) => {
+          let pinList = response.data;
+          pinList.forEach(pin => {
+            this.members.forEach(member => {
+              if(pin.sender == member.id)
+                pin.sendUser = member.username
+            })
+          })
+          this.pinList = pinList;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    unPin() {
+      
+    }
+  }
 };
 </script>
 

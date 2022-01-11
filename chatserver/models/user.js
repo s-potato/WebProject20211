@@ -9,7 +9,6 @@ var UserSchema = new mongoose.Schema({
         type: String,
         require: true,
         unique: true,
-        lowercase: true,
         trim: true,
         required: true,
     },
@@ -163,7 +162,7 @@ UserSchema.statics.addToGroup = function(data, cb) {
 }; 
 
 
-    UserSchema.methods.pinMessage = function(data,cb){
+UserSchema.statics.pinMessage = function(data,cb){
         Room.findById(data.room_id, (err, result) => {
             if (err || !result) {
                 cb({ err: "Can't query" });
@@ -173,35 +172,54 @@ UserSchema.statics.addToGroup = function(data, cb) {
                     cb({ err: "Can't query" });
                 }
                 else {
-                    result.pinMessages.push(message._id);
-                    console.log(result)
-                    result.save( function (err) {
-                        if (err) console.log(err);
-                    });
-                    cb(null, { status: "Success" });
+                    if ( message.isPin == false){
+                        result.pinMessages.push(message._id);
+                        message.isPin = true ; 
+                        message.save();
+                        console.log("Pin" + result.pinMessages[0]);
+                        result.markModified('pinMessages');
+                        result.save( function (err) {
+                            if (err) console.log(err);
+                        });
+                        cb(null, { status: "Success" });
+                    }else cb(null, { status: "Existed"});
                 }
             })
         }
         })        
     }
 
-/* 
-    UserSchema.statics.pinMessage = function(message,cb){
-        Room.findById(message.room._id, (err, result) => {
-            if (err || !result) {
-            cb({ err: "Can't query" });
-        }else{
-            Message.findById(message._id , (err,message1) =>{
-                result.pinMessages.push(message1);
-                result.save( function (err) {
-                    if (err) console.log(err);
-                });
-                cb({ status: "Success" });
-            })
+
+/*UserSchema.statics.unPin = function(data,cb){
+    Room.findById(data.room_id, (err,result) =>{
+        if(err || !result){
+            cb({err :})
+        }else {
+            Message.findById(data.message_id ,(err,message) => {
+                if( err|| !message){
+                    cb({ err: "Can't query"});
+                }
+                else{
+                    if ( message.isPin == true){
+                        let(i = 0; i < result.pinMessages.length();i++){
+                            if(result.pinMessages[i]._id === message._id)
+                            {
+                                result.pinMessages.splice(i,1);
+                                break;
+                            }
+                        }
+                        message.isPin = false; 
+                        message.save();
+                        result.save();
+                    }else cb(null, {status : "Not pin"});
+                }
+            }) 
         }
-        })        
-    }
+    })
+
+}
 */
+
 
 UserSchema.methods.joinRoom = function (room, cb) {
     var user = this;
@@ -269,11 +287,11 @@ UserSchema.statics.addFriend = function(users, cb) {
     User.findById(users.requester, (err, requester)=>{
         if (err || !requester) {
             cb({ err: "Can't query" });
-        }else {
+        } else {
             User.findById(users.request_to, (err, request_to)=>{
                 if (err || !requester) {
                     cb({ err: "Can't query" });
-                }else {
+                } else {
                     Room.create( { isDirect: true, users: [requester._id, request_to._id] },
                         (err, room) => {
                             if (err) {

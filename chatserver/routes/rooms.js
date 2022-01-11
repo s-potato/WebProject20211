@@ -27,4 +27,15 @@ router.post('/members', function (req, res, next) {
     })
 })
 
+router.post('/pins',function(req,res,next) {
+     Room.getPinList(req.body, function (err, result) {
+        if (err) {
+            res.status(500).json(err);
+        }
+        else {
+            res.json(result);
+        }
+    })
+})
+
 module.exports = router;

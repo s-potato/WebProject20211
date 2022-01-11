@@ -29,8 +29,10 @@
                       <template v-for="(item, index) in direct">
                         <v-list-item
                           :key="item.friend._id"
-                          @click="addIntoGroupList(item.friend)"
+                          :disabled="item.friend.added"
+                          @click="addIntoGroupList(item.friend, index)"
                         >
+                        <!-- Vue.set(direct[index], 'added', true), -->
                           <v-badge
                             bordered
                             bottom
@@ -52,12 +54,8 @@
                               ></v-list-item-title>
                             </v-list-item-content>
                           </template>
-                          <!-- <v-btn color="blue" icon class="mt-n5 mr-n2" outlined max-height="35" max-width="35" @click="item.icon = !item.icon">
-                            <v-icon small v-if="item.icon == true"
-                              >fas fa-plus</v-icon
-                            >
-                            <v-icon small v-else>mdi-check</v-icon>
-                          </v-btn> -->
+                          <v-icon small v-if="item.friend.added === true" >fas fa-check</v-icon>
+                          <v-icon small v-else>fas fa-user-plus</v-icon>
                         </v-list-item>
                         <v-divider
                           v-if="index < direct.length - 1"
@@ -221,7 +219,8 @@
             </v-toolbar-title>
             <AddGroup
               :username='user.username'
-              :members="this.groupUsers">
+              :members="this.groupUsers"
+              @addIntoGroup="addIntoGroup">
             </AddGroup>
             <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
               <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
@@ -315,13 +314,13 @@
                     </template>
 
                   <v-list>
-                    <v-list-item clickable v-on:click="addPin(message._id)">
+                    <v-list-item clickable @click="addPin(message._id)">
                       <v-list-item-title>
                         <v-icon>mdi-pin</v-icon>
                         Pin</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item clickable v-on:click="isReply = true,getUser(message.sender)">
+                    <v-list-item clickable @click="isReply = true,getUser(message.sender)">
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
@@ -409,7 +408,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-list-item v-bind="attrs" v-on="on">
                           <v-list-item-content class="content">
-                            <div>{{ message.message + message.active }}</div>
+                            <div>{{ message.message }}</div>
                           </v-list-item-content>
                         </v-list-item>
                       </template>
@@ -432,22 +431,18 @@
                     </v-btn>
                   </template>
                   <v-list>
+                    <v-list-item clickable @click="addPin(message._id)">
+                      <v-list-item-title>
+                        <v-icon>mdi-pin</v-icon>
+                        Pin</v-list-item-title
+                      >
+                    </v-list-item>
                     <v-list-item clickable >
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
                       >
                     </v-list-item>
-                    <!-- <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-circle-edit-outline</v-icon>
-                      Edit</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item clickable>
-                    <v-list-item-title>
-                      <v-icon>mdi-content-copy</v-icon>
-                      Copy</v-list-item-title>
-                  </v-list-item> -->
                     <v-list-item clickable>
                       <v-list-item-title>
                         <v-icon>mdi-delete</v-icon>
@@ -555,10 +550,10 @@
           </v-app-bar>
           <div v-else>
             <extension
-              :pinList="pinList"
               :isDirect="isDirect"
               :members="this.groupUsers"
               :nameChoose="this.nameChoose"
+              :idRoomChoose="this.idRoomChoose"
             ></extension>
           </div>
         </v-col>
@@ -602,7 +597,6 @@ export default {
       replyUser: "",
       isReply: false,
       groupUsers: [],
-      pinList:[],
       group: [],
       direct: [],
       messages: [],
@@ -706,12 +700,6 @@ export default {
     resetIcon() {
       this.iconIndex = 0;
     },
-    joinGroup() {
-      //TODO:
-    },
-    sendRequest() {
-      //TODO:
-    },
     setID(id, name) {
       // show message list
       this.idRoomChoose = id;
@@ -723,7 +711,6 @@ export default {
         .post("http://localhost:8000/rooms/messages", params)
         .then((response) => {
           this.messages = response.data;
-          console.log(response.data)
         })
         .catch((err) => {
           console.log(err);
@@ -757,8 +744,9 @@ export default {
       // this.isEmo = true;
       console.log(this.emo);
     },
-    addIntoGroupList(friend) {
+    addIntoGroupList(friend, index) {
       this.addGroupList.push(friend);
+      this.$set(this.direct[index].friend, 'added', true);
     },
     createGroup() {
       let params = {
@@ -824,6 +812,9 @@ export default {
       });
       }
       reader.readAsDataURL(file);
+    },
+    addIntoGroup(){
+      this.$router.go()
     }
   },
 };

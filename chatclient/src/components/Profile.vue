@@ -15,14 +15,14 @@
                     <v-card-text>
                         <v-flex class="mb-4">
                             <v-avatar size="96" class="mr-4">
-                                <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
+                                <img :src="`${user.avatar}`" />
                             </v-avatar>
                             <v-btn @click="openAvatarPicker">Change Avatar</v-btn>
                             <input
                                 ref="inputAvatar"
                                 type="file"
                                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                style="display: none;" @click="changeAvatar">
+                                style="display: none;" @change="changeAvatar()">
                         </v-flex>
                         <v-text-field
                             label="User Name" :value="user.username"
