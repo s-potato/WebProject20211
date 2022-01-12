@@ -111,16 +111,17 @@ module.exports = (io) => {
     });
 
     socket.on("Pin message", (data) => {
-      io.to(data.room_id).emit("Pinned");
+      console.log("Pin " +data.message_id)
+      io.to(data.room_id).emit("A message pinned",(data));
     });
 
-    /*
-    socket.on("Unpin message", (data) => {
-      io.to.(data.room_id).emit("Unpinned");
-    })
+    
+      socket.on("Unpin message", (data) => {
+        io.to(data.room_id).emit("Unpinned a message",(data));
+     });
     
 
-    */
+    
 
     socket.on("Add member",(data) =>{
       io.to(data.room_id).emit("A member added", {room_id: data.room_id}); // refresh group
@@ -148,7 +149,7 @@ module.exports = (io) => {
     ,
     socket.on("Send f-request", (data) => {
       console.log(data)
-      console.log("wtf???" + data.request_to);
+      console.log("Send f-request to" + data.request_to);
       io.to(data.request_to).emit("F-request", (data));
     })
     /*

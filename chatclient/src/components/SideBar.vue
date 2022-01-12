@@ -81,7 +81,7 @@
                             <v-list-item-avatar class="mb-5">
                                 <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
                                     <v-avatar size="40">
-                                        <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
+                                        <v-img :src="user.avatar ? user.avatar : '/avatar.png'"></v-img>
                                     </v-avatar>
                                 </v-badge>
                             </v-list-item-avatar>
@@ -142,6 +142,13 @@ export default {
         .catch((err) => {
             console.log(err);
         })
+        axios.post("http://localhost:8000/users/info",params)
+        .then(response => {
+            this.user = response.data;
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     },
     created() {
         socket.on("F-request", () => {
@@ -170,8 +177,9 @@ export default {
             };
             console.log(params);
             axios.post("http://localhost:8000/users/sendrequest",params)
-            .then(
+            .then(()=>{
                 socket.emit("Send f-request", {requester: this.user.username, request_to: friendName})
+            }
             )
             .catch((err) => {
                 console.log(err);

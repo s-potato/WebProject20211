@@ -69,6 +69,7 @@ export default {
             };
             axios.post("http://localhost:8000/users/find",params)
             .then(response => {
+            console.log(this.findUsers)
                 return this.findUsers = response.data
             })
             .catch((err) => {

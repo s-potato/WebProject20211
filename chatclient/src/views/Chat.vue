@@ -32,7 +32,6 @@
                           :disabled="item.friend.added"
                           @click="addIntoGroupList(item.friend, index)"
                         >
-                        <!-- Vue.set(direct[index], 'added', true), -->
                           <v-badge
                             bordered
                             bottom
@@ -43,14 +42,14 @@
                           >
                             <v-list-item-avatar>
                               <v-img
-                                :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                                :src="item.friend.avatar ? item.friend.avatar : '/avatar.png'"
                               ></v-img>
                             </v-list-item-avatar>
                           </v-badge>
                           <template>
                             <v-list-item-content>
                               <v-list-item-title
-                                v-text="item.friend.username"
+                                v-text="item.friend.display_name"
                               ></v-list-item-title>
                             </v-list-item-content>
                           </template>
@@ -171,14 +170,14 @@
                   >
                     <v-list-item-avatar>
                       <v-img
-                        :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                        :src="item.friend.avatar ? item.friend.avatar : '/avatar.png'"
                       ></v-img>
                     </v-list-item-avatar>
                   </v-badge>
                   <template>
                     <v-list-item-content>
                       <v-list-item-title
-                        v-text="item.friend.username"
+                        v-text="item.friend.display_name"
                       ></v-list-item-title>
                     </v-list-item-content>
                   </template>
@@ -346,7 +345,7 @@
                   </v-menu>
                 <!-- chat message -->
                 <div>
-                  <div class="name">{{ message.sender }}</div>
+                  <div class="name">{{ getDisplayName(message.sender) }}</div>
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
@@ -374,7 +373,7 @@
                   offset-y="10"
                 >
                   <v-avatar size="30" elevation="10">
-                    <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
+                    <img :src="getAvatar(message.sender)" @error="this.onerror=null;this.src='/avatar.png';" />
                   </v-avatar>
                 </v-badge>
               </v-app-bar>
@@ -396,11 +395,11 @@
                   offset-y="10"
                 >
                   <v-avatar size="30" elevation="10">
-                    <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
+                    <img :src="getAvatar(message.sender)" @error="this.onerror=null;this.src='/avatar.png';"/>
                   </v-avatar>
                 </v-badge>
                 <div>
-                  <div class="name">{{ message.sender }}</div>
+                  <div class="name">{{ getDisplayName(message.sender) }}</div>
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
@@ -718,6 +717,13 @@ export default {
       });
   },
   methods: {
+    getDisplayName(username) {
+      return this.groupUsers.find( element => element.username == username ).display_name
+    },
+    getAvatar(username) {
+      return this.groupUsers.find( element => element.username == username ).avatar ?
+          this.groupUsers.find( element => element.username == username ).avatar : '/avatar.png'
+    },
     logUserOut() {
       localStorage.removeItem("jwt");
       this.$router.go("/login");
@@ -826,8 +832,11 @@ export default {
       };
       axios
         .post("http://localhost:8000/users/pinmessage", params)
-        .then(
-          socket.emit("Pin message", {room_id: this.idRoomChoose})
+        .then(()=>
+        {
+          console.log("");
+          socket.emit("Pin message",params);
+        }
         )
         .catch((err) => {
           console.log(err);

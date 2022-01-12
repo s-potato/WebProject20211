@@ -49,6 +49,10 @@ RoomSchema.statics.getMembersList = function (room, cb) {
         let response = [];
         for (let i = 0; i < result.users.length; i++) {
           let temp = {};
+          temp.display_name = result.users[i].display_name;
+          if (result.users[i].avatar) {
+            temp.avatar = result.users[i].avatar;
+          }
           temp.username = result.users[i].username;
           temp.id = result.users[i].id;
           temp.status = result.users[i].status;
@@ -115,6 +119,7 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
                       }
                     }).clone().catch(function(err){ console.log(err)})                  
                 }
+                console.log("Get pin list");
                 cb(null,response);
             }
         })
