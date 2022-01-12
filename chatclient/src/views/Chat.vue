@@ -362,7 +362,16 @@
                       <span> {{ format_date(message.date) }}</span>
                     </v-tooltip>
                   </v-card>
-                  <v-card class="emo">{{emo}}</v-card>
+                  <v-card >
+                    <v-tooltip top >
+                      <template v-slot:activator="{ on, attrs }">
+                        <div class="emo" v-bind="attrs" v-on="on">
+                         {{emo}}
+                        </div>
+                      </template>
+                      <span> {{emo}} {{message.sender}}</span>
+                    </v-tooltip>
+                  </v-card>
                 </div>
                 <v-badge
                   class="space"
@@ -594,6 +603,7 @@ export default {
       idRoomChoose: "",
       replyUser: "",
       isReply: false,
+      emoMess:"",
       groupUsers: [],
       group: [],
       direct: [],
@@ -816,6 +826,7 @@ export default {
     },
     getUser(data){
       this.replyUser = data;
+      this.emoMess = data;
     },
     
     addPin(messageId){
