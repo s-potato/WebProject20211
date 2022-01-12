@@ -39,13 +39,13 @@
                   >
                     <v-list-item-avatar>
                       <v-img
-                        :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                        :src="item.avatar ? item.avatar : '/avatar.png'"
                       ></v-img>
                     </v-list-item-avatar>
                   </v-badge>
                   <template>
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.username"></v-list-item-title>
+                      <v-list-item-title v-text="item.display_name"></v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
@@ -104,7 +104,7 @@
                   <v-list-item-subtitle v-html="item.sendUser"></v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon @click="unPin(item.id)">
+                  <v-btn icon @click="unPin(item.id,index)">
                     <v-icon color="grey lighten-1">fas fa-trash-alt</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -208,7 +208,7 @@
 <script>
 import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
-// import socket from '../socket';
+import socket from '../socket';
 export default {
   name: "extension",
   props:{
@@ -225,11 +225,20 @@ export default {
         type: String,
       }
   },
-  // created() {
-  //   socket.on("Pinned", () =>{
-  //     this.getPinList()
-  //   })
-  // },
+  created() {
+    socket.on("A message pinned", () =>{ 
+      console.log("Pinned"); 
+      this.getPinList();
+      console.log("Pinned success"); 
+
+    });
+  socket.on("Unpinned a message",()=>{
+    console.log("Unpinned");
+    this.getPinList();
+    console.log("Unpinned success");
+   });
+  },
+
   data() {
     let token = localStorage.getItem("jwt");
     let decoded = VueJwtDecode.decode(token);
@@ -266,12 +275,13 @@ export default {
             })
           })
           this.pinList = pinList;
+          console.log("Success");
         })
         .catch((err) => {
           console.log(err);
         });
     },
-    unPin(messageId){
+    unPin(messageId,index){
       let params = {
         username: this.user.username,
         message_id: messageId,
@@ -279,7 +289,10 @@ export default {
       };
       axios
         .post("http://localhost:8000/users/unpin", params)
-        .then()
+        .then(()=>{
+            socket.emit("Unpin message", {room_id: this.idRoomChoose, message_id: messageId})
+            this.pinList.splice(index,1);
+        })
         .catch((err) => {
           console.log(err);
         });

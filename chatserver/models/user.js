@@ -182,8 +182,8 @@ UserSchema.statics.pinMessage = function(data,cb){
                         result.save( function (err) {
                             if (err) console.log(err);
                         });
-                        cb(null, { status: "Success" });
-                    }else cb(null, { status: "Existed"});
+                        cb(null, { status: "Success", data: message });
+                    }else cb(null, { status: "Existed", data: message});
                 }
             })
         }
@@ -206,8 +206,8 @@ UserSchema.statics.unPin = function(data,cb){
                         message.isPin = false; 
                         message.save();
                         result.save();
-                        cb(null, {status : "Unpined"});
-                    } else cb({status : "Not pin"});
+                        cb(null, {status : "Unpined", data: message});
+                    } else cb({status : "Not pin yet"});
                 }
             }) 
         }
@@ -248,7 +248,7 @@ UserSchema.methods.joinRoom = function (room, cb) {
 UserSchema.statics.search = function (params, cb) {
     User.find({ username: { $regex: ".*" + params.term + ".*" } })
     .where('username').ne(params.username)
-    .populate("friends.friend", "username").select("_id username").exec((err, result) => {
+    .populate("friends.friend", "username").select("_id username avatar").exec((err, result) => {
         if (err || !result) {
             cb({ err: "Can't query" });
         } else {
@@ -312,7 +312,7 @@ UserSchema.statics.addFriend = function(users, cb) {
 
 UserSchema.statics.getDirectsList = function (user, cb) {
     User.findOne({ username: user.username })
-        .populate("friends.room", "isDirect").populate("friends.friend", "username status")
+        .populate("friends.room", "isDirect").populate("friends.friend", "username display_name avatar status")
         .exec(function (err, result) {
             if (err || !result) {
                 cb({ err: "Can't query" });
