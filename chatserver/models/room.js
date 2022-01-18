@@ -99,6 +99,9 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
             if (err || !result) {
                 cb({ err: "Can't query" });
             }else {
+              if ( result.pinMessages.length == 0 ){
+                  cb(null , {status: "List empty"});
+              }else {
                 let response = [];
                  for ( let i = 0; i < result.pinMessages.length; i++){
                     let temp = {};
@@ -122,6 +125,7 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
                 console.log("Get pin list");
                 cb(null,response);
             }
+          }
         })
     }
 
