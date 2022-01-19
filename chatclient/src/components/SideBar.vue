@@ -13,7 +13,6 @@
                     <v-list flat>
                         <v-list-item>
                             <v-list-item-content>
-
                                 <Dialog
                                   :username='user.username'
                                   :icon="true"
@@ -70,14 +69,15 @@
                                 </v-menu>
                             </v-list-item-content>
                         </v-list-item>
-                        <v-list-item router to="/">
+                        <v-list-item>
                             <v-list-item-content>
-                                <v-icon color="grey">
+                                <!-- <v-icon color="grey">
                                     fas fa-cog
-                                </v-icon>
+                                </v-icon> -->
+                                <ChangePassMail></ChangePassMail>
                             </v-list-item-content>
                         </v-list-item>
-                        <v-list-item router to="/">
+                        <v-list-item>
                             <v-list-item-avatar class="mb-5">
                                 <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
                                     <v-avatar size="40">
@@ -109,12 +109,14 @@ import axios from 'axios';
 import VueJwtDecode from "vue-jwt-decode";
 import Dialog from './Dialog.vue';
 import Profile from './Profile.vue';
+import ChangePassMail from './ChangePassMail.vue';
 import socket from '../socket';
 
 export default {
     components: {
         Dialog,
         Profile,
+        ChangePassMail,
     },
     data () {
         let token = localStorage.getItem("jwt");

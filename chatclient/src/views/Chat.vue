@@ -497,11 +497,16 @@
               @change="uploadImage()"
               style="display: none;">
 
-            <v-btn class="mr-5">
-              <v-icon right class="mr-5"> fas fa-file-upload </v-icon>
+            <v-btn class="mr-5" @click="chooseFile">
+              <v-icon right class="mr-5" > fas fa-file-upload </v-icon>
 
               <span class="hidden-sm-and-down">Files</span>
             </v-btn>
+            <input
+              ref="inputFile"
+              type="file"
+              @change="uploadFile()"
+              style="display: none;">
 
             <v-btn class="mr-5">
               <v-icon right class="mr-5"> fas fa-video </v-icon>
@@ -871,6 +876,9 @@ export default {
     async chooseImg() {
       this.$refs.inputImg.click()
     },
+    async chooseFile() {
+      this.$refs.inputFile.click();
+    },
     uploadImage() {
       const file = document.querySelector('input[type=file]').files[0]
       const reader = new FileReader()
@@ -889,6 +897,15 @@ export default {
       });
       }
       reader.readAsDataURL(file);
+    },
+    uploadFile() {
+      const file = this.$refs.inputFile.files[0]
+      const form = new FormData();
+      form.append('file', file);
+      axios.post("http://localhost:8000/upload", form)
+      .then(()=>{
+        console.log("uploaded");
+      })
     },
     addIntoGroup(){
       this.$router.go()
