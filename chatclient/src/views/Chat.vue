@@ -560,6 +560,7 @@
               :members="this.groupUsers"
               :nameChoose="this.nameChoose"
               :idRoomChoose="this.idRoomChoose"
+              @updateGroup="updateGroup"
             ></extension>
           </div>
         </v-col>
@@ -876,8 +877,12 @@ export default {
       reader.readAsDataURL(file);
     },
     addIntoGroup(){
+      // need to check
       this.$router.go()
     }
+  },
+  updateGroup(){
+    // call list group again
   },
 };
 </script>

@@ -58,6 +58,19 @@
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <!-- group setting -->
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          <h3>Setting group</h3>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content> 
+          <SettingGroup
+          :nameChoose="nameChoose"
+          @updateGroup="updateGroup"
+          @outGroup="outGroup"
+          ></SettingGroup>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
       <!-- theme -->
       <v-expansion-panel>
         <v-expansion-panel-header>
@@ -209,6 +222,7 @@
 import VueJwtDecode from "vue-jwt-decode";
 import axios from 'axios';
 import socket from '../socket';
+import SettingGroup from './SettingGroup.vue';
 export default {
   name: "extension",
   props:{
@@ -224,6 +238,9 @@ export default {
       idRoomChoose:{
         type: String,
       }
+  },
+  components: {
+    SettingGroup,
   },
   created() {
     socket.on("A message pinned", () =>{ 
@@ -254,7 +271,7 @@ export default {
     };
   },
   watch: {
-    idRoomChoose: function(newVal, oldVal) { // watch it
+    idRoomChoose: function(newVal, oldVal) {
       if(newVal != oldVal)
         this.getPinList()
     }
@@ -297,6 +314,12 @@ export default {
           console.log(err);
         });
     },
+    updateGroup() {
+      this.$emit('updateGroup');
+    },
+    outGroup() {
+      this.$emit('outGroup');
+    }
   }
 };
 </script>
