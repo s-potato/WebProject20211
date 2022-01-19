@@ -3,6 +3,7 @@ const User = require('../models/user');
 const Room = require('../models/room')
 const jwt = require('jsonwebtoken');
 const auth = require('../util/auth');
+var upload = require('../util/upload')
 const router = express.Router();
 
 router.post('/messages', function (req, res, next) {
@@ -37,5 +38,9 @@ router.post('/pins',function(req,res,next) {
         }
     })
 })
+
+router.post('/upload', upload.single('file'), (req, res, next)=> {
+    res.json("uploaded");
+  })
 
 module.exports = router;
