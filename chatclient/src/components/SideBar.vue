@@ -86,6 +86,13 @@
                                 </v-badge>
                             </v-list-item-avatar>
                         </v-list-item>
+                        <v-list-item @click="logUserOut">
+                            <v-list-item-content>
+                                <v-icon color="grey">
+                                    logout
+                                </v-icon>
+                            </v-list-item-content>
+                        </v-list-item>
                     </v-list>
                 </v-navigation-drawer>
             </nav>
@@ -198,7 +205,11 @@ export default {
             .catch((err) => {
                 console.log(err);
             })
-        }
+        },
+        logUserOut() {
+            localStorage.removeItem("jwt");
+            this.$router.go("/login");
+        },
     },
     
 }
