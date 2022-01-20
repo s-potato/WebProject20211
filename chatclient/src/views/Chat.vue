@@ -604,6 +604,7 @@ export default {
     this.user = decoded;
 
     return {
+      token: token,
       offset: true,
       active: false,
       user: decoded,
@@ -924,7 +925,7 @@ export default {
       })
     },
     downloadFile(messageid) {
-      window.open("http://localhost:8000/rooms/download?id="+messageid, "_blank");
+      window.open("http://localhost:8000/rooms/download?id="+messageid + "&jwt=" + this.token, "_blank");
     },
     addIntoGroup(){
       // need to check

@@ -44,13 +44,22 @@ router.post('/upload', upload.single('file'), (req, res, next) => {
     res.json({filename: req.file.filename});
 })
 
-router.get('/download', (req, res, next)=>{
-    console.log(req);
-    Message.findById(req.query.id, (err, result)=>{
+router.get('/download', auth.isAuthorized, (req, res, next)=>{
+    Message.findById(req.query.id).populate({
+        path: "room",
+        populate: [{ path: "users" }],
+      }).exec((err, result)=>{
         if (err || !result) {
-            res.render("File not found.")
+            res.json("File not found.")
         } else {
-            res.download('./uploads/'+result.file.data, result.file.filename);
+            console.log(result.room.users, req.body.decoded.username)
+            if (result.room.users.find((element)=>{
+                return element.username == req.body.decoded.username
+            })) {
+                res.download('./uploads/'+result.file.data, result.file.filename);
+            } else {
+                res.json("Who are you?")
+            }
         }
     })
 })
