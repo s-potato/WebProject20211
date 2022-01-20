@@ -155,5 +155,11 @@ module.exports = (io) => {
     /*
      socket.on("Typing",(data) =>{
     */
+
+      socket.on("Delete", (data) =>{
+        io.to(data.room_id).emit("Deleted", data);
+      })
+
+
   })
 };

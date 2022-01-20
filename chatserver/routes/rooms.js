@@ -29,7 +29,7 @@ router.post('/members', function (req, res, next) {
 })
 
 router.post('/pins',function(req,res,next) {
-     Room.getPinList(req.body, function (err, result) {
+    Room.getPinList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
         }
@@ -43,4 +43,22 @@ router.post('/upload', upload.single('file'), (req, res, next)=> {
     res.json("uploaded");
   })
 
+router.post('/updateinfo', function (req, res, next) {
+    Room.findById(req.body.id, (err,result) => {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!"})
+        } else {
+            if (typeof req.body.groupname != 'undefined'){
+                result.name = req.body.groupname;
+            }
+            if (typeof req.body.avatar != 'undefined'){
+                result.avatar = req.body.avatar;
+            }
+            result.save(function (err) {
+                if (err) console.log(err);
+            })
+            res.json({status: "Success"});
+        }
+    })
+})
 module.exports = router;

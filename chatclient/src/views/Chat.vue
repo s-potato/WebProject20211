@@ -124,9 +124,7 @@
               <template v-for="(item, index) in group">
                 <v-list-item
                   :key="item.id"
-                  @click="
-                    setID(item.id, item.name), infoRoom(item.id, item.name)
-                  "
+                  @click="infoRoom(item.id)"
                 >
                   <v-badge
                     bordered
@@ -562,13 +560,13 @@
             </v-row>
           </v-app-bar>
           <div v-else>
-            <extension
+            <Extension
               :isDirect="isDirect"
               :members="this.groupUsers"
               :nameChoose="this.nameChoose"
               :idRoomChoose="this.idRoomChoose"
               @updateGroup="updateGroup"
-            ></extension>
+            ></Extension>
           </div>
         </v-col>
       </v-row>
@@ -774,10 +772,9 @@ export default {
     resetIcon() {
       this.iconIndex = 0;
     },
-    setID(id, name) {
+    infoRoom(id) {
       // show message list
       this.idRoomChoose = id;
-      this.nameChoose = name;
       let params = {
         id: this.idRoomChoose,
       };
@@ -789,14 +786,6 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-    },
-    infoRoom(id, name) {
-      // show message list
-      this.idRoomChoose = id;
-      this.nameChoose = name;
-      let params = {
-        id: this.idRoomChoose,
-      };
       axios
         .post("http://localhost:8000/rooms/members", params)
         .then((response) => {
@@ -854,8 +843,7 @@ export default {
     getUser(data){
       this.replyUser = data;
       this.emoMess = data;
-    },
-    
+    },    
     addPin(messageId){
       let params = {
         username: this.user.username,
@@ -911,10 +899,11 @@ export default {
     addIntoGroup(){
       // need to check
       this.$router.go()
-    }
-  },
-  updateGroup(){
-    // call list group again
+    },
+    updateGroup(name){
+      this.nameChoose = name;
+      // get list room again
+    },
   },
 };
 </script>

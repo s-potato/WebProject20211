@@ -270,4 +270,24 @@ router.post('/addtogroup', (req, res, next)=>{
     })
 })
 
+    router.post('/deleteMessage', (req,res,next)=> {
+        Message.findById(req.body.message_id , (err,result)=>{
+            if(err || !result) {
+                res.status(500).json({ status: "error", message: "Not found!"});
+            }
+            else{
+                Room.findById(result.room, (err, result1) => {
+                    if(err || !result) {
+                    res.status(500).json({ status: "error", message: "Room not found!"});
+                    }else{
+                        result1.messages.pull({_id: result._id });
+                        result1.save();
+                    }
+                });
+                result.remove();
+                res.json({status: "Success"});
+            }
+        })   
+    });
+
 module.exports = router;
