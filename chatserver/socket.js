@@ -4,11 +4,11 @@ const Message = require("./models/message");
 
 function addMessage(room, user, message, type, cb) {
   User.findOne({ username: user.username }, function (err, result) {
-    if (err || !result) { cb({ err: "Can't query" }) }
+    if (err || !result) { cb({ err: "Can't query user" }) }
     else {
       user = result;
       Room.findById(room.room_id, function (err2, result2) {
-        if (err2 || !result2) { cb({ err: "Can't query" }) }
+        if (err2 || !result2) { cb({ err: "Can't query room" }) }
         else {
           room = result2;
           if (type === "text") {
@@ -89,6 +89,7 @@ module.exports = (io) => {
         if (err) {
           console.log(err);
         } else {
+          data._id = result._id;
           data.date = Date.now();
           io.to(data.room_id).emit("response", data);
           /*update room.update at
@@ -98,13 +99,13 @@ module.exports = (io) => {
       });
     });
 
-    socket.on("image message", (data) => {
-      addMessage({ room_id: data.room_id }, { username: data.sender }, { body: data.file }, "image", (err, result) => {
+    socket.on("file message", (data) => {
+      addMessage({ room_id: data.room_id }, { username: data.sender }, { body: data.file }, data.type, (err, result) => {
         if (err) {
           console.log(err);
         } else {
+          data._id = result._id;
           data.date = Date.now();
-          data.type = "image";
           io.to(data.room_id).emit("response", data);
         }
       });
