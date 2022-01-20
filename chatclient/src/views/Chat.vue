@@ -76,9 +76,9 @@
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-toolbar-title class="title">Chat</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn icon @click="logUserOut">
+            <!-- <v-btn icon @click="logUserOut">
               <v-icon>logout</v-icon>
-            </v-btn>
+            </v-btn> -->
             <v-btn icon>
               <v-icon>fas fa-ellipsis-h</v-icon>
             </v-btn>
@@ -534,12 +534,14 @@
             :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
             :rules="[rules.required]"
             :class="isActive ? 'half' : 'full'"
+            @keyup="typingIndicatorOn"
             @keyup.enter="sendMessage"
             @click:append-outer="sendMessage"
             @click:append="pickEmojiShow = !pickEmojiShow"
             @click:prepend="openMenuChat = !openMenuChat"
           >
           </v-text-field>
+          <div :class="['dots',isTyping ? 'active' : '']">●●●</div>
         </v-col>
         <v-col
           cols="12"
@@ -571,6 +573,7 @@
               :members="this.groupUsers"
               :nameChoose="this.nameChoose"
               :idRoomChoose="this.idRoomChoose"
+              @updateGroup="updateGroup"
             ></extension>
           </div>
         </v-col>
@@ -587,6 +590,7 @@ import moment from 'moment';
 import { VuemojiPicker } from 'vuemoji-picker';
 import AddGroup from '../components/AddGroup.vue';
 import Extension from '../components/Extension.vue';
+import _ from 'underscore';
 
 export default {
   components: {
@@ -625,6 +629,7 @@ export default {
       currentUrl: "",
       // search
       isSearch: false,
+      isTyping:false,
       rules: {
         required: (value) => !!value || "Required.",
       },
@@ -745,10 +750,21 @@ export default {
       return this.groupUsers.find( element => element.username == username ).avatar ?
           this.groupUsers.find( element => element.username == username ).avatar : '/avatar.png'
     },
-    logUserOut() {
-      localStorage.removeItem("jwt");
-      this.$router.go("/login");
+    typingIndicatorOn(e){
+      if(_.indexOf(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'],e.code) == -1 ){
+          if(!this.isTyping){
+            this.isTyping = true
+          }
+          _.debounce(this.typingIndicatorOff,1600)()
+      }
     },
+    typingIndicatorOff(){
+      this.isTyping = false
+    },
+    // logUserOut() {
+    //   localStorage.removeItem("jwt");
+    //   this.$router.go("/login");
+    // },
     sendMessage() {
       socket.emit("chat message", {
         room_id: this.idRoomChoose,
@@ -911,8 +927,12 @@ export default {
       window.open("http://localhost:8000/rooms/download?id="+messageid, "_blank");
     },
     addIntoGroup(){
+      // need to check
       this.$router.go()
     }
+  },
+  updateGroup(){
+    // call list group again
   },
 };
 </script>
@@ -995,5 +1015,18 @@ export default {
   background-color: grey;
   left: 666px;
   color: white;
+}
+.dots{
+  background: lightgray;
+  display: inline-block;
+  padding:3px 6px;
+  color:gray;
+  border-radius:8px;
+  opacity: 0;
+  transition: opacity .5s;
+  margin-left: 10px;
+}
+.active{
+  opacity: 1 !important;
 }
 </style>
