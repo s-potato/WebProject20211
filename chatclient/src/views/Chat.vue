@@ -349,6 +349,9 @@
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
+                  <span v-else-if="message.type === 'file'" class="content">
+                    <a @click="downloadFile(message._id)">{{message.file.filename}}</a>
+                  </span>
                   <v-card  v-else class="mr-2 recept" max-width="350px" color="blue" dark>
                     <v-tooltip top >
                       <template v-slot:activator="{ on, attrs }">
@@ -411,6 +414,9 @@
                   <div class="name">{{ getDisplayName(message.sender) }}</div>
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
+                  </span>
+                  <span v-else-if="message.type === 'file'" class="content">
+                    <a @click="downloadFile(message._id)">{{message.file.filename}}</a>
                   </span>
                   <v-card  v-else class="mr-2 sender" max-width="350px">
                     <v-tooltip top>
@@ -871,7 +877,7 @@ export default {
       let rawImg;
       reader.onloadend = () => {
         rawImg = reader.result;
-        socket.emit("image message", {
+        socket.emit("file message", {
         room_id: this.idRoomChoose,
         sender: this.user.username,
         file: {
@@ -887,10 +893,22 @@ export default {
       const file = this.$refs.inputFile.files[0]
       const form = new FormData();
       form.append('file', file);
-      axios.post("http://localhost:8000/upload", form)
-      .then(()=>{
-        console.log("uploaded");
+      console.log(file)
+      axios.post("http://localhost:8000/rooms/upload", form)
+      .then((response)=>{
+        socket.emit("file message", {
+        room_id: this.idRoomChoose,
+        sender: this.user.username,
+        file: {
+          data: response.data.filename,
+          filename: file.name
+        },
+        type: "file"
+        });
       })
+    },
+    downloadFile(messageid) {
+      window.open("http://localhost:8000/rooms/download?id="+messageid, "_blank");
     },
     addIntoGroup(){
       this.$router.go()
