@@ -543,22 +543,7 @@
           v-if="groupType != 'none'"
         >
           <v-app-bar v-if="isSearch == true" flat color="rgba(0,0,0,0,0)">
-            <v-row>
-              <v-col class="mt-6" cols="12" sm="8" lg="8">
-                <v-text-field
-                  filled
-                  label="Search Here"
-                  append-icon="mdi-magnify"
-                  color="grey"
-                >
-                </v-text-field>
-              </v-col>
-              <v-col cols="12" sm="4" lg="4">
-                <v-btn class="mt-8" depressed @click="isSearch = !isSearch">
-                  Cancel
-                </v-btn>
-              </v-col>
-            </v-row>
+            <search-message :idRoom="this.idRoomChoose"/>
           </v-app-bar>
           <div v-else>
             <Extension
@@ -583,6 +568,7 @@ import moment from 'moment';
 import { VuemojiPicker } from 'vuemoji-picker';
 import AddGroup from '../components/AddGroup.vue';
 import Extension from '../components/Extension.vue';
+import SearchMessage from '../components/SearchMessage.vue';
 import _ from 'underscore';
 
 export default {
@@ -590,6 +576,7 @@ export default {
     VuemojiPicker,
     Extension,
     AddGroup,
+    SearchMessage
   },
   data() {
     let token = localStorage.getItem("jwt");
@@ -768,24 +755,17 @@ export default {
     typingIndicatorOff(){
       this.isTyping = false
     },
-    // logUserOut() {
-    //   localStorage.removeItem("jwt");
-    //   this.$router.go("/login");
-    // },
-    sendMessage() {
-      socket.emit("chat message", {
-        room_id: this.idRoomChoose,
-        sender: this.user.username,
-        message: this.message,
-      });
-      this.resetIcon();
-      this.clearMessage();
-    },
-    clearMessage() {
-      this.message = "";
-    },
-    resetIcon() {
+    async sendMessage() {
+      let message = this.message.trim()
+      if(message != ""){
+        await socket.emit("chat message", {
+          room_id: this.idRoomChoose,
+          sender: this.user.username,
+          message: message,
+        });
+      }
       this.iconIndex = 0;
+      this.message = "";
     },
     setID(id, name) {
       this.idRoomChoose = id;

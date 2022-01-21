@@ -120,12 +120,17 @@ router.post('/joinroom', (req, res, next) => {
 })
 
 router.post('/find', (req, res, next)=>{
+    if (req.body.term == '') {
+        res.json([]);
+        return;
+    }
     User.findOne({username: req.body.username}, (err, result)=>{
         if (err) {
             res.status(500).json(err);
         } else {
             User.search({...req.body, _id: result._id}, (err, result)=>{
                 if (err) {
+                    res.json([]);
                 } else {
                     res.json(result);
                 }
@@ -291,5 +296,35 @@ router.post('/addtogroup', (req, res, next)=>{
             }
         })   
     });
+
+
+    router.post('/reactMessage', (req,res,next) => {
+        Message.findById(req.body.message_id).exec(function (err, result){
+            if ( err || !result ){
+                res.status(500).json({status: "error", message: "Not found!"});
+            }else{
+                // Tìm react đã xem đã react chưa
+                for ( let i = 0; i <result.react.length; i++){
+                if ( String(result.react[i].user) == req.body.user_id) {
+                    if (result.react[i].icon == req.body.icon) {
+                        result.react[i].remove();
+                        result.save();
+                        res.json({status:"Remove Success"});
+                        return;
+                    } else {
+                        result.react[i].icon = req.body.icon;
+                        result.save();
+                        res.json({status:"Change Success"});
+                        return;//hello c //choello c co sai dau ko c :V postman thu, postman ?
+                    }
+                }
+            }
+            result.react.push({user: req.body.user_id, icon: req.body.icon});
+            result.save();
+            res.json({status: "Add Success"});
+            return;
+            }
+        })
+    })
 
 module.exports = router;

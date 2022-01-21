@@ -102,4 +102,19 @@ router.post('/outgroup', function (req, res, next) {
         }
     })
 })
+
+router.post('/search', (req, res, next)=>{
+    if (req.body.term == '') {
+        res.json([]);
+        return;
+    }
+    Room.search(req.body, (err, result)=>{
+        if(err){
+            res.json([]);
+        }
+        else {
+            res.json(result);
+        }
+    })
+})
 module.exports = router;

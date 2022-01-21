@@ -167,5 +167,10 @@ module.exports = (io) => {
       io.to(data.room_id).emit("A member added",(data));
       socket.leave(data.room_id)
     })
+
+    socket.on("React a message",(data)=>{
+      io.to(data.room_id).emit("Reacted",(data));
+    })
+
   })
 };
