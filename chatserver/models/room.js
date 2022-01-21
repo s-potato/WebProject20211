@@ -29,6 +29,7 @@ var RoomSchema = new mongoose.Schema({
   isDirect: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
+  avatar : String,
 });
 
 RoomSchema.pre("save", function (next) {
@@ -122,7 +123,6 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
                       }
                     }).clone().catch(function(err){ console.log(err)})                  
                 }
-                console.log("Get pin list");
                 cb(null,response);
             }
           }

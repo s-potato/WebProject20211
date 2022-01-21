@@ -155,6 +155,17 @@ module.exports = (io) => {
     })
     /*
      socket.on("Typing",(data) =>{
+      io.to(data.room_id).emit("Someone typing",(data));
+    })
     */
+
+    socket.on("delete", (data) =>{
+      io.to(data.room_id).emit("deleted", data);
+    })
+
+    socket.on("Leave room",(data) => {
+      io.to(data.room_id).emit("A member added",(data));
+      socket.leave(data.room_id)
+    })
   })
 };

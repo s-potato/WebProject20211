@@ -1,6 +1,8 @@
 const express = require('express');
 const User = require('../models/user');
-const Request = require('../models/request')
+const Request = require('../models/request');
+const Message = require('../models/message');
+const Room = require('../models/room');
 const jwt = require('jsonwebtoken');
 const auth = require('../util/auth');
 const router = express.Router();
@@ -58,7 +60,7 @@ router.post('/login', function (req, res, next) {
                 if (err2 || !isMatch)
                     res.status(500).json({ status: "error", message: "Mismatch", data: req.body.username });
                 else {
-                    let token = jwt.sign({username: req.body.username, _id: result._id }, process.env.SECRET, {expiresIn: '1d'});
+                    let token = jwt.sign({username: req.body.username, _id: result._id }, process.env.SECRET);
                     res.json({ status: "success", data: {username: req.body.username, jwt: token} });
                 }
             })
@@ -269,5 +271,25 @@ router.post('/addtogroup', (req, res, next)=>{
         }
     })
 })
+
+    router.post('/deleteMessage', (req,res,next)=> {
+        Message.findById(req.body.message_id , (err,result)=>{
+            if(err || !result) {
+                res.status(500).json({ status: "error", message: "Not found!"});
+            }
+            else{
+                Room.findById(result.room, (err, result1) => {
+                    if(err || !result) {
+                    res.status(500).json({ status: "error", message: "Room not found!"});
+                    }else{
+                        result1.messages.pull({_id: result._id });
+                        result1.save();
+                    }
+                });
+                result.remove();
+                res.json({status: "Success"});
+            }
+        })   
+    });
 
 module.exports = router;

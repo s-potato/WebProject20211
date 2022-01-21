@@ -66,8 +66,8 @@
         <v-expansion-panel-content> 
           <SettingGroup
           :nameChoose="nameChoose"
+          :idRoomChoose="idRoomChoose"
           @updateGroup="updateGroup"
-          @outGroup="outGroup"
           ></SettingGroup>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -283,7 +283,7 @@ export default {
       };
       axios
         .post("http://localhost:8000/rooms/pins", params)
-        .then((response) => {
+        .then( (response) => {
           let pinList = response.data;
           pinList.forEach(pin => {
             this.members.forEach(member => {
@@ -314,12 +314,10 @@ export default {
           console.log(err);
         });
     },
-    updateGroup() {
-      this.$emit('updateGroup');
+    updateGroup(name) {
+      console.log(name);
+      this.$emit('updateGroup',name);
     },
-    outGroup() {
-      this.$emit('outGroup');
-    }
   }
 };
 </script>

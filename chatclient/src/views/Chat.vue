@@ -124,10 +124,7 @@
               <template v-for="(item, index) in group">
                 <v-list-item
                   :key="item.id"
-                  @click="
-                    setID(item.id, item.name), infoRoom(item.id, item.name)
-                  "
-                >
+                  @click="setID(item.id, item.name), infoRoom(item.id, item.name)">
                   <v-badge
                     bordered
                     bottom
@@ -294,7 +291,7 @@
             </v-btn>
           </v-app-bar>
           <div style="overflow: auto; max-height: 82%; height:750px">
-            <div v-for="message in messages" :key="message.date">
+            <div v-for="(message,index) in messages" :key="message.date">
               <!-- user send -->
               <v-app-bar
                 class="space content"
@@ -327,7 +324,7 @@
                         Reply</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item clickable>
+                    <v-list-item clickable @click="deleteMessage(message, index)">
                       <v-list-item-title>
                         <v-icon>mdi-delete</v-icon>
                         Delete</v-list-item-title
@@ -459,12 +456,6 @@
                         Reply</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item clickable>
-                      <v-list-item-title>
-                        <v-icon>mdi-delete</v-icon>
-                        Delete</v-list-item-title
-                      >
-                    </v-list-item>
                   </v-list>
                 </v-menu>
               </v-app-bar>
@@ -570,13 +561,13 @@
             </v-row>
           </v-app-bar>
           <div v-else>
-            <extension
+            <Extension
               :groupType="groupType"
               :members="this.groupUsers"
               :nameChoose="this.nameChoose"
               :idRoomChoose="this.idRoomChoose"
               @updateGroup="updateGroup"
-            ></extension>
+            ></Extension>
           </div>
         </v-col>
       </v-row>
@@ -647,9 +638,11 @@ export default {
       socket.emit("userconnected", { username: this.user.username });
     })
     socket.on("response", (data) => {
+      // get room list
       if (data.room_id === this.idRoomChoose) {
         this.messages.push(data);
-      }
+      } 
+      // else bôi đen
     })
     socket.on("A member added", (data)=>{
       if (data.room_id === this.idRoomChoose) {
@@ -689,6 +682,11 @@ export default {
         this.direct = response.data;
         socket.emit("Joined room", { room_id: data.room_id });
       })
+    })
+    socket.on("deleted", (data)=>{
+      if (data.room_id === this.idRoomChoose) {
+        this.messages.splice(data.index,1);
+      }
     })
     // get Link
     this.currentUrl = window.location.href
@@ -787,7 +785,6 @@ export default {
       this.iconIndex = 0;
     },
     setID(id, name) {
-      // show message list
       this.idRoomChoose = id;
       this.nameChoose = name;
       let params = {
@@ -802,7 +799,7 @@ export default {
           console.log(err);
         });
     },
-    infoRoom(id, name) {
+    infoRoom(id) {
       // show message list
       this.idRoomChoose = id;
       this.nameChoose = name;
@@ -866,8 +863,7 @@ export default {
     getUser(data){
       this.replyUser = data;
       this.emoMess = data;
-    },
-    
+    },    
     addPin(messageId){
       let params = {
         username: this.user.username,
@@ -935,17 +931,33 @@ export default {
     addIntoGroup(){
       // need to check
       this.$router.go()
+    },
+    updateGroup(name){
+      this.nameChoose = name;
+      // get list room again
+    },
+    deleteMessage(message, index) {
+      let params = {
+        message_id: message._id,
+      };
+      message.index = index;
+      axios
+        .post("http://localhost:8000/users/deleteMessage", params)
+        .then(()=>
+        {
+          socket.emit("delete",message);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    chooseGroup(){
+      this.groupType = 'group'
+    },
+    chooseDirect(){
+      this.groupType = 'direct'
     }
   },
-  updateGroup(){
-    // call list group again
-  },
-  chooseGroup(){
-    this.groupType = 'group'
-  },
-  chooseDirect(){
-    this.groupType = 'direct'
-  }
 };
 </script>
 <style scoped>
