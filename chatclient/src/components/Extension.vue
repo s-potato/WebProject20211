@@ -284,7 +284,7 @@ export default {
       };
       axios
         .post("http://localhost:8000/rooms/pins", params)
-        .then((response) => {
+        .then( (response) => {
           let pinList = response.data;
           pinList.forEach(pin => {
             this.members.forEach(member => {

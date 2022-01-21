@@ -124,8 +124,7 @@
               <template v-for="(item, index) in group">
                 <v-list-item
                   :key="item.id"
-                  @click="infoRoom(item.id)"
-                >
+                  @click="setID(item.id, item.name), infoRoom(item.id, item.name)">
                   <v-badge
                     bordered
                     bottom
@@ -291,7 +290,7 @@
             </v-btn>
           </v-app-bar>
           <div style="overflow: auto; max-height: 82%; height:750px">
-            <div v-for="message in messages" :key="message.date">
+            <div v-for="(message,index) in messages" :key="message.date">
               <!-- user send -->
               <v-app-bar
                 class="space content"
@@ -324,7 +323,7 @@
                         Reply</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item clickable>
+                    <v-list-item clickable @click="deleteMessage(message, index)">
                       <v-list-item-title>
                         <v-icon>mdi-delete</v-icon>
                         Delete</v-list-item-title
@@ -454,12 +453,6 @@
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
-                      >
-                    </v-list-item>
-                    <v-list-item clickable>
-                      <v-list-item-title>
-                        <v-icon>mdi-delete</v-icon>
-                        Delete</v-list-item-title
                       >
                     </v-list-item>
                   </v-list>
@@ -643,9 +636,11 @@ export default {
       socket.emit("userconnected", { username: this.user.username });
     })
     socket.on("response", (data) => {
+      // get room list
       if (data.room_id === this.idRoomChoose) {
         this.messages.push(data);
-      }
+      } 
+      // else bôi đen
     })
     socket.on("A member added", (data)=>{
       if (data.room_id === this.idRoomChoose) {
@@ -685,6 +680,11 @@ export default {
         this.direct = response.data;
         socket.emit("Joined room", { room_id: data.room_id });
       })
+    })
+    socket.on("deleted", (data)=>{
+      if (data.room_id === this.idRoomChoose) {
+        this.messages.splice(data.index,1);
+      }
     })
     // get Link
     this.currentUrl = window.location.href
@@ -779,9 +779,9 @@ export default {
     resetIcon() {
       this.iconIndex = 0;
     },
-    infoRoom(id) {
-      // show message list
+    setID(id, name) {
       this.idRoomChoose = id;
+      this.nameChoose = name;
       let params = {
         id: this.idRoomChoose,
       };
@@ -793,6 +793,14 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    infoRoom(id) {
+      // show message list
+      this.idRoomChoose = id;
+      this.nameChoose = name;
+      let params = {
+        id: this.idRoomChoose,
+      };
       axios
         .post("http://localhost:8000/rooms/members", params)
         .then((response) => {
@@ -923,6 +931,21 @@ export default {
       this.nameChoose = name;
       // get list room again
     },
+    deleteMessage(message, index) {
+      let params = {
+        message_id: message._id,
+      };
+      message.index = index;
+      axios
+        .post("http://localhost:8000/users/deleteMessage", params)
+        .then(()=>
+        {
+          socket.emit("delete",message);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   },
 };
 </script>

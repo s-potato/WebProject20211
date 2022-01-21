@@ -82,4 +82,19 @@ router.post('/updateinfo', function (req, res, next) {
         }
     })
 })
+
+router.post('/outgroup', function (req, res, next) {
+    Room.findById(req.body.id, (err,result) => {
+        if (err || !result) {
+            res.status(500).json({ status: "error", message: "Not found!"})
+        } else {
+            User.findOne( { username: req.body.username}, function (err, result1) {
+                result.users.pull({_id: result1._id})
+                result1.rooms.pull({_id: req.body.id})
+                result1.save();
+                result.save();
+            })
+        }
+    })
+})
 module.exports = router;

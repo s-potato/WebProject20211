@@ -155,12 +155,18 @@ module.exports = (io) => {
     })
     /*
      socket.on("Typing",(data) =>{
+      io.to(data.room_id).emit("Someone typing",(data));
+    })
     */
 
-      socket.on("Delete", (data) =>{
-        io.to(data.room_id).emit("Deleted", data);
-      })
+    socket.on("delete", (data) =>{
+      io.to(data.room_id).emit("deleted", data);
+    })
 
+    socket.on("Leave room",(data) => {
+      io.to(data.room_id).emit("Leaved room",(data));
+      socket.leave(data.room_id)
+    })
 
   })
 };
