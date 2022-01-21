@@ -14,11 +14,6 @@ var MessageSchema = new mongoose.Schema({
         default: "text"
     },
     isPin: { type: Boolean, default: false},
-    /*seenby: [
-        who: {type: mongoose.Schema.types.ObjectId },
-        when: {type: Date}
-    ]
-    */
     content: String,
     file: {
         data: String,

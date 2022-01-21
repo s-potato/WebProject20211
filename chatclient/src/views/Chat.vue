@@ -204,85 +204,74 @@
               offset-x="11"
               offset-y="13"
             >
-              <v-avatar class="mt-n7" size="40" elevation="10">
+              <v-avatar size="40" elevation="10">
                 <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
               </v-avatar>
             </v-badge>
-            <v-toolbar-title class="title pl-0 ml-2 mt-n4">
+            <v-toolbar-title class="title pl-0 ml-2">
               {{ this.nameChoose }}
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-toolbar-title class="title pl-0 mr-2 mt-n4">
-              <v-btn icon>
-                <v-icon>fas fa-ellipsis-h</v-icon>
-              </v-btn>
-            </v-toolbar-title>
-            <v-toolbar-title class="title pl-0 mr-2 mt-n4">
-              Members :
-            </v-toolbar-title>
-            <AddGroup
-              :username='user.username'
-              :members="this.groupUsers"
-              :idRoomChoose="this.idRoomChoose"
-              @addIntoGroup="addIntoGroup">
-            </AddGroup>
-            <v-avatar class="mt-n5 mr-2" size="30" elevation="10">
-              <img src="https://cdn.vuetifyjs.com/images/lists/5.jpg" />
-            </v-avatar>
-            <v-divider vertical inset class="mt-n1"></v-divider>
-
-            <v-dialog transition="dialog-bottom-transition" max-width="600">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  color="black"
-                  icon
-                  class="mt-n5"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-link-variant</v-icon>
-                </v-btn>
-              </template>
-              <template v-slot:default="dialog">
-                <v-card>
-                  <v-toolbar color="black" dark>Get link</v-toolbar>
-                  <div class="mt-8">
-                    <v-card-text>
-                      <v-row>
-                        <v-col cols="12" sm="9" lg="9">
-                          <a
-                            :href="currentUrl"
-                            class="text-dark"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            ref="mylink"
-                          >
-                            {{ currentUrl }}
-                          </a>
-                        </v-col>
-                        <v-col cols="12" sm="3" lg="3">
-                          <v-btn
-                            title
-                            color="white"
-                            @click="copyURL(currentUrl)"
-                            block
-                          >
-                            Copy
-                          </v-btn>
-                        </v-col></v-row
-                      >
-                    </v-card-text>
-                  </div>
-                  <v-card-actions class="justify-end">
-                    <v-btn text @click="dialog.value = false">Close</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </template>
-            </v-dialog>
+              <v-toolbar-title class="title pl-0 mr-2" v-if="groupType == 'group'">
+                Members :
+              </v-toolbar-title>
+              <AddGroup
+                :username='user.username'
+                :members="this.groupUsers"
+                :idRoomChoose="this.idRoomChoose"
+                @addIntoGroup="addIntoGroup" v-if="groupType == 'group'">
+              </AddGroup>
+              <v-dialog transition="dialog-bottom-transition" max-width="600" v-if="groupType == 'group'">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    color="black"
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-link-variant</v-icon>
+                  </v-btn>
+                </template>
+                <template v-slot:default="dialog">
+                  <v-card>
+                    <v-toolbar color="black" dark>Get link</v-toolbar>
+                    <div>
+                      <v-card-text>
+                        <v-row>
+                          <v-col cols="12" sm="9" lg="9">
+                            <a
+                              :href="currentUrl"
+                              class="text-dark"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              ref="mylink"
+                            >
+                              {{ currentUrl }}
+                            </a>
+                          </v-col>
+                          <v-col cols="12" sm="3" lg="3">
+                            <v-btn
+                              title
+                              color="white"
+                              @click="copyURL(currentUrl)"
+                              block
+                            >
+                              Copy
+                            </v-btn>
+                          </v-col></v-row
+                        >
+                      </v-card-text>
+                    </div>
+                    <v-card-actions class="justify-end">
+                      <v-btn text @click="dialog.value = false">Close</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </template>
+              </v-dialog>
+            <!-- search -->
             <v-btn
               color="black"
               icon
-              class="mt-n5"
               @click="isSearch = !isSearch"
             >
               <v-icon>mdi-magnify</v-icon>
@@ -290,7 +279,6 @@
             <v-btn
               color="black"
               icon
-              class="mt-n5"
               @click="isActive = !isActive"
             >
               <v-icon>mdi-cog</v-icon>
@@ -324,7 +312,7 @@
                         Pin</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item clickable @click="isReply = true,getUser(message.sender)">
+                    <v-list-item clickable @click="isReply = true,getUser(message)">
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
@@ -530,9 +518,8 @@
             type="text"
             class="chatbar"
             :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
-            :rules="[rules.required]"
             :class="isActive ? 'half' : 'full'"
-            @keyup="typingIndicatorOn"
+            @keyup="typingEvent"
             @keyup.enter="sendMessage"
             @click:append-outer="sendMessage"
             @click:append="pickEmojiShow = !pickEmojiShow"
@@ -619,14 +606,11 @@ export default {
       isTyping:false,
       latest:"",
       isRead:false,
-      rules: {
-        required: (value) => !!value || "Required.",
-      },
       openMenuChat: false,
       pickEmojiShow: false,
       emo: "",
       isEmo:false,
-      selectIndex: 0
+      selectIndex: 0,
     };
   },
   created() {
@@ -641,17 +625,14 @@ export default {
       // else bôi đen
     })
     socket.on("A member added", (data)=>{
-      console.log(1)
       if (data.room_id === this.idRoomChoose) {
         let params = {
           id: this.idRoomChoose,
         };
-        console.log(2)
         axios
           .post("http://localhost:8000/rooms/members", params)
           .then((response) => {
             this.groupUsers = response.data;
-            console.log(3)
           })
           .catch((err) => {
             console.log(err);
@@ -686,6 +667,10 @@ export default {
       if (data.room_id === this.idRoomChoose) {
         this.messages.splice(data.index,1);
       }
+    })
+
+    socket.on("Someone typing" , (data)=>{
+      this.typingIndicatorOn(data.e);
     })
     // get Link
     this.currentUrl = window.location.href
@@ -762,19 +747,27 @@ export default {
       return typeof this.groupUsers.find( element => element.username == username ).avatar != 'undefined' ?
           this.groupUsers.find( element => element.username == username ).avatar : '/avatar.png'
     },
+    // floatting while typing
     typingIndicatorOn(e){
       if(_.indexOf(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'],e.code) == -1 ){
           if(!this.isTyping){
             this.isTyping = true
           }
-          _.debounce(this.typingIndicatorOff,1600)()
+          _.debounce(this.typingIndicatorOff,2000)()
       }
+    },
+    typingEvent(e){
+      socket.emit("Typing", { room_id: this.idRoomChoose, user_id: this.user.username, e: e });
     },
     typingIndicatorOff(){
       this.isTyping = false
     },
+    // end floatting
     async sendMessage() {
       let message = this.message.trim()
+      if(this.replyUser){
+        console.log(message)
+      }else
       if(message != ""){
         await socket.emit("chat message", {
           room_id: this.idRoomChoose,
@@ -866,9 +859,8 @@ export default {
       }
       //
     },
-    getUser(data){
-      this.replyUser = data;
-      this.emoMess = data;
+    getUser(data){      
+      this.replyUser = data.sender;
     },    
     addPin(messageId){
       let params = {

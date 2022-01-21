@@ -6,7 +6,7 @@
         label="Search Here"
         append-icon="mdi-magnify"
         color="grey"
-        @keyup = "Search"
+        @keyup.enter = "Search"
       ></v-text-field>
     </div>
 </template>

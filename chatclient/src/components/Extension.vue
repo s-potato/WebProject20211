@@ -35,7 +35,7 @@
                   >
                     <v-list-item-avatar>
                       <v-img
-                        :src="item.avatar ? item.avatar : '/avatar.png'"
+                        :src="typeof item.avatar != 'undefined' ? item.avatar : '/avatar.png'"
                       ></v-img>
                     </v-list-item-avatar>
                   </v-badge>

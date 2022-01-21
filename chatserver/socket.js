@@ -153,11 +153,12 @@ module.exports = (io) => {
       console.log("Send f-request to" + data.request_to);
       io.to(data.request_to).emit("F-request", (data));
     })
-    /*
-     socket.on("Typing",(data) =>{
-      io.to(data.room_id).emit("Someone typing",(data));
+
+    socket.on("Typing",(data) =>{
+      //console.log("typing");
+      socket.broadcast.to(data.room_id).emit("Someone typing",(data));
     })
-    */
+    
 
     socket.on("delete", (data) =>{
       io.to(data.room_id).emit("deleted", data);
