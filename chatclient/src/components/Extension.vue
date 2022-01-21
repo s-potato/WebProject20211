@@ -244,15 +244,11 @@ export default {
   },
   created() {
     socket.on("A message pinned", () =>{ 
-      console.log("Pinned"); 
       this.getPinList();
-      console.log("Pinned success"); 
 
     });
   socket.on("Unpinned a message",()=>{
-    console.log("Unpinned");
     this.getPinList();
-    console.log("Unpinned success");
    });
   },
 
@@ -292,7 +288,6 @@ export default {
             })
           })
           this.pinList = pinList;
-          console.log("Success");
         })
         .catch((err) => {
           console.log(err);
@@ -315,7 +310,6 @@ export default {
         });
     },
     updateGroup(name) {
-      console.log(name);
       this.$emit('updateGroup',name);
     },
   }

@@ -29,7 +29,7 @@ var RoomSchema = new mongoose.Schema({
   isDirect: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
-
+  avatar : String
 });
 
 RoomSchema.pre("save", function (next) {
