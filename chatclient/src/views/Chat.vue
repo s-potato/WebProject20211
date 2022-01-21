@@ -755,10 +755,11 @@ export default {
   },
   methods: {
     getDisplayName(username) {
-      return this.groupUsers.find( element => element.username == username ).display_name
+      return typeof this.groupUsers.find( element => element.username == username ).display_name != 'undefined' ?
+          this.groupUsers.find( element => element.username == username ).display_name : username
     },
     getAvatar(username) {
-      return this.groupUsers.find( element => element.username == username ).avatar ?
+      return typeof this.groupUsers.find( element => element.username == username ).avatar != 'undefined' ?
           this.groupUsers.find( element => element.username == username ).avatar : '/avatar.png'
     },
     typingIndicatorOn(e){

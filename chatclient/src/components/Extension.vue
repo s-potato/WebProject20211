@@ -294,16 +294,13 @@ export default {
     SettingGroup,
   },
   created() {
-    socket.on("A message pinned", () => {
-      console.log("Pinned");
+    socket.on("A message pinned", () =>{ 
       this.getPinList();
-      console.log("Pinned success");
+
     });
-    socket.on("Unpinned a message", () => {
-      console.log("Unpinned");
-      this.getPinList();
-      console.log("Unpinned success");
-    });
+  socket.on("Unpinned a message",()=>{
+    this.getPinList();
+   });
   },
 
   data() {
@@ -340,7 +337,6 @@ export default {
             });
           });
           this.pinList = pinList;
-          console.log("Success");
         })
         .catch((err) => {
           console.log(err);
@@ -366,7 +362,6 @@ export default {
         });
     },
     updateGroup(name) {
-      console.log(name);
       this.$emit('updateGroup',name);
     },
   }
