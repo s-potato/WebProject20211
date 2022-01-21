@@ -124,7 +124,7 @@
               <template v-for="(item, index) in group">
                 <v-list-item
                   :key="item.id"
-                  @click="setID(item.id, item.name), infoRoom(item.id, item.name)">
+                  @click="setID(item.id, item.name), infoRoom(item.id)">
                   <v-badge
                     bordered
                     bottom
@@ -802,7 +802,6 @@ export default {
     infoRoom(id) {
       // show message list
       this.idRoomChoose = id;
-      this.nameChoose = name;
       let params = {
         id: this.idRoomChoose,
       };
@@ -952,10 +951,22 @@ export default {
         });
     },
     chooseGroup(){
-      this.groupType = 'group'
+      if (this.group[0]) {
+        this.groupType = 'group'
+        
+        this.setID(this.group[0].id, this.group[0].name)
+        this.infoRoom(this.group[0].id)
+      } else {
+        this.groupType = 'none'
+      }
     },
     chooseDirect(){
-      this.groupType = 'direct'
+      if (this.direct[0]) {
+        this.groupType = 'direct'
+        this.setID(this.direct[0].id, this.direct[0].name)
+      } else {
+        this.groupType = 'none'
+      }
     }
   },
 };

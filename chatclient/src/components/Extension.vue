@@ -234,7 +234,7 @@ export default {
         type: Array,
         required: true
       },
-      groupType: Boolean,
+      groupType: String,
       idRoomChoose:{
         type: String,
       }

@@ -71,6 +71,7 @@
         .then(response => {
             this.user = response.data;
             this.displayname = this.user.display_name;
+            if (!response.data.avatar) this.user.avatar = '/avatar.png';
         })
         .catch((err) => {
             console.log(err);
@@ -93,7 +94,7 @@
                 };
                 axios
                 .post("http://localhost:8000/users/updateinfo", params)
-                .then(this.$router.go())
+                .then(()=>{this.$router.go()})
                 .catch((err) => {
                 console.log(err);
                 });
