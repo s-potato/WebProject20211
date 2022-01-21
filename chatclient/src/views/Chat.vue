@@ -120,10 +120,10 @@
             color="rgba(0,0,0,0)"
             style="overflow: auto; height: 40%"
           >
-            <v-list-item-group v-if="groupType == 'group'">
+            <v-list-item-group v-if="groupType == 'group'" v-model='selectIndex'>
               <template v-for="(item, index) in group">
                 <v-list-item
-                  :key="item.id"
+                  :key="index"
                   @click="setID(item.id, item.name), infoRoom(item.id)">
                   <v-badge
                     bordered
@@ -151,10 +151,10 @@
                 ></v-divider>
               </template>
             </v-list-item-group>
-            <v-list-item-group v-else>
+            <v-list-item-group v-else v-model='selectIndex'>
               <template v-for="(item, index) in direct">
                 <v-list-item
-                  :key="item.friend.username"
+                  :key="index"
                   @click="setID(item.room._id, item.friend.username)"
                 >
                   <v-badge
@@ -631,6 +631,7 @@ export default {
       pickEmojiShow: false,
       emo: "",
       isEmo:false,
+      selectIndex: 0
     };
   },
   created() {
@@ -956,7 +957,7 @@ export default {
     chooseGroup(){
       if (this.group[0]) {
         this.groupType = 'group'
-        
+        this.selectIndex = 0
         this.setID(this.group[0].id, this.group[0].name)
         this.infoRoom(this.group[0].id)
       } else {
@@ -966,6 +967,7 @@ export default {
     chooseDirect(){
       if (this.direct[0]) {
         this.groupType = 'direct'
+        this.selectIndex = 0
         this.setID(this.direct[0].room._id, this.direct[0].friend.username)
       } else {
         this.groupType = 'none'
