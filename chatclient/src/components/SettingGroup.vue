@@ -101,22 +101,28 @@
                 id: this.idRoomChoose,
                 groupname: this.group.groupname
             };
-                axios
-                .post("http://localhost:8000/rooms/updateinfo", params)
-                .then(
-                    this.$emit('updateGroup',this.group.groupname)
-                )
-                .catch((err) => {
-                console.log(err);
-                });
+            axios
+            .post("http://localhost:8000/rooms/updateinfo", params)
+            .then(
+                this.$emit('updateGroup',this.group.groupname)
+            )
+            .catch((err) => {
+            console.log(err);
+            });
         },
         OutGroup(){
             let params = {
                 idRoomChoose: this.idRoomChoose,
-                group: this.nameChoose
+                username: this.user.username
             }
-            this.$emit('outGroup')
-            console.log(params);
+            axios
+            .post("http://localhost:8000/rooms/outgroup", params)
+            .then(
+                this.$router.go()
+            )
+            .catch((err) => {
+            console.log(err);
+            });
         }
     }
   }

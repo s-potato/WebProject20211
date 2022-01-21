@@ -68,7 +68,6 @@
           :nameChoose="nameChoose"
           :idRoomChoose="idRoomChoose"
           @updateGroup="updateGroup"
-          @outGroup="outGroup"
           ></SettingGroup>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -319,9 +318,6 @@ export default {
       console.log(name);
       this.$emit('updateGroup',name);
     },
-    outGroup() {
-      this.$emit('outGroup');
-    }
   }
 };
 </script>

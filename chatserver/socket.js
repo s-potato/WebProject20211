@@ -164,9 +164,8 @@ module.exports = (io) => {
     })
 
     socket.on("Leave room",(data) => {
-      io.to(data.room_id).emit("Leaved room",(data));
+      io.to(data.room_id).emit("A member added",(data));
       socket.leave(data.room_id)
     })
-
   })
 };
