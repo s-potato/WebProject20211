@@ -156,6 +156,7 @@ UserSchema.statics.addToGroup = function(data, cb) {
                     let temp = {};
                     temp.id = result.rooms[i]._id;
                     temp.name = result.rooms[i].name;
+                    temp.updated_at = result.rooms[i].updated_at.getTime();
                     response.push(temp);
                 }
                 cb(null, response);
