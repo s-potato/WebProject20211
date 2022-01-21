@@ -20,15 +20,11 @@
         <v-expansion-panel-header>
           <h3>Member</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content style="overflow: auto; height:121px;"> 
-          <v-list
-            color="rgba(0,0,0,0)"
-          >
+        <v-expansion-panel-content style="overflow: auto; height: 121px">
+          <v-list color="rgba(0,0,0,0)">
             <v-list-item-group>
               <template v-for="(item, index) in members">
-                <v-list-item
-                  :key="index"
-                >
+                <v-list-item :key="index">
                   <v-badge
                     bordered
                     bottom
@@ -45,7 +41,9 @@
                   </v-badge>
                   <template>
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.display_name"></v-list-item-title>
+                      <v-list-item-title
+                        v-text="item.display_name"
+                      ></v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
@@ -63,7 +61,7 @@
         <v-expansion-panel-header>
           <h3>Setting group</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> 
+        <v-expansion-panel-content>
           <SettingGroup
           :nameChoose="nameChoose"
           :idRoomChoose="idRoomChoose"
@@ -77,6 +75,31 @@
           <h3>Theme</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content> </v-expansion-panel-content>
+      </v-expansion-panel>
+      <!-- Pictures -->
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          <h3>Pictures</h3>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content> 
+          <v-container fluid>
+          <v-row>
+            <v-col
+              v-for="i in 6"
+              :key="i"
+              cols="4"
+            >
+              <img
+                :src="`https://randomuser.me/api/portraits/men/${i + 20}.jpg`"
+                alt="lorem"
+                class="image"
+                height="100%"
+                width="100%"
+              >
+            </v-col>
+          </v-row>
+        </v-container>
+        </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- Files -->
       <v-expansion-panel>
@@ -103,21 +126,23 @@
         <v-expansion-panel-header>
           <h3>Pinned Message</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content style="overflow: auto; height:181px;"> 
+        <v-expansion-panel-content style="overflow: auto; height: 181px">
           <v-list three-line>
             <template v-for="(item, index) in pinList">
-              <v-list-item
-                :key="index"
-              >
+              <v-list-item :key="index">
                 <v-list-item-avatar>
-                  <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                  <v-img
+                    :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                  ></v-img>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title v-html="item.content"></v-list-item-title>
-                  <v-list-item-subtitle v-html="item.sendUser"></v-list-item-subtitle>
+                  <v-list-item-subtitle
+                    v-html="item.sendUser"
+                  ></v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon @click="unPin(item.id,index)">
+                  <v-btn icon @click="unPin(item.id, index)">
                     <v-icon color="grey lighten-1">fas fa-trash-alt</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -149,8 +174,7 @@
         <v-expansion-panel-header>
           <h3>Nickname</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> 
-        </v-expansion-panel-content>
+        <v-expansion-panel-content> </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- theme -->
       <v-expansion-panel>
@@ -158,6 +182,31 @@
           <h3>Theme</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content> </v-expansion-panel-content>
+      </v-expansion-panel>
+      <!-- Pictures -->
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          <h3>Pictures</h3>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-container fluid>
+          <v-row>
+            <v-col
+              v-for="i in 6"
+              :key="i"
+              cols="4"
+            >
+              <img
+                :src="`https://randomuser.me/api/portraits/men/${i + 20}.jpg`"
+                alt="lorem"
+                class="image"
+                height="100%"
+                width="100%"
+              >
+            </v-col>
+          </v-row>
+        </v-container>
+        </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- Files -->
       <v-expansion-panel>
@@ -167,14 +216,14 @@
         <v-expansion-panel-content>
           <v-list shaped>
             <template v-for="(item, i) in files">
-                <v-list-item :key="i">
-                  <v-list-item-icon>
-                    <v-icon v-text="item.icon" color="green"></v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title v-text="item.text"></v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
+              <v-list-item :key="i">
+                <v-list-item-icon>
+                  <v-icon v-text="item.icon" color="green"></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
             </template>
           </v-list>
         </v-expansion-panel-content>
@@ -191,18 +240,20 @@
         <v-expansion-panel-header>
           <h3>Pinned Message</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content style="overflow: auto; height:181px;"> 
+        <v-expansion-panel-content style="overflow: auto; height: 181px">
           <v-list three-line>
             <template v-for="(item, index) in pinList">
-              <v-list-item
-                :key="index"
-              >
+              <v-list-item :key="index">
                 <v-list-item-avatar>
-                  <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                  <v-img
+                    :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
+                  ></v-img>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title v-html="item.content"></v-list-item-title>
-                  <v-list-item-subtitle v-html="item.sendUser"></v-list-item-subtitle>
+                  <v-list-item-subtitle
+                    v-html="item.sendUser"
+                  ></v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-btn icon @click="unPin(item.id)">
@@ -220,9 +271,9 @@
 
 <script>
 import VueJwtDecode from "vue-jwt-decode";
-import axios from 'axios';
-import socket from '../socket';
-import SettingGroup from './SettingGroup.vue';
+import axios from "axios";
+import socket from "../socket";
+import SettingGroup from "./SettingGroup.vue";
 export default {
   name: "extension",
   props:{
@@ -267,10 +318,9 @@ export default {
     };
   },
   watch: {
-    idRoomChoose: function(newVal, oldVal) {
-      if(newVal != oldVal)
-        this.getPinList()
-    }
+    idRoomChoose: function (newVal, oldVal) {
+      if (newVal != oldVal) this.getPinList();
+    },
   },
   methods: {
     getPinList() {
@@ -281,19 +331,18 @@ export default {
         .post("http://localhost:8000/rooms/pins", params)
         .then( (response) => {
           let pinList = response.data;
-          pinList.forEach(pin => {
-            this.members.forEach(member => {
-              if(pin.sender == member.id)
-                pin.sendUser = member.username
-            })
-          })
+          pinList.forEach((pin) => {
+            this.members.forEach((member) => {
+              if (pin.sender == member.id) pin.sendUser = member.username;
+            });
+          });
           this.pinList = pinList;
         })
         .catch((err) => {
           console.log(err);
         });
     },
-    unPin(messageId,index){
+    unPin(messageId, index) {
       let params = {
         username: this.user.username,
         message_id: messageId,
@@ -301,9 +350,12 @@ export default {
       };
       axios
         .post("http://localhost:8000/users/unpin", params)
-        .then(()=>{
-            socket.emit("Unpin message", {room_id: this.idRoomChoose, message_id: messageId})
-            this.pinList.splice(index,1);
+        .then(() => {
+          socket.emit("Unpin message", {
+            room_id: this.idRoomChoose,
+            message_id: messageId,
+          });
+          this.pinList.splice(index, 1);
         })
         .catch((err) => {
           console.log(err);

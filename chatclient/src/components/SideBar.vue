@@ -4,10 +4,19 @@
             <nav>
                 <v-navigation-drawer v-model="drawer" dark app mini-variant mini-variant-width="100" class="white">
                     <v-list>
-                        <v-list-item class="mb-16">
+                        <v-list-item >
                             <v-list-item-content>
                                 <v-icon class="mb-2" large color="blue">fas fa-dove</v-icon>
                             </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item>
+                            <v-list-item-avatar >
+                                <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
+                                    <v-avatar size="40">
+                                        <v-img :src="user.avatar ? user.avatar : '/avatar.png'"></v-img>
+                                    </v-avatar>
+                                </v-badge>
+                            </v-list-item-avatar>
                         </v-list-item>
                     </v-list>
                     <v-list flat>
@@ -77,7 +86,7 @@
                                 <ChangePassMail></ChangePassMail>
                             </v-list-item-content>
                         </v-list-item>
-                        <v-list-item>
+                        <!-- <v-list-item>
                             <v-list-item-avatar class="mb-5">
                                 <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
                                     <v-avatar size="40">
@@ -85,7 +94,7 @@
                                     </v-avatar>
                                 </v-badge>
                             </v-list-item-avatar>
-                        </v-list-item>
+                        </v-list-item> -->
                         <v-list-item @click="logUserOut">
                             <v-list-item-content>
                                 <v-icon color="grey">

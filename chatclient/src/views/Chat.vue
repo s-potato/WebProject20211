@@ -73,16 +73,16 @@
               </template>
             </v-dialog>
           </v-app-bar>
-          <v-app-bar flat color="rgba(0,0,0,0,0)">
+          <!-- <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-toolbar-title class="title">Chat</v-toolbar-title>
             <v-spacer></v-spacer>
-            <!-- <v-btn icon @click="logUserOut">
+            <v-btn icon @click="logUserOut">
               <v-icon>logout</v-icon>
-            </v-btn> -->
+            </v-btn>
             <v-btn icon>
               <v-icon>fas fa-ellipsis-h</v-icon>
             </v-btn>
-          </v-app-bar>
+          </v-app-bar> -->
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-text-field
               filled
@@ -140,8 +140,9 @@
                     </v-list-item-avatar>
                   </v-badge>
                   <template>
-                    <v-list-item-content>
+                    <v-list-item-content :class="textRead">
                       <v-list-item-title v-text="item.name"></v-list-item-title>
+                      <v-list-item-subtitle>hieu : 1234</v-list-item-subtitle>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
@@ -211,6 +212,11 @@
               {{ this.nameChoose }}
             </v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-toolbar-title class="title pl-0 mr-2 mt-n4">
+              <v-btn icon>
+                <v-icon>fas fa-ellipsis-h</v-icon>
+              </v-btn>
+            </v-toolbar-title>
             <v-toolbar-title class="title pl-0 mr-2 mt-n4">
               Members :
             </v-toolbar-title>
@@ -463,7 +469,7 @@
           </div>
           <VuemojiPicker
             v-show="pickEmojiShow"
-            @emojiClick="handleEmojiClick"
+            @emojiClick="handleEmojiChat"
             class="emojiPicker"
             :class="isActive ? 'leftEmoji' : 'rightEmoji'"
           />
@@ -611,6 +617,8 @@ export default {
       // search
       isSearch: false,
       isTyping:false,
+      latest:"",
+      isRead:false,
       rules: {
         required: (value) => !!value || "Required.",
       },
@@ -686,6 +694,13 @@ export default {
     theme() {
       return this.$vuetify.theme.dark ? "dark" : "light";
     },
+    textRead(){
+    if(this.isRead == true){
+      return "font-weight-black"
+    }else{
+      return ""
+    }
+  }
   },
   mounted: function () {
     let params = {
@@ -695,6 +710,7 @@ export default {
     axios
       .post("http://localhost:8000/users/rooms", params)
       .then((response) => {
+        console.log(response.data)
         if (response.data[0]) {
           this.idRoomChoose = response.data[0].id;
           this.nameChoose = response.data[0].name;
@@ -805,10 +821,16 @@ export default {
       }
     },
     handleEmojiClick(EmojiClickEventDetail) {
-      console.log(EmojiClickEventDetail);
+      // console.log(EmojiClickEventDetail);
       this.pickEmojiShow = false;
       this.emo = EmojiClickEventDetail.unicode;
+      console.log("Hello")
       // this.isEmo = true;
+    },
+    handleEmojiChat(EmojiClickEventDetail) {
+      this.pickEmojiShow = false;
+      this.message += EmojiClickEventDetail.unicode;
+      // console.log(this.emoChat)
     },
     addIntoGroupList(friend, index) {
       this.addGroupList.push(friend);
