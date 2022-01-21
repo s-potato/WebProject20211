@@ -1,5 +1,5 @@
 <template>
-  <div class="extension" v-if="isDirect == false">
+  <div class="extension" v-if="groupType == 'group'">
     <!-- Groups -->
     <v-card class="text-center mt-8 mb-3" shaped>
       <v-badge bordered bottom color="green" dot offset-x="11" offset-y="13">
@@ -234,7 +234,7 @@ export default {
         type: Array,
         required: true
       },
-      isDirect: Boolean,
+      groupType: Boolean,
       idRoomChoose:{
         type: String,
       }

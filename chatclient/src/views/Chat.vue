@@ -96,9 +96,9 @@
             <v-col color="rgba(0,0,0,0,0)">
               <v-btn
                 title
-                :color="isDirect ? 'white' : 'grey'"
+                :color="groupType == 'group' ? 'grey' : 'white'"
                 block
-                @click="isDirect = false"
+                @click="chooseGroup"
               >
                 Group
               </v-btn>
@@ -106,9 +106,9 @@
             <v-col>
               <v-btn
                 title
-                :color="isDirect ? 'grey' : 'white'"
+                :color="groupType == 'direct' ? 'grey' : 'white'"
                 block
-                @click="isDirect = true"
+                @click="chooseDirect"
               >
                 Direct
               </v-btn>
@@ -120,7 +120,7 @@
             color="rgba(0,0,0,0)"
             style="overflow: auto; height: 40%"
           >
-            <v-list-item-group v-if="isDirect == false">
+            <v-list-item-group v-if="groupType == 'group'">
               <template v-for="(item, index) in group">
                 <v-list-item
                   :key="item.id"
@@ -195,6 +195,7 @@
           :sm="isActive ? '6' : '9'"
           :lg="isActive ? '6' : '9'"
           class="border"
+          v-if="groupType != 'none'"
         >
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-badge
@@ -548,6 +549,7 @@
           :sm="isActive ? '3' : '0'"
           :lg="isActive ? '3' : '0'"
           v-show="isActive"
+          v-if="groupType != 'none'"
         >
           <v-app-bar v-if="isSearch == true" flat color="rgba(0,0,0,0,0)">
             <v-row>
@@ -569,7 +571,7 @@
           </v-app-bar>
           <div v-else>
             <extension
-              :isDirect="isDirect"
+              :groupType="groupType"
               :members="this.groupUsers"
               :nameChoose="this.nameChoose"
               :idRoomChoose="this.idRoomChoose"
@@ -608,7 +610,7 @@ export default {
       offset: true,
       active: false,
       user: decoded,
-      isDirect: false,
+      groupType: "none",
       isActive: true,
       selected: [2],
       show: false,
@@ -726,6 +728,9 @@ export default {
             .catch((err) => {
               console.log(err);
             });
+            this.groupType = 'group'
+        } else {
+          this.groupType = 'none';
         }
         this.group = response.data;
       })
@@ -935,6 +940,12 @@ export default {
   updateGroup(){
     // call list group again
   },
+  chooseGroup(){
+    this.groupType = 'group'
+  },
+  chooseDirect(){
+    this.groupType = 'direct'
+  }
 };
 </script>
 <style scoped>
