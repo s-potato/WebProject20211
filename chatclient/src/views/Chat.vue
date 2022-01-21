@@ -463,10 +463,9 @@
           />
             <div class="reply" v-if="isReply == true">
               <v-icon style="color: white">mdi-share</v-icon>
-              Reply to {{this.replyUser}}
+              Reply to {{this.replyUser}} :  {{this.replyMess}}
               <v-icon class="btn" icon clickable v-on:click="isReply = !isReply"
-                >mdi-close-circle-outline</v-icon
-              >
+                >mdi-close-circle-outline</v-icon>
             </div>
           <v-btn-toggle v-model="icon" borderless v-if="openMenuChat">
             <v-btn @click="openMenuChat = !openMenuChat" class="mr-5">
@@ -590,6 +589,7 @@ export default {
       iconIndex: 0,
       idRoomChoose: "",
       replyUser: "",
+      replyMess: "",
       isReply: false,
       emoMess:"",
       groupUsers: [],
@@ -859,8 +859,9 @@ export default {
       }
       //
     },
-    getUser(data){      
+    getUser(data){
       this.replyUser = data.sender;
+      this.replyMess = data.message;
     },    
     addPin(messageId){
       let params = {
