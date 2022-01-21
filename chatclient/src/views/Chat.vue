@@ -966,7 +966,7 @@ export default {
     chooseDirect(){
       if (this.direct[0]) {
         this.groupType = 'direct'
-        this.setID(this.direct[0].id, this.direct[0].name)
+        this.setID(this.direct[0].room._id, this.direct[0].friend.username)
       } else {
         this.groupType = 'none'
       }
