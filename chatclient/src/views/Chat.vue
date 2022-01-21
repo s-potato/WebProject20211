@@ -643,14 +643,17 @@ export default {
       // else bôi đen
     })
     socket.on("A member added", (data)=>{
+      console.log(1)
       if (data.room_id === this.idRoomChoose) {
         let params = {
           id: this.idRoomChoose,
         };
+        console.log(2)
         axios
           .post("http://localhost:8000/rooms/members", params)
           .then((response) => {
             this.groupUsers = response.data;
+            console.log(3)
           })
           .catch((err) => {
             console.log(err);

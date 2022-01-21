@@ -51,6 +51,7 @@
 <script>
   import axios from 'axios';
   import VueJwtDecode from "vue-jwt-decode";
+  import socket from '../socket';
 
   export default {
     name: 'profile',
@@ -112,13 +113,16 @@
         },
         OutGroup(){
             let params = {
-                idRoomChoose: this.idRoomChoose,
+                id: this.idRoomChoose,
                 username: this.user.username
             }
+            // cứ làm đi tui đang nghe intern ko bật tiếng bên meet lun
             axios
             .post("http://localhost:8000/rooms/outgroup", params)
-            .then(
-                this.$router.go()
+            .then(()=>{
+                socket.emit("Leave room", {room_id: this.idRoomChoose} );
+                this.$router.go()  
+                }
             )
             .catch((err) => {
             console.log(err);
