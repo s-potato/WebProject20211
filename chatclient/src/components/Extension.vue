@@ -1,5 +1,5 @@
 <template>
-  <div class="extension" v-if="isDirect == false">
+  <div class="extension" v-if="groupType == 'group'">
     <!-- Groups -->
     <v-card class="text-center mt-8 mb-3" shaped>
       <v-badge bordered bottom color="green" dot offset-x="11" offset-y="13">
@@ -63,9 +63,9 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <SettingGroup
-            :nameChoose="nameChoose"
-            @updateGroup="updateGroup"
-            @outGroup="outGroup"
+          :nameChoose="nameChoose"
+          :idRoomChoose="idRoomChoose"
+          @updateGroup="updateGroup"
           ></SettingGroup>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -276,19 +276,19 @@ import socket from "../socket";
 import SettingGroup from "./SettingGroup.vue";
 export default {
   name: "extension",
-  props: {
-    nameChoose: {
-      type: String,
-      default: "default",
-    },
-    members: {
-      type: Array,
-      required: true,
-    },
-    isDirect: Boolean,
-    idRoomChoose: {
-      type: String,
-    },
+  props:{
+      nameChoose:{
+          type: String,
+          default : 'default'
+      },
+      members:{
+        type: Array,
+        required: true
+      },
+      groupType: String,
+      idRoomChoose:{
+        type: String,
+      }
   },
   components: {
     SettingGroup,
@@ -332,7 +332,7 @@ export default {
       };
       axios
         .post("http://localhost:8000/rooms/pins", params)
-        .then((response) => {
+        .then( (response) => {
           let pinList = response.data;
           pinList.forEach((pin) => {
             this.members.forEach((member) => {
@@ -365,13 +365,11 @@ export default {
           console.log(err);
         });
     },
-    updateGroup() {
-      this.$emit("updateGroup");
+    updateGroup(name) {
+      console.log(name);
+      this.$emit('updateGroup',name);
     },
-    outGroup() {
-      this.$emit("outGroup");
-    },
-  },
+  }
 };
 </script>
 

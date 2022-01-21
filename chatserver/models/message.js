@@ -25,6 +25,17 @@ var MessageSchema = new mongoose.Schema({
         filename: String
     },
     created_at: { type: Date, default: Date.now },
+    react : [ 
+        {
+            user : {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+            icon: {
+                type: String
+            }
+        }
+    ]
 });
 
 var Message = mongoose.model("Message", MessageSchema);

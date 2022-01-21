@@ -29,6 +29,7 @@ var RoomSchema = new mongoose.Schema({
   isDirect: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
+
 });
 
 RoomSchema.pre("save", function (next) {
@@ -67,7 +68,7 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
   Room.findById(room.id)
     .populate({
       path: "messages",
-      populate: [{ path: "sender" }, { path: "room" }],
+      populate: [{ path: "sender" }, { path: "room" }, { path: "react.user", select: '_id username'}],
     })
     .exec(function (err, result) {
       if (err || !result) {
@@ -86,6 +87,7 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
           }
           temp.sender = result.messages[i].sender.username;
           temp.date = result.messages[i].created_at.getTime();
+          temp.react = result.messages[i].react
           response.push(temp);
         }
         cb(null, response);
@@ -94,40 +96,61 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
 };
 
 
- RoomSchema.statics.getPinList =  function (room,cb ){
-       Room.findById(room.id).populate("pinMessages").exec( async function(err,result){
-            if (err || !result) {
-                cb({ err: "Can't query" });
-            }else {
-              if ( result.pinMessages.length == 0 ){
-                  cb(null , {status: "List empty"});
-              }else {
-                let response = [];
-                 for ( let i = 0; i < result.pinMessages.length; i++){
-                    let temp = {};
-                    await Message.findById(result.pinMessages[i]._id , (err, message) => {
-                      if(err || !message){
-                        cb({ err: "Can't query" });
-                      }else{
-                        temp.id = message._id;
-                        temp.sender = message.sender;
-                        temp.type = message.type;
-                        if( message.type == "text"){
-                          temp.content = message.content;
-                        }else{
-                          temp.file = message.file;
-                        }
-                        temp.created_at = message.created_at;
-                        response.push(temp);
-                      }
-                    }).clone().catch(function(err){ console.log(err)})                  
+RoomSchema.statics.getPinList =  function (room,cb ){
+  Room.findById(room.id).populate("pinMessages").exec( async function(err,result){
+      if (err || !result) {
+          cb({ err: "Can't query" });
+      }else {
+        if ( result.pinMessages.length == 0 ){
+            cb(null , {status: "List empty"});
+        }else {
+          let response = [];
+            for ( let i = 0; i < result.pinMessages.length; i++){
+              let temp = {};
+              await Message.findById(result.pinMessages[i]._id , (err, message) => {
+                if(err || !message){
+                  cb({ err: "Can't query" });
+                }else{
+                  temp.id = message._id;
+                  temp.sender = message.sender;
+                  temp.type = message.type;
+                  if( message.type == "text"){
+                    temp.content = message.content;
+                  }else{
+                    temp.file = message.file;
+                  }
+                  temp.created_at = message.created_at;
+                  response.push(temp);
                 }
-                console.log("Get pin list");
-                cb(null,response);
-            }
+              }).clone().catch(function(err){ console.log(err)})                  
           }
-        })
+          cb(null,response);
+      }
     }
+  })
+}
+
+RoomSchema.statics.search = function(params, cb) {
+  Message.find({content: { $regex: ".*" + params.term + ".*" }, type: 'text', room: params.room_id})
+  .populate("sender").exec((err, result)=>{
+    if (err || !result) {
+      cb({ err: "Can't query" });
+    } else {
+      let response = [];
+      for (let i = 0; i < result.length; i++) {
+        let temp = {};
+        temp._id = result[i]._id;
+        temp.message = result[i].content;
+        temp.sender = result[i].sender.display_name;
+        temp.date = result[i].created_at.getTime();
+        response.push(temp);
+      }
+      cb(null, response);
+    }
+  })
+}
+
+
 
 const Room = mongoose.model("Room", RoomSchema);
 

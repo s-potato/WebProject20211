@@ -96,9 +96,9 @@
             <v-col color="rgba(0,0,0,0,0)">
               <v-btn
                 title
-                :color="isDirect ? 'white' : 'grey'"
+                :color="groupType == 'group' ? 'grey' : 'white'"
                 block
-                @click="isDirect = false"
+                @click="chooseGroup"
               >
                 Group
               </v-btn>
@@ -106,9 +106,9 @@
             <v-col>
               <v-btn
                 title
-                :color="isDirect ? 'grey' : 'white'"
+                :color="groupType == 'direct' ? 'grey' : 'white'"
                 block
-                @click="isDirect = true"
+                @click="chooseDirect"
               >
                 Direct
               </v-btn>
@@ -120,14 +120,11 @@
             color="rgba(0,0,0,0)"
             style="overflow: auto; height: 40%"
           >
-            <v-list-item-group v-if="isDirect == false">
+            <v-list-item-group v-if="groupType == 'group'" v-model='selectIndex'>
               <template v-for="(item, index) in group">
                 <v-list-item
-                  :key="item.id"
-                  @click="
-                    setID(item.id, item.name), infoRoom(item.id, item.name), isRead = !isRead
-                  "
-                >
+                  :key="index"
+                  @click="setID(item.id, item.name), infoRoom(item.id)">
                   <v-badge
                     bordered
                     bottom
@@ -155,10 +152,10 @@
                 ></v-divider>
               </template>
             </v-list-item-group>
-            <v-list-item-group v-else>
+            <v-list-item-group v-else v-model='selectIndex'>
               <template v-for="(item, index) in direct">
                 <v-list-item
-                  :key="item.friend.username"
+                  :key="index"
                   @click="setID(item.room._id, item.friend.username)"
                 >
                   <v-badge
@@ -196,6 +193,7 @@
           :sm="isActive ? '6' : '9'"
           :lg="isActive ? '6' : '9'"
           class="border"
+          v-if="groupType != 'none'"
         >
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-badge
@@ -299,7 +297,7 @@
             </v-btn>
           </v-app-bar>
           <div style="overflow: auto; max-height: 82%; height:750px">
-            <div v-for="message in messages" :key="message.date">
+            <div v-for="(message,index) in messages" :key="message.date">
               <!-- user send -->
               <v-app-bar
                 class="space content"
@@ -332,7 +330,7 @@
                         Reply</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item clickable>
+                    <v-list-item clickable @click="deleteMessage(message, index)">
                       <v-list-item-title>
                         <v-icon>mdi-delete</v-icon>
                         Delete</v-list-item-title
@@ -354,6 +352,9 @@
                   <div class="name">{{ getDisplayName(message.sender) }}</div>
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
+                  </span>
+                  <span v-else-if="message.type === 'file'" class="content">
+                    <a @click="downloadFile(message._id)">{{message.file.filename}}</a>
                   </span>
                   <v-card  v-else class="mr-2 recept" max-width="350px" color="blue" dark>
                     <v-tooltip top >
@@ -418,6 +419,9 @@
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
+                  <span v-else-if="message.type === 'file'" class="content">
+                    <a @click="downloadFile(message._id)">{{message.file.filename}}</a>
+                  </span>
                   <v-card  v-else class="mr-2 sender" max-width="350px">
                     <v-tooltip top>
                       <template v-slot:activator="{ on, attrs }">
@@ -456,12 +460,6 @@
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
-                      >
-                    </v-list-item>
-                    <v-list-item clickable>
-                      <v-list-item-title>
-                        <v-icon>mdi-delete</v-icon>
-                        Delete</v-list-item-title
                       >
                     </v-list-item>
                   </v-list>
@@ -548,33 +546,19 @@
           :sm="isActive ? '3' : '0'"
           :lg="isActive ? '3' : '0'"
           v-show="isActive"
+          v-if="groupType != 'none'"
         >
           <v-app-bar v-if="isSearch == true" flat color="rgba(0,0,0,0,0)">
-            <v-row>
-              <v-col class="mt-6" cols="12" sm="8" lg="8">
-                <v-text-field
-                  filled
-                  label="Search Here"
-                  append-icon="mdi-magnify"
-                  color="grey"
-                >
-                </v-text-field>
-              </v-col>
-              <v-col cols="12" sm="4" lg="4">
-                <v-btn class="mt-8" depressed @click="isSearch = !isSearch">
-                  Cancel
-                </v-btn>
-              </v-col>
-            </v-row>
+            <search-message :idRoom="this.idRoomChoose"/>
           </v-app-bar>
           <div v-else>
-            <extension
-              :isDirect="isDirect"
+            <Extension
+              :groupType="groupType"
               :members="this.groupUsers"
               :nameChoose="this.nameChoose"
               :idRoomChoose="this.idRoomChoose"
               @updateGroup="updateGroup"
-            ></extension>
+            ></Extension>
           </div>
         </v-col>
       </v-row>
@@ -590,6 +574,7 @@ import moment from 'moment';
 import { VuemojiPicker } from 'vuemoji-picker';
 import AddGroup from '../components/AddGroup.vue';
 import Extension from '../components/Extension.vue';
+import SearchMessage from '../components/SearchMessage.vue';
 import _ from 'underscore';
 
 export default {
@@ -597,6 +582,7 @@ export default {
     VuemojiPicker,
     Extension,
     AddGroup,
+    SearchMessage
   },
   data() {
     let token = localStorage.getItem("jwt");
@@ -604,10 +590,11 @@ export default {
     this.user = decoded;
 
     return {
+      token: token,
       offset: true,
       active: false,
       user: decoded,
-      isDirect: false,
+      groupType: "none",
       isActive: true,
       selected: [2],
       show: false,
@@ -639,6 +626,7 @@ export default {
       pickEmojiShow: false,
       emo: "",
       isEmo:false,
+      selectIndex: 0
     };
   },
   created() {
@@ -646,19 +634,24 @@ export default {
       socket.emit("userconnected", { username: this.user.username });
     })
     socket.on("response", (data) => {
+      // get room list
       if (data.room_id === this.idRoomChoose) {
         this.messages.push(data);
-      }
+      } 
+      // else bôi đen
     })
     socket.on("A member added", (data)=>{
+      console.log(1)
       if (data.room_id === this.idRoomChoose) {
         let params = {
           id: this.idRoomChoose,
         };
+        console.log(2)
         axios
           .post("http://localhost:8000/rooms/members", params)
           .then((response) => {
             this.groupUsers = response.data;
+            console.log(3)
           })
           .catch((err) => {
             console.log(err);
@@ -688,6 +681,11 @@ export default {
         this.direct = response.data;
         socket.emit("Joined room", { room_id: data.room_id });
       })
+    })
+    socket.on("deleted", (data)=>{
+      if (data.room_id === this.idRoomChoose) {
+        this.messages.splice(data.index,1);
+      }
     })
     // get Link
     this.currentUrl = window.location.href
@@ -735,6 +733,9 @@ export default {
             .catch((err) => {
               console.log(err);
             });
+            this.groupType = 'group'
+        } else {
+          this.groupType = 'none';
         }
         this.group = response.data;
       })
@@ -771,27 +772,19 @@ export default {
     typingIndicatorOff(){
       this.isTyping = false
     },
-    // logUserOut() {
-    //   localStorage.removeItem("jwt");
-    //   this.$router.go("/login");
-    // },
-    sendMessage() {
-      socket.emit("chat message", {
-        room_id: this.idRoomChoose,
-        sender: this.user.username,
-        message: this.message,
-      });
-      this.resetIcon();
-      this.clearMessage();
-    },
-    clearMessage() {
+    async sendMessage() {
+      let message = this.message.trim()
+      if(message != ""){
+        await socket.emit("chat message", {
+          room_id: this.idRoomChoose,
+          sender: this.user.username,
+          message: message,
+        });
+      }
+      this.iconIndex = 0;
       this.message = "";
     },
-    resetIcon() {
-      this.iconIndex = 0;
-    },
     setID(id, name) {
-      // show message list
       this.idRoomChoose = id;
       this.nameChoose = name;
       let params = {
@@ -806,10 +799,9 @@ export default {
           console.log(err);
         });
     },
-    infoRoom(id, name) {
+    infoRoom(id) {
       // show message list
       this.idRoomChoose = id;
-      this.nameChoose = name;
       let params = {
         id: this.idRoomChoose,
       };
@@ -876,8 +868,7 @@ export default {
     getUser(data){
       this.replyUser = data;
       this.emoMess = data;
-    },
-    
+    },    
     addPin(messageId){
       let params = {
         username: this.user.username,
@@ -909,7 +900,7 @@ export default {
       let rawImg;
       reader.onloadend = () => {
         rawImg = reader.result;
-        socket.emit("image message", {
+        socket.emit("file message", {
         room_id: this.idRoomChoose,
         sender: this.user.username,
         file: {
@@ -925,19 +916,65 @@ export default {
       const file = this.$refs.inputFile.files[0]
       const form = new FormData();
       form.append('file', file);
-      axios.post("http://localhost:8000/upload", form)
-      .then(()=>{
-        console.log("uploaded");
+      console.log(file)
+      axios.post("http://localhost:8000/rooms/upload", form)
+      .then((response)=>{
+        socket.emit("file message", {
+        room_id: this.idRoomChoose,
+        sender: this.user.username,
+        file: {
+          data: response.data.filename,
+          filename: file.name
+        },
+        type: "file"
+        });
       })
+    },
+    downloadFile(messageid) {
+      window.open("http://localhost:8000/rooms/download?id="+messageid + "&jwt=" + this.token, "_blank");
     },
     addIntoGroup(){
       // need to check
       this.$router.go()
+    },
+    updateGroup(name){
+      this.nameChoose = name;
+      // get list room again
+    },
+    deleteMessage(message, index) {
+      let params = {
+        message_id: message._id,
+      };
+      message.index = index;
+      axios
+        .post("http://localhost:8000/users/deleteMessage", params)
+        .then(()=>
+        {
+          socket.emit("delete",message);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    chooseGroup(){
+      if (this.group[0]) {
+        this.groupType = 'group'
+        this.selectIndex = 0
+        this.setID(this.group[0].id, this.group[0].name)
+        this.infoRoom(this.group[0].id)
+      } else {
+        this.groupType = 'none'
+      }
+    },
+    chooseDirect(){
+      if (this.direct[0]) {
+        this.groupType = 'direct'
+        this.selectIndex = 0
+        this.setID(this.direct[0].room._id, this.direct[0].friend.username)
+      } else {
+        this.groupType = 'none'
+      }
     }
-  },
-  updateGroup(){
-    
-    // call list group again
   },
 };
 </script>

@@ -25,7 +25,8 @@
                                     style="display: none;" @change="changeAvatar()">
                             </v-flex>
                             <v-text-field
-                                label="Group Name" :value="group.groupname"
+                                v-model="group.groupname"
+                                label="New Group Name"
                                 ></v-text-field>
                         </v-card-text>
                         <v-card-actions>
@@ -33,7 +34,7 @@
                                 <v-icon left dark>check</v-icon>
                                 Save Changes
                             </v-btn>
-                            <v-btn color="primary" :loading="loading" @click="dialog.value = false; updateGroup();">
+                            <v-btn color="primary" :loading="loading" @click="dialog.value = false;">
                                 <v-icon left dark>fas fa-times</v-icon>
                                 Close
                             </v-btn>
@@ -48,14 +49,15 @@
 
 
 <script>
-
-//   import axios from 'axios';
+  import axios from 'axios';
   import VueJwtDecode from "vue-jwt-decode";
+  import socket from '../socket';
 
   export default {
     name: 'profile',
     props: {
-        nameChoose: String
+        nameChoose: String,
+        idRoomChoose: String
     },
     data () {
         let token = localStorage.getItem("jwt");
@@ -87,7 +89,7 @@
                 };
                 console.log(params);
                 // axios
-                // .post("http://localhost:8000/groups/updateinfo", params)
+                // .post("http://localhost:8000/rooms/updateinfo", params)
                 // .then(this.$router.go())
                 // .catch((err) => {
                 // console.log(err);
@@ -97,25 +99,34 @@
         },
         updateGroup() {
             let params = {
-                username: this.user.username,
-                group: this.group
+                id: this.idRoomChoose,
+                groupname: this.group.groupname
             };
-            this.$emit('updateGroup')
-            console.log(params);
-                // axios
-                // .post("http://localhost:8000/groups/updateinfo", params)
-                // .then()
-                // .catch((err) => {
-                // console.log(err);
-                // });
+            axios
+            .post("http://localhost:8000/rooms/updateinfo", params)
+            .then(
+                this.$emit('updateGroup',this.group.groupname)
+            )
+            .catch((err) => {
+            console.log(err);
+            });
         },
         OutGroup(){
             let params = {
-                username: this.user.username,
-                group: this.nameChoose
+                id: this.idRoomChoose,
+                username: this.user.username
             }
-            this.$emit('outGroup')
-            console.log(params);
+            // cứ làm đi tui đang nghe intern ko bật tiếng bên meet lun
+            axios
+            .post("http://localhost:8000/rooms/outgroup", params)
+            .then(()=>{
+                socket.emit("Leave room", {room_id: this.idRoomChoose} );
+                this.$router.go()  
+                }
+            )
+            .catch((err) => {
+            console.log(err);
+            });
         }
     }
   }
