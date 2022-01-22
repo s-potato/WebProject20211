@@ -13,17 +13,6 @@
                 <v-layout column>
                     <v-card>
                         <v-card-text>
-                            <v-flex class="mb-4">
-                                <v-avatar size="96" class="mr-4">
-                                    <img :src="`${group.avatar}`" />
-                                </v-avatar>
-                                <v-btn @click="openAvatarPicker">Change Group Avatar</v-btn>
-                                <input
-                                    ref="inputAvatar"
-                                    type="file"
-                                    accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                    style="display: none;" @change="changeAvatar()">
-                            </v-flex>
                             <v-text-field
                                 v-model="group.groupname"
                                 label="New Group Name"
@@ -73,30 +62,6 @@
         }
     },
     methods: {
-        openAvatarPicker() {
-            this.$refs.inputAvatar.click()
-        },
-        changeAvatar(){
-            const file = document.querySelector('input[type=file]').files[0]
-            const reader = new FileReader()
-
-            let rawImg;
-            reader.onloadend = () => {
-                rawImg = reader.result;
-                let params = {
-                    username: this.user.username,
-                    avatar: rawImg
-                };
-                console.log(params);
-                // axios
-                // .post("http://localhost:8000/rooms/updateinfo", params)
-                // .then(this.$router.go())
-                // .catch((err) => {
-                // console.log(err);
-                // });
-            }
-            reader.readAsDataURL(file);
-        },
         updateGroup() {
             let params = {
                 id: this.idRoomChoose,

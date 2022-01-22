@@ -113,7 +113,6 @@ UserSchema.methods.addListIntoGroup = function(data, cb){
             {
                 User.addToGroup({room_id: result._id, username: data.members[i].username}, (err, result) => 
                 {
-                    if (err) cb(err);
                 })
             }
         }
@@ -241,36 +240,6 @@ UserSchema.statics.unPin = function(data,cb){
         }
     })
 } 
-
-
-
-UserSchema.methods.joinRoom = function (room, cb) {
-    var user = this;
-    Room.findOne({ _id: room.id }, function (err, result) {
-        if (err || !result) {
-            cb({ err: "Can't query" });
-        } else {
-            if (result.isDirect) {
-                cb({ status: "JoinDirect.", message: "This room is a direct one." });
-            }
-            else if (
-                (result.users &&
-                    result.users.find((element) => String(element) === String(user._id)))) {
-                cb({ status: "Existed.", message: "User is on this room." });
-            } else {
-                result.users.push(user._id);
-                user.rooms.push(result._id);
-                result.save(function (err) {
-                    if (err) console.log(err);
-                });
-                user.save(function (err) {
-                    if (err) console.log(err);
-                });
-                cb(null, { status: "Success" });
-            }
-        }
-    });
-};
 
 
 UserSchema.statics.search = function (params, cb) {

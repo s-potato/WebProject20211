@@ -1,0 +1,29 @@
+<template>
+  <div>Loading.....</div>
+</template>
+
+
+<script>
+  // import axios from 'axios';
+  import VueJwtDecode from "vue-jwt-decode";
+
+  export default {
+    name: 'join',
+    data () {
+        let token = localStorage.getItem("jwt");
+        let decoded = VueJwtDecode.decode(token);
+        this.user = decoded;
+        return{
+            displayname: "",
+            user: decoded,
+        }
+    },
+    mounted: function() {
+      let params = {
+        username: this.user.username,
+        joinKey: this.$route.params.id
+      }
+      console.log(params);
+    } 
+  }
+</script>

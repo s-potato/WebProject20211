@@ -12,7 +12,8 @@ const routes = [
     path: '/',
     component: () => import('../components/SideBar.vue'),
     children: [
-      { path: '/', component: () => import('../views/Chat.vue') }
+      { path: '/', component: () => import('../views/Chat.vue') },
+      { path: '/join/:id', component: () => import('../views/Join.vue')}
     ],
     meta: {
       requiresAuth: true
