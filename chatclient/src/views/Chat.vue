@@ -73,16 +73,6 @@
               </template>
             </v-dialog>
           </v-app-bar>
-          <!-- <v-app-bar flat color="rgba(0,0,0,0,0)">
-            <v-toolbar-title class="title">Chat</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="logUserOut">
-              <v-icon>logout</v-icon>
-            </v-btn>
-            <v-btn icon>
-              <v-icon>fas fa-ellipsis-h</v-icon>
-            </v-btn>
-          </v-app-bar> -->
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-text-field
               filled
@@ -114,12 +104,12 @@
               </v-btn>
             </v-col>
           </v-row>
-
           <v-list
             two-line
             color="rgba(0,0,0,0)"
             style="overflow: auto; height: 40%"
           >
+            <!-- group list -->
             <v-list-item-group v-if="groupType == 'group'" v-model='selectIndex'>
               <template v-for="(item, index) in group">
                 <v-list-item
@@ -128,7 +118,7 @@
                   <v-badge
                     bordered
                     bottom
-                    color="green"
+                    color="grey"
                     dot
                     offset-x="22"
                     offset-y="26"
@@ -142,7 +132,7 @@
                   <template>
                     <v-list-item-content :class="textRead">
                       <v-list-item-title v-text="item.name"></v-list-item-title>
-                      <v-list-item-subtitle>hieu : 1234</v-list-item-subtitle>
+                      <v-list-item-subtitle v-if='item.latest_message' >{{item.latest_message.sender.display_name}}: {{item.latest_message.content}}</v-list-item-subtitle>
                     </v-list-item-content>
                   </template>
                 </v-list-item>
@@ -152,7 +142,8 @@
                 ></v-divider>
               </template>
             </v-list-item-group>
-            <v-list-item-group v-else v-model='selectIndex'>
+            <!-- direct list -->
+            <v-list-item-group v-else-if="groupType == 'direct'" v-model='selectIndex'>
               <template v-for="(item, index) in direct">
                 <v-list-item
                   :key="index"
@@ -172,6 +163,12 @@
                       ></v-img>
                     </v-list-item-avatar>
                   </v-badge>
+                  <!-- <template>
+                    <v-list-item-content :class="textRead">
+                      <v-list-item-title v-text="item.name"></v-list-item-title>
+                      <v-list-item-subtitle >{{item.latest_message.sender.display_name}}: {{item.latest_message.content}}</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </template> -->
                   <template>
                     <v-list-item-content>
                       <v-list-item-title
@@ -624,6 +621,37 @@ export default {
     })
     socket.on("response", (data) => {
       // get room list
+      let params = {
+        username: this.user.username,
+      };
+      axios
+      .post("http://localhost:8000/users/rooms", params)
+      .then((response) => {
+        this.group = response.data;
+        let i;
+        if (this.groupType == 'group') {
+          this.group.find((element, index)=>{
+            if (element.id === data.room_id) {
+              return i = index;
+            }
+          })
+          this.selectIndex = i;
+        }
+      })
+      axios
+      .post("http://localhost:8000/users/directs", params)
+      .then((response) => {
+        this.direct = response.data;
+        let i;
+        if (this.groupType == 'direct') {
+          this.direct.find((element, index)=>{
+            if (element.room._id === data.room_id) {
+              return i = index;
+            }
+          })
+          this.selectIndex = i;
+        } 
+      })
       if (data.room_id === this.idRoomChoose) {
         this.messages.push(data);
       } 
@@ -825,16 +853,12 @@ export default {
       }
     },
     handleEmojiClick(EmojiClickEventDetail) {
-      // console.log(EmojiClickEventDetail);
       this.pickEmojiShow = false;
       this.emo = EmojiClickEventDetail.unicode;
-      console.log("Hello")
-      // this.isEmo = true;
     },
     handleEmojiChat(EmojiClickEventDetail) {
       this.pickEmojiShow = false;
       this.message += EmojiClickEventDetail.unicode;
-      // console.log(this.emoChat)
     },
     addIntoGroupList(friend, index) {
       this.addGroupList.push(friend);
@@ -892,10 +916,7 @@ export default {
       axios
         .post("http://localhost:8000/users/pinmessage", params)
         .then(()=>
-        {
-          console.log("");
-          socket.emit("Pin message",params);
-        }
+          {socket.emit("Pin message",params);}
         )
         .catch((err) => {
           console.log(err);

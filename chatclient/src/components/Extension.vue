@@ -169,13 +169,6 @@
       >
     </v-card>
     <v-expansion-panels v-model="panel" multiple>
-      <!-- Nickname -->
-      <v-expansion-panel>
-        <v-expansion-panel-header>
-          <h3>Nickname</h3>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content> </v-expansion-panel-content>
-      </v-expansion-panel>
       <!-- theme -->
       <v-expansion-panel>
         <v-expansion-panel-header>
@@ -227,13 +220,6 @@
             </template>
           </v-list>
         </v-expansion-panel-content>
-      </v-expansion-panel>
-      <!-- Block -->
-      <v-expansion-panel>
-        <v-expansion-panel-header>
-          <h3>Block</h3>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content> </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- Pinned Message -->
       <v-expansion-panel>
@@ -294,7 +280,7 @@ export default {
     SettingGroup,
   },
   created() {
-    socket.on("A message pinned", () =>{ 
+    socket.on("A message pinned", () =>{
       this.getPinList();
 
     });
@@ -323,11 +309,11 @@ export default {
     },
   },
   methods: {
-    getPinList() {
+     getPinList() {
       let params = {
         id: this.idRoomChoose,
       };
-      axios
+       axios
         .post("http://localhost:8000/rooms/pins", params)
         .then( (response) => {
           let pinList = response.data;

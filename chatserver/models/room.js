@@ -12,7 +12,7 @@ var RoomSchema = new mongoose.Schema({
   users: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "User"
     },
   ],
   messages: [
@@ -45,6 +45,7 @@ RoomSchema.pre("save", function (next) {
     this.updated_at = Date.now();
     next();
   }
+  this.users = [...new Set(this.users)];
   return next();
 });
 

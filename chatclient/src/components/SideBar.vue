@@ -176,10 +176,7 @@ export default {
             // show pending list
             axios.post("http://localhost:8000/users/inrequest",params)
             .then(response => {
-                console.log("aaaaaaaaaaaaaaa")
                 this.pending = response.data
-                console.log(this.pending)
-                console.log("2");
             })
             .catch((err) => {
                 console.log(err);
@@ -193,7 +190,6 @@ export default {
                 friendname: friendName,
                 username: this.user.username
             };
-            console.log(params);
             axios.post("http://localhost:8000/users/sendrequest",params)
             .then(()=>{
                 socket.emit("Send f-request", {requester: this.user.username, request_to: friendName})
@@ -204,7 +200,7 @@ export default {
             })
         },
         acceptRequest(id,index) {
-            let params = {
+            let params = {               
                 request_id: id
             };
             axios.post("http://localhost:8000/users/acceptrequest",params)
