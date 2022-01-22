@@ -335,7 +335,9 @@
                 <!-- chat message -->
                 <div>
                   <div class="name">{{ getDisplayName(message.sender) }}</div>
-                  <div v-if='message.reply_to'>Reply to: {{message.reply_to.message}}</div>
+                  <div class="replied" v-if='message.reply_to'>
+                    <v-icon>mdi-share</v-icon>
+                    Replied to: {{message.reply_to.message}}</div>
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
@@ -404,7 +406,9 @@
                 </v-badge>
                 <div>
                   <div class="name">{{ getDisplayName(message.sender) }}</div>
-                  <div v-if='message.reply_to'>Reply to: {{message.reply_to.message}}</div>
+                  <div class="replied" v-if='message.reply_to'>
+                    <v-icon>mdi-share</v-icon>
+                    Replied to: {{message.reply_to.message}}</div>
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
@@ -1176,6 +1180,12 @@ export default {
     border-radius: 50px 50px;
     background-color:rgb(72, 106, 253);
     color: white;
+}
+.replied{
+    padding-bottom: 5px;
+    border-radius: 50px 50px;
+    background-color: #BBDEFB;
+    outline: none;
 }
 .emo{
     position: fixed;
