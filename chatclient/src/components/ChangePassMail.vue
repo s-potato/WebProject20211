@@ -1,5 +1,8 @@
 <template>
-  <v-dialog transition="dialog-top-transition" max-width="600">
+<v-dialog
+    transition="dialog-top-transition"
+    max-width="600"
+    v-model="value">
         <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="grey"
@@ -9,7 +12,7 @@
                 <v-icon>fas fa-cog</v-icon>
             </v-btn>
         </template>
-        <template v-slot:default="dialog">
+        <template>
             <v-layout column>
                 <v-card>
                     <v-card-text>
@@ -48,7 +51,7 @@
                             :rules="[rules.required, rules.min, passwordConfirmationRule]"></v-text-field>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="primary" :loading="loading" @click="dialog.value = false; updatePassword();">
+                        <v-btn color="primary" :loading="loading" @click="updatePassword();">
                             <v-icon left dark>check</v-icon>
                             Save Changes
                         </v-btn>
@@ -56,6 +59,23 @@
                 </v-card>
             </v-layout>
         </template>
+        <v-snackbar
+            v-model="snackbar"
+            :timeout="timeout"
+        >
+            {{ text }}
+
+            <template v-slot:action="{ attrs }">
+            <v-btn
+                color="blue"
+                text
+                v-bind="attrs"
+                @click="snackbar = false"
+            >
+                Close
+            </v-btn>
+            </template>
+        </v-snackbar>
     </v-dialog>
 </template>
 
@@ -80,7 +100,11 @@
             rules: {
                 required: value => !!value || 'Required.',
                 min: v => v.length >= 8 || 'Min 8 characters',
-            }
+            },
+            value: false,
+            snackbar: false,
+            text: '',
+            timeout: 1000,
         }
     },
     mounted: function (){
@@ -101,18 +125,24 @@
         }
     },
     methods: {
-        updatePassword() {
+        async updatePassword() {
             let params = {
                 username: this.user.username,
-                password: this.newPass
+                oldpassword: this.password,
+                newpassword: this.newPass
             };
-            console.log(params);
-                // axios
-                // .post("http://localhost:8000/users/updateinfo", params)
-                // .then()
-                // .catch((err) => {
-                // console.log(err);
-                // });
+            await axios
+            .post("http://localhost:8000/users/changepassword", params)
+            .then( ()=>{
+                let here = this
+                setTimeout(function(){here.value = false}, 1000);
+                this.text = "Password successfully updated"
+                }
+            )
+            .catch(() => {
+                this.text = "Password fails"
+            });
+            this.snackbar = true
         }
     }
   }

@@ -116,7 +116,6 @@
                 id: this.idRoomChoose,
                 username: this.user.username
             }
-            // cứ làm đi tui đang nghe intern ko bật tiếng bên meet lun
             axios
             .post("http://localhost:8000/rooms/outgroup", params)
             .then(()=>{
