@@ -1,12 +1,14 @@
 <template>
     <div>
+        <v-list>
+        <v-list-item>
         <v-dialog transition="dialog-top-transition" max-width="600">
             <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                color="blue"
                 v-bind="attrs"
                 v-on="on">
-                    Setting Group
+                <v-icon>mdi-cog</v-icon>
+                    Change Group Name
                 </v-btn>
             </template>
             <template v-slot:default="dialog">
@@ -32,7 +34,15 @@
                 </v-layout>
             </template>
         </v-dialog>
-        <v-btn color="blue" @click="OutGroup">Out Group</v-btn>
+        </v-list-item>
+        <v-list-item>
+        <v-btn @click="OutGroup">
+        <v-icon color="grey">
+            logout
+        </v-icon>
+        Leave</v-btn>
+        </v-list-item>
+        </v-list>
     </div>
 </template>
 

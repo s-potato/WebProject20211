@@ -59,7 +59,7 @@
       <!-- group setting -->
       <v-expansion-panel>
         <v-expansion-panel-header>
-          <h3>Setting group</h3>
+          <h3>Options</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <SettingGroup
@@ -138,11 +138,11 @@
                 <v-list-item-content>
                   <v-list-item-title v-html="item.content"></v-list-item-title>
                   <v-list-item-subtitle
-                    v-html="item.sendUser"
+                    v-html="item.display_name"
                   ></v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon @click="unPin(item.id, index)">
+                  <v-btn icon @click="unPin(item.id)">
                     <v-icon color="grey lighten-1">fas fa-trash-alt</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -238,7 +238,7 @@
                 <v-list-item-content>
                   <v-list-item-title v-html="item.content"></v-list-item-title>
                   <v-list-item-subtitle
-                    v-html="item.sendUser"
+                    v-html="item.sender.display_name"
                   ></v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
@@ -308,6 +308,20 @@ export default {
       if (newVal != oldVal) this.getPinList();
     },
   },
+  mounted: function () {
+    let params = {
+        id: this.idRoomChoose,
+      };
+       axios
+        .post("http://localhost:8000/rooms/pins", params)
+        .then( (response) => {
+          this.pinList = response.data;
+          console.log(response.data)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  },
   methods: {
      getPinList() {
       let params = {
@@ -317,18 +331,21 @@ export default {
         .post("http://localhost:8000/rooms/pins", params)
         .then( (response) => {
           let pinList = response.data;
-          pinList.forEach((pin) => {
+          console.log(response.data)
+          if (pinList) {
+            pinList.forEach((pin) => {
             this.members.forEach((member) => {
               if (pin.sender == member.id) pin.sendUser = member.username;
             });
           });
           this.pinList = pinList;
+          }
         })
         .catch((err) => {
           console.log(err);
         });
     },
-    unPin(messageId, index) {
+    unPin(messageId) {
       let params = {
         username: this.user.username,
         message_id: messageId,
@@ -341,7 +358,6 @@ export default {
             room_id: this.idRoomChoose,
             message_id: messageId,
           });
-          this.pinList.splice(index, 1);
         })
         .catch((err) => {
           console.log(err);

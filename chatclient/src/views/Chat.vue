@@ -340,7 +340,9 @@
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
                   <span v-else-if="message.type === 'file'" class="content">
-                    <a @click="downloadFile(message._id)">{{message.file.filename}}</a>
+                    <a class="file1" @click="downloadFile(message._id)">
+                    <v-icon>mdi-file</v-icon>
+                    {{message.file.filename}}</a>
                   </span>
                   <v-card  v-else class="mr-2 recept" max-width="350px" color="blue" dark>
                     <v-tooltip top >
@@ -407,7 +409,9 @@
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
                   <span v-else-if="message.type === 'file'" class="content">
-                    <a @click="downloadFile(message._id)">{{message.file.filename}}</a>
+                    <a class="file" @click="downloadFile(message._id)">
+                    <v-icon>mdi-file</v-icon>
+                    {{message.file.filename}}</a>
                   </span>
                   <v-card  v-else class="mr-2 sender" max-width="350px">
                     <v-tooltip top>
@@ -560,6 +564,7 @@ import { VuemojiPicker } from 'vuemoji-picker';
 import AddGroup from '../components/AddGroup.vue';
 import Extension from '../components/Extension.vue';
 import SearchMessage from '../components/SearchMessage.vue';
+import ImageCompressor from 'js-image-compressor'
 import _ from 'underscore';
 
 export default {
@@ -693,8 +698,15 @@ export default {
       })
     })
     socket.on("deleted", (data)=>{
+      console.log(data)
+      console.log("wtf man")
+      let vue = this
       if (data.room_id === this.idRoomChoose) {
-        this.messages.splice(data.index,1);
+        this.messages.find((element, index)=>{
+          if (element._id == data._id){
+            vue.messages.splice(index, 1);
+          }
+        })
       }
     })
 
@@ -720,6 +732,12 @@ export default {
     let params = {
       username: this.user.username,
     };
+    // get info:
+    axios
+      .post("http://localhost:8000/users/info", params)
+      .then((response) => {
+        this.user = response.data
+      })
     // show group list
     axios
       .post("http://localhost:8000/users/rooms", params)
@@ -769,12 +787,45 @@ export default {
   },
   methods: {
     getDisplayName(username) {
-      return typeof this.groupUsers.find( element => element.username == username ).display_name != 'undefined' ?
-          this.groupUsers.find( element => element.username == username ).display_name : username
+      return ((username)=>{
+          if (this.user.username == username) {
+            return this.user.displayname ? this.user.displayname : this.user.username
+          }
+          var user = this.groupUsers.find(element => element.username == username)
+          if (!user) {
+            var direct = this.direct.find(element=> element.friend.username == username)
+            console.log(direct)
+            user = direct.friend
+          }
+          if (user && user.displayname) {
+            return user.displayname
+          } else {
+            return user.username
+          }
+        }
+      )(username)
+      // return typeof this.groupUsers.find( element => element.username == username ).display_name != 'undefined' ?
+      //     this.groupUsers.find( element => element.username == username ).display_name : username
     },
     getAvatar(username) {
-      return typeof this.groupUsers.find( element => element.username == username ).avatar != 'undefined' ?
-          this.groupUsers.find( element => element.username == username ).avatar : '/avatar.png'
+      // return typeof this.groupUsers.find( element => element.username == username ).avatar != 'undefined' ?
+      //     this.groupUsers.find( element => element.username == username ).avatar : '/avatar.png'
+      return ((username)=>{
+          if (this.user.username == username) {
+            return this.user.avatar ? this.user.avatar : '/avatar.png'
+          }
+          var user = this.groupUsers.find(element => element.username == username)
+          if (!user) {
+            var direct = this.direct.find(element=>element.friend.username == username)
+            if (direct) user = direct.friend
+          }
+          if (user && user.avatar) {
+            return user.avatar
+          } else {
+            return '/avatar.png'
+          }
+        }
+      )(username)
     },
     // floatting while typing
     typingIndicatorOn(e){
@@ -926,30 +977,50 @@ export default {
     },
     uploadImage() {
       const file = document.querySelector('input[type=file]').files[0]
-      const reader = new FileReader()
+      let vue = this
+      var options = {
+        file: file,
+        quality: 0.5,
+        maxWidth: 800,
+        maxHeight: 800,
+        convertSize: Infinity,
+        // Callback before compression
+        beforeCompress: function (result) {
+          console.log('Image size before compression:', result.size);
+          console.log('mime type:', result.type);
+        },
 
-      let rawImg;
-      reader.onloadend = () => {
-        rawImg = reader.result;
-        let params = {
-          room_id: this.idRoomChoose,
-          sender: this.user.username,
-          file: {
-            data: rawImg,
-            filename: file.name
-          },
-          type: "image"
+        // Compression success callback
+        success: function (result) {
+          console.log('Image size after compression:', result.size);
+          console.log('mime type:', result.type);
+            const reader = new FileReader()
+
+            let rawImg;
+            reader.onloadend = () => {
+              rawImg = reader.result;
+              let params = {
+                room_id: vue.idRoomChoose,
+                sender: vue.user.username,
+                file: {
+                  data: rawImg,
+                  filename: vue.name
+                },
+                type: "image"
+              }
+              if (vue.isReply) {
+                params.reply_to = {
+                  _id: vue.replyMess._id,
+                  message: vue.replyMess.message
+                }
+              }
+              socket.emit("file message", params);
+              vue.isReply = false;
+            }
+            reader.readAsDataURL(result);
         }
-        if (this.isReply) {
-          params.reply_to = {
-            _id: this.replyMess._id,
-            message: this.replyMess.message
-          }
-        }
-        socket.emit("file message", params);
-        this.isReply = false;
-      }
-      reader.readAsDataURL(file);
+      };
+      new ImageCompressor(options)
     },
     uploadFile() {
       const file = this.$refs.inputFile.files[0]
@@ -997,7 +1068,7 @@ export default {
         .post("http://localhost:8000/users/deleteMessage", params)
         .then(()=>
         {
-          socket.emit("delete",message);
+          socket.emit("delete",{room_id: this.idRoomChoose, _id: message._id});
         })
         .catch((err) => {
           console.log(err);
@@ -1092,6 +1163,18 @@ export default {
     border: 2px solid;
     border-radius: 50px 50px 1px;
     background-color:grey;
+    color: white;
+}
+.file{
+    padding: 5px;
+    border-radius: 50px 50px;
+    background-color:white;
+    color: black;
+}
+.file1{
+    padding: 5px;
+    border-radius: 50px 50px;
+    background-color:rgb(72, 106, 253);
     color: white;
 }
 .emo{

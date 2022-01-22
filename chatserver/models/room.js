@@ -45,7 +45,6 @@ RoomSchema.pre("save", function (next) {
     this.updated_at = Date.now();
     next();
   }
-  this.users = [...new Set(this.users)];
   return next();
 });
 
@@ -117,35 +116,32 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
 
 
 RoomSchema.statics.getPinList =  function (room,cb ){
-  Room.findById(room.id).populate("pinMessages").exec( async function(err,result){
+  Room.findById(room.id).populate(
+      {
+        path: "pinMessages",
+        populate: {
+          path: "sender",
+          select: "username display_name"
+        }
+      }).exec( async function(err,result){
       if (err || !result) {
           cb({ err: "Can't query" });
       }else {
-        if ( result.pinMessages.length == 0 ){
-            cb(null , {status: "List empty"});
-        }else {
-          let response = [];
-            for ( let i = 0; i < result.pinMessages.length; i++){
-              let temp = {};
-              await Message.findById(result.pinMessages[i]._id , (err, message) => {
-                if(err || !message){
-                  cb({ err: "Can't query" });
-                }else{
-                  temp.id = message._id;
-                  temp.sender = message.sender;
-                  temp.type = message.type;
-                  if( message.type == "text"){
-                    temp.content = message.content;
-                  }else{
-                    temp.file = message.file;
-                  }
-                  temp.created_at = message.created_at;
-                  response.push(temp);
-                }
-              }).clone().catch(function(err){ console.log(err)})                  
-          }
-          cb(null,response);
-      }
+        let response = [];
+          for ( let i = 0; i < result.pinMessages.length; i++){
+            let temp = {};
+            temp.id = result.pinMessages[i]._id;
+            temp.sender = result.pinMessages[i].sender;
+            temp.type = result.pinMessages[i].type;
+            if( result.pinMessages[i].type == "text"){
+              temp.content = result.pinMessages[i].content;
+            }else{
+              temp.file = result.pinMessages[i].file;
+            }
+            temp.created_at = result.pinMessages[i].created_at;
+            response.push(temp);            
+        }
+        cb(null,response);
     }
   })
 }
