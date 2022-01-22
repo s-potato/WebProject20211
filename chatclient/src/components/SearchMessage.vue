@@ -7,19 +7,16 @@
       append-icon="mdi-magnify"
       color="grey"
       @keyup.enter="Search"
-      @mouseover="findSig = true"
-      @mouseout="findSig = false"
     ></v-text-field>
-    <v-list v-show="findSig">
-      <v-list-item> Hihi </v-list-item>
-      <v-list-item> Hihi </v-list-item>
-      <v-list-item> Hihi </v-list-item>
+    <v-list v-show="findSig" v-for="item in searchList" :key="item.message">
+      <v-list-item> {{item.sender}} : {{item.message}} ({{ format_date(item.date) }})</v-list-item>
     </v-list>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import moment from 'moment';
 export default {
   name: "SearchMessage",
   props: {
@@ -28,12 +25,17 @@ export default {
   data() {
     return {
       searchMessage: "",
-      searchList: [],
+      searchList: [{
+        date: "",
+        message: "",
+        sender: ""
+      }],
       findSig: false,
     };
   },
   methods: {
     Search() {
+      this.findSig = true;
       let params = {
         term: this.searchMessage.trim(),
         room_id: this.idRoom,
@@ -47,6 +49,11 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    format_date(value) {
+      if (value) {
+        return moment(value).format("DD/MM/Y h:mm");
+      }
     },
   },
 };
