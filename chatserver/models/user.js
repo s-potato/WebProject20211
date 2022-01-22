@@ -129,15 +129,20 @@ UserSchema.statics.addToGroup = function(data, cb) {
                 if (err || !user) {
                     cb({ err: "Can't query" });
                 } else{
-                    user.rooms.push(result._id);
-                    result.users.push(user._id);
-                    result.save(function (err) {
-                        if (err) console.log(err);
-                    });
-                    user.save(function (err) {
-                        if (err) console.log(err);
-                    });
-                    cb(null, { status: "Success" });
+                    if (!result.users.find(element=>String(element) == String(user._id)))
+                        {    
+                        user.rooms.push(result._id);
+                        result.users.push(user._id);
+                        result.save(function (err) {
+                            if (err) console.log(err);
+                        });
+                        user.save(function (err) {
+                            if (err) console.log(err);
+                        });
+                        cb(null, { status: "Success" });
+                    } else {
+                        cb({status: 'err', message: 'duplicate user'})
+                    }
                 }
             })
         }
@@ -146,7 +151,23 @@ UserSchema.statics.addToGroup = function(data, cb) {
 
  UserSchema.statics.getRoomsList = function (user, cb) {
     User.findOne({ username: user.username })
-        .populate("rooms")
+        .populate( {
+            path: "rooms",
+            options: {
+                sort: { updated_at: -1 }
+            },
+            populate: {
+                path: "messages",
+                select: "sender type content",
+                options: {
+                    sort: { created_at: -1 }
+                },
+                populate: {
+                    path: "sender",
+                    select: "username display_name"
+                }
+            }
+        })
         .exec(function (err, result) {
             if (err || !result) {
                 cb({ err: "Can't query" });
@@ -157,6 +178,12 @@ UserSchema.statics.addToGroup = function(data, cb) {
                     temp.id = result.rooms[i]._id;
                     temp.name = result.rooms[i].name;
                     temp.updated_at = result.rooms[i].updated_at.getTime();
+                    if (result.rooms[i].messages && result.rooms[i].messages[0]) {
+                        temp.latest_message = result.rooms[i].messages[0];
+                        if (result.rooms[i].messages[0].type != 'text') {
+                            temp.latest_message.content = result.rooms[i].messages[0].type
+                        }
+                    }
                     response.push(temp);
                 }
                 cb(null, response);

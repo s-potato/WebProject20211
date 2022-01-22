@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Message = require("./message");
+var md5 = require('md5')
 const User = require("./user");
 
 var RoomSchema = new mongoose.Schema({
@@ -27,12 +28,19 @@ var RoomSchema = new mongoose.Schema({
      }
   ],
   isDirect: { type: Boolean, default: false },
+  joinKey: {
+    type: String,
+    unique: true
+  },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
   avatar : String
 });
 
 RoomSchema.pre("save", function (next) {
+  if (!this.joinKey) {
+    this.joinKey = md5(Date.now() + this._id)
+  }
   if (this.isModified("messages")) {
     this.updated_at = Date.now();
     next();

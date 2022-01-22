@@ -5,6 +5,7 @@ const Message = require('../models/message')
 const jwt = require('jsonwebtoken');
 const auth = require('../util/auth');
 var upload = require('../util/upload')
+var md5 = require('md5')
 const router = express.Router();
 
 router.post('/messages', function (req, res, next) {
@@ -98,6 +99,36 @@ router.post('/outgroup', function (req, res, next) {
                     result.save();
                     res.json({status: "Success"}); 
                 }               
+            })
+        }
+    })
+})
+
+router.post('/refreshKey', (req, res, next)=>{
+    Room.findById(req.body.id, (err, room)=>{
+        if (err || !room) {
+            res.status(500).json({ status: "error", message: "Not found room!"})
+        } else {
+            room.joinKey = md5(Date.now()+room.id);
+            room.save((err)=>{
+                if (err) res.status(500).json({ status: "error", message: "internal error"})
+                else res.json(room.joinKey)
+            })
+        }
+    })
+})
+
+router.post('/joinwithkey', (req, res, next)=>{
+    Room.findOne({joinKey: req.body.key}, (err, room)=>{
+        if (err || !room || room.isDirect) {
+            res.status(500).json({ status: "error", message: "Wrong key"})
+        } else {
+            User.addToGroup({username: req.body.username, room_id: room._id}, (err, result)=>{
+                if (err) {
+                    res.status(500).json(err)
+                } else {
+                    res.json({status: 'success'})
+                }
             })
         }
     })
