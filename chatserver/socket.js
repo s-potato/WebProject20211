@@ -2,7 +2,7 @@ const Room = require("./models/room");
 const User = require("./models/user");
 const Message = require("./models/message");
 
-function addMessage(room, user, message, type, cb) {
+function addMessage(room, user, message, type, reply_to, cb) {
   User.findOne({ username: user.username }, function (err, result) {
     if (err || !result) { cb({ err: "Can't query user" }) }
     else {
@@ -15,6 +15,12 @@ function addMessage(room, user, message, type, cb) {
             Message.create({ room: room._id, sender: user._id, content: message.body}, function (err3, result3) {
               if (err3) { cb(err3) }
               else {
+                if (reply_to) {
+                  result3.reply_to = reply_to._id;
+                  result3.save(function (err) {
+                    if (err) console.log(err);
+                  });
+                }
                 room.messages.push(result3._id);
                 room.save(function (err) {
                   if (err) console.log(err);
@@ -26,6 +32,12 @@ function addMessage(room, user, message, type, cb) {
             Message.create({ room: room._id, sender: user._id, file: message.body, type: type }, function (err3, result3) {
               if (err3) { cb(err3) }
               else {
+                if (reply_to) {
+                  result3.reply_to = reply_to._id;
+                  result3.save(function (err) {
+                    if (err) console.log(err);
+                  });
+                }
                 room.messages.push(result3._id);
                 room.save(function (err) {
                   if (err) console.log(err);
@@ -85,7 +97,7 @@ module.exports = (io) => {
     });
 
     socket.on("chat message", (data) => {
-      addMessage({ room_id: data.room_id }, { username: data.sender }, { body: data.message }, "text", (err, result) => {
+      addMessage({ room_id: data.room_id }, { username: data.sender }, { body: data.message }, "text", data.reply_to, (err, result) => {
         if (err) {
           console.log(err);
         } else {
@@ -100,7 +112,7 @@ module.exports = (io) => {
     });
 
     socket.on("file message", (data) => {
-      addMessage({ room_id: data.room_id }, { username: data.sender }, { body: data.file }, data.type, (err, result) => {
+      addMessage({ room_id: data.room_id }, { username: data.sender }, { body: data.file }, data.type, data.reply_to, (err, result) => {
         if (err) {
           console.log(err);
         } else {

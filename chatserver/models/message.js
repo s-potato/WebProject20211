@@ -9,6 +9,10 @@ var MessageSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    reply_to: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message'
+    },
     type: {
         type: String,
         default: "text"

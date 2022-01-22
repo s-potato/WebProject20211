@@ -312,7 +312,7 @@
                         Pin</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item clickable @click="isReply = true,getUser(message)">
+                    <v-list-item clickable @click="isReply = true, getUser(message)">
                       <v-list-item-title>
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
@@ -338,6 +338,7 @@
                 <!-- chat message -->
                 <div>
                   <div class="name">{{ getDisplayName(message.sender) }}</div>
+                  <div v-if='message.reply_to'>Reply to: {{message.reply_to.message}}</div>
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
@@ -349,7 +350,7 @@
                       <template v-slot:activator="{ on, attrs }">
                         <v-list-item v-bind="attrs" v-on="on">
                           <v-list-item-content class="content">
-                            <div>{{ message.message}}</div>
+                            <div>{{ message.message }}</div>
                           </v-list-item-content>
                         </v-list-item>
                       </template>
@@ -404,6 +405,7 @@
                 </v-badge>
                 <div>
                   <div class="name">{{ getDisplayName(message.sender) }}</div>
+                  <div v-if='message.reply_to'>Reply to: {{message.reply_to.message}}</div>
                   <span v-if="message.type === 'image'" class="content">
                     <img :src="message.file.data" class="messageimg"/>
                   </span>
@@ -444,8 +446,8 @@
                         Pin</v-list-item-title
                       >
                     </v-list-item>
-                    <v-list-item clickable >
-                      <v-list-item-title>
+                    <v-list-item clickable @click="isReply = true, getUser(message)">
+                      <v-list-item-title >
                         <v-icon>mdi-share</v-icon>
                         Reply</v-list-item-title
                       >
@@ -463,7 +465,7 @@
           />
             <div class="reply" v-if="isReply == true">
               <v-icon style="color: white">mdi-share</v-icon>
-              Reply to {{this.replyUser}} :  {{this.replyMess}}
+              Reply to {{this.replyMess.replyUser}} :  {{this.replyMess.message}}
               <v-icon class="btn" icon clickable v-on:click="isReply = !isReply"
                 >mdi-close-circle-outline</v-icon>
             </div>
@@ -588,7 +590,6 @@ export default {
       marker: true,
       iconIndex: 0,
       idRoomChoose: "",
-      replyUser: "",
       replyMess: "",
       isReply: false,
       emoMess:"",
@@ -765,18 +766,24 @@ export default {
     // end floatting
     async sendMessage() {
       let message = this.message.trim()
-      if(this.replyUser){
-        console.log(message)
-      }else
+      let params = {
+            room_id: this.idRoomChoose,
+            sender: this.user.username,
+            message: message,
+            type: 'text'
+      };
+      if(this.isReply){
+        params.reply_to = {
+            _id: this.replyMess._id,
+            message: this.replyMess.message
+        }
+      }
       if(message != ""){
-        await socket.emit("chat message", {
-          room_id: this.idRoomChoose,
-          sender: this.user.username,
-          message: message,
-        });
+          await socket.emit("chat message", params);
       }
       this.iconIndex = 0;
       this.message = "";
+      this.isReply = false;
     },
     setID(id, name) {
       this.idRoomChoose = id;
@@ -860,8 +867,17 @@ export default {
       //
     },
     getUser(data){
-      this.replyUser = data.sender;
-      this.replyMess = data.message;
+      console.log(data)
+      let message = {};
+      message.replyUser = this.getDisplayName(data.sender);
+      if (data.type != 'text') {
+        message.message = data.type;
+      } else {
+        message.message = data.message;
+      }
+      message._id = data._id;
+      this.replyMess = message
+      console.log(this.replyMess)
     },    
     addPin(messageId){
       let params = {
@@ -894,15 +910,23 @@ export default {
       let rawImg;
       reader.onloadend = () => {
         rawImg = reader.result;
-        socket.emit("file message", {
-        room_id: this.idRoomChoose,
-        sender: this.user.username,
-        file: {
-          data: rawImg,
-          filename: file.name
-        },
-        type: "image"
-      });
+        let params = {
+          room_id: this.idRoomChoose,
+          sender: this.user.username,
+          file: {
+            data: rawImg,
+            filename: file.name
+          },
+          type: "image"
+        }
+        if (this.isReply) {
+          params.reply_to = {
+            _id: this.replyMess._id,
+            message: this.replyMess.message
+          }
+        }
+        socket.emit("file message", params);
+        this.isReply = false;
       }
       reader.readAsDataURL(file);
     },
@@ -913,15 +937,23 @@ export default {
       console.log(file)
       axios.post("http://localhost:8000/rooms/upload", form)
       .then((response)=>{
-        socket.emit("file message", {
-        room_id: this.idRoomChoose,
-        sender: this.user.username,
-        file: {
-          data: response.data.filename,
-          filename: file.name
-        },
-        type: "file"
-        });
+        let params = {
+          room_id: this.idRoomChoose,
+          sender: this.user.username,
+          file: {
+            data: response.data.filename,
+            filename: file.name
+          },
+          type: "file"
+        }
+        if (this.isReply) {
+          params.reply_to = {
+            _id: this.replyMess._id,
+            message: this.replyMess.message
+          }
+        }
+        socket.emit("file message", params);
+        this.isReply = false;
       })
     },
     downloadFile(messageid) {

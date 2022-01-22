@@ -63,12 +63,14 @@ RoomSchema.statics.getMembersList = function (room, cb) {
       }
     });
 };
+/*
 
+ */
 RoomSchema.statics.getMessagesList = function (room, cb) {
   Room.findById(room.id)
     .populate({
       path: "messages",
-      populate: [{ path: "sender" }, { path: "room" }, { path: "react.user", select: '_id username'}],
+      populate: [{ path: "sender" }, { path: "room" }, { path: "react.user", select: '_id username'}, {path: "reply_to"}],
     })
     .exec(function (err, result) {
       if (err || !result) {
@@ -88,6 +90,15 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
           temp.sender = result.messages[i].sender.username;
           temp.date = result.messages[i].created_at.getTime();
           temp.react = result.messages[i].react
+          if (result.messages[i].reply_to) {
+            temp.reply_to = {}
+            temp.reply_to._id = result.messages[i].reply_to._id
+            if (result.messages[i].reply_to.type === 'text') {
+              temp.reply_to.message = result.messages[i].reply_to.content
+            } else {
+              temp.reply_to.message = result.messages[i].reply_to.type
+            }
+          }
           response.push(temp);
         }
         cb(null, response);

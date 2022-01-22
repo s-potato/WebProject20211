@@ -327,4 +327,25 @@ router.post('/addtogroup', (req, res, next)=>{
         })
     })
 
+router.post('/changepassword', (req, res, next) => {
+    User.findOne({ username: req.body.username }, 'password', function (err, user) {
+        if (err || !user) {
+            res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
+        }
+        else {
+            user.comparePassword(req.body.oldpassword, function (err, isMatch) {
+                if (err || !isMatch)
+                    res.status(500).json({ status: "error", message: "Mismatch", data: req.body.username });
+                else {
+                    user.password = req.body.newpassword
+                    user.save((err)=>{
+                        if(err) res.status(500).json({ status: "error", message:"internal error"})
+                        else res.json({status: 'success'})
+                    })
+                }
+            })
+        }
+    })
+})
+
 module.exports = router;
