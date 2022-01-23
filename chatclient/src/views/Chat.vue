@@ -194,6 +194,7 @@
           class="border"
           v-if="groupType != 'none'"
         >
+        
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-badge
               bordered
@@ -283,6 +284,7 @@
               <v-icon>mdi-cog</v-icon>
             </v-btn>
           </v-app-bar>
+        
           <div style="overflow: auto; max-height: 82%; height:750px">
             <div v-for="(message,index) in messages" :key="message.date">
               <!-- user send -->

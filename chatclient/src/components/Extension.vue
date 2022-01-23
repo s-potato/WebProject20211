@@ -35,7 +35,11 @@
                   >
                     <v-list-item-avatar>
                       <v-img
-                        :src="typeof item.avatar != 'undefined' ? item.avatar : '/avatar.png'"
+                        :src="
+                          typeof item.avatar != 'undefined'
+                            ? item.avatar
+                            : '/avatar.png'
+                        "
                       ></v-img>
                     </v-list-item-avatar>
                   </v-badge>
@@ -63,42 +67,38 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <SettingGroup
-          :nameChoose="nameChoose"
-          :idRoomChoose="idRoomChoose"
-          @updateGroup="updateGroup"
+            :nameChoose="nameChoose"
+            :idRoomChoose="idRoomChoose"
+            @updateGroup="updateGroup"
           ></SettingGroup>
         </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- theme -->
-      <v-expansion-panel>
+      <!-- <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Theme</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content> </v-expansion-panel-content>
-      </v-expansion-panel>
+      </v-expansion-panel> -->
       <!-- Pictures -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Pictures</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> 
+        <v-expansion-panel-content>
           <v-container fluid>
-          <v-row>
-            <v-col
-              v-for="i in 6"
-              :key="'Picture'+i"
-              cols="4"
-            >
-              <img
-                :src="`https://randomuser.me/api/portraits/men/${i + 20}.jpg`"
-                alt="lorem"
-                class="image"
-                height="100%"
-                width="100%"
-              >
-            </v-col>
-          </v-row>
-        </v-container>
+            <v-row>
+              <v-col v-for="i in 6" :key="'Picture' + i" cols="4">
+                <img
+                  :src="`https://randomuser.me/api/portraits/men/${i + 20}.jpg`"
+                  alt="lorem"
+                  class="image"
+                  height="100%"
+                  width="100%"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
         </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- Files -->
@@ -109,7 +109,7 @@
         <v-expansion-panel-content>
           <v-list shaped>
             <v-list-item-group>
-              <v-list-item v-for="(item, i) in files" :key="'FileA'+i">
+              <v-list-item v-for="(item, i) in files" :key="'FileA' + i">
                 <v-list-item-icon>
                   <v-icon v-text="item.icon" color="green"></v-icon>
                 </v-list-item-icon>
@@ -129,7 +129,7 @@
         <v-expansion-panel-content style="overflow: auto; height: 181px">
           <v-list three-line>
             <template v-for="(item, index) in pinList">
-              <v-list-item :key="'PinA'+index">
+              <v-list-item :key="'PinA' + index">
                 <v-list-item-avatar>
                   <v-img
                     :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
@@ -172,9 +172,20 @@
       <!-- theme -->
       <v-expansion-panel>
         <v-expansion-panel-header>
-          <h3>Theme</h3>
+          <h3>Options</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> </v-expansion-panel-content>
+        <v-expansion-panel-content>
+          <v-list>
+            <v-list-item>
+              <v-switch
+                v-model="$vuetify.theme.dark"
+                inset
+                label="Dark/Light Switch"
+                persistent-hint
+              ></v-switch>
+            </v-list-item>
+          </v-list>
+        </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- Pictures -->
       <v-expansion-panel>
@@ -183,22 +194,18 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-container fluid>
-          <v-row>
-            <v-col
-              v-for="i in 6"
-              :key="'Picture'+i"
-              cols="4"
-            >
-              <img
-                :src="`https://randomuser.me/api/portraits/men/${i + 20}.jpg`"
-                alt="lorem"
-                class="image"
-                height="100%"
-                width="100%"
-              >
-            </v-col>
-          </v-row>
-        </v-container>
+            <v-row>
+              <v-col v-for="i in 6" :key="'Picture' + i" cols="4">
+                <img
+                  :src="`https://randomuser.me/api/portraits/men/${i + 20}.jpg`"
+                  alt="lorem"
+                  class="image"
+                  height="100%"
+                  width="100%"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
         </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- Files -->
@@ -209,7 +216,7 @@
         <v-expansion-panel-content>
           <v-list shaped>
             <template v-for="(item, i) in files">
-              <v-list-item :key="'FileB'+i">
+              <v-list-item :key="'FileB' + i">
                 <v-list-item-icon>
                   <v-icon v-text="item.icon" color="green"></v-icon>
                 </v-list-item-icon>
@@ -229,7 +236,7 @@
         <v-expansion-panel-content style="overflow: auto; height: 181px">
           <v-list three-line>
             <template v-for="(item, index) in pinList">
-              <v-list-item :key="'PinB'+index">
+              <v-list-item :key="'PinB' + index">
                 <v-list-item-avatar>
                   <v-img
                     :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
@@ -262,31 +269,30 @@ import socket from "../socket";
 import SettingGroup from "./SettingGroup.vue";
 export default {
   name: "extension",
-  props:{
-      nameChoose:{
-          type: String,
-          default : 'default'
-      },
-      members:{
-        type: Array,
-        required: true
-      },
-      groupType: String,
-      idRoomChoose:{
-        type: String,
-      }
+  props: {
+    nameChoose: {
+      type: String,
+      default: "default",
+    },
+    members: {
+      type: Array,
+      required: true,
+    },
+    groupType: String,
+    idRoomChoose: {
+      type: String,
+    },
   },
   components: {
     SettingGroup,
   },
   created() {
-    socket.on("A message pinned", () =>{
+    socket.on("A message pinned", () => {
       this.getPinList();
-
     });
-  socket.on("Unpinned a message",()=>{
-    this.getPinList();
-   });
+    socket.on("Unpinned a message", () => {
+      this.getPinList();
+    });
   },
 
   data() {
@@ -310,35 +316,35 @@ export default {
   },
   mounted: function () {
     let params = {
-        id: this.idRoomChoose,
-      };
-       axios
-        .post("http://localhost:8000/rooms/pins", params)
-        .then( (response) => {
-          this.pinList = response.data;
-          console.log(response.data)
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      id: this.idRoomChoose,
+    };
+    axios
+      .post("http://localhost:8000/rooms/pins", params)
+      .then((response) => {
+        this.pinList = response.data;
+        console.log(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
   methods: {
-     getPinList() {
+    getPinList() {
       let params = {
         id: this.idRoomChoose,
       };
-       axios
+      axios
         .post("http://localhost:8000/rooms/pins", params)
-        .then( (response) => {
+        .then((response) => {
           let pinList = response.data;
-          console.log(response.data)
+          console.log(response.data);
           if (pinList) {
             pinList.forEach((pin) => {
-            this.members.forEach((member) => {
-              if (pin.sender == member.id) pin.sendUser = member.username;
+              this.members.forEach((member) => {
+                if (pin.sender == member.id) pin.sendUser = member.username;
+              });
             });
-          });
-          this.pinList = pinList;
+            this.pinList = pinList;
           }
         })
         .catch((err) => {
@@ -364,9 +370,9 @@ export default {
         });
     },
     updateGroup(name) {
-      this.$emit('updateGroup',name);
+      this.$emit("updateGroup", name);
     },
-  }
+  },
 };
 </script>
 
