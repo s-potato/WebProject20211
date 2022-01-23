@@ -113,7 +113,8 @@
             <v-list-item-group v-if="groupType == 'group'" v-model='selectIndex'>
               <template v-for="(item, index) in group">
                 <v-list-item
-                  :key="index"
+                  :key="'A'+index"
+                  :value="item.id"
                   @click="setID(item.id, item.name), infoRoom(item.id)">
                   <v-badge
                     bordered
@@ -146,7 +147,8 @@
             <v-list-item-group v-else-if="groupType == 'direct'" v-model='selectIndex'>
               <template v-for="(item, index) in direct">
                 <v-list-item
-                  :key="index"
+                  :key="'B'+index"
+                  :value="item.room._id"
                   @click="setID(item.room._id, item.friend.username)"
                 >
                   <v-badge
@@ -617,7 +619,7 @@ export default {
       pickEmojiShow: false,
       emo: "",
       isEmo:false,
-      selectIndex: 0,
+      selectIndex: "",
     };
   },
   created() {
@@ -625,6 +627,7 @@ export default {
       socket.emit("userconnected", { username: this.user.username });
     })
     socket.on("response", (data) => {
+      this.selectIndex = ""
       // get room list
       let params = {
         username: this.user.username,
@@ -633,34 +636,21 @@ export default {
       .post("http://localhost:8000/users/rooms", params)
       .then((response) => {
         this.group = response.data;
-        let i;
-        if (this.groupType == 'group') {
-          this.group.find((element, index)=>{
-            if (element.id === data.room_id) {
-              return i = index;
-            }
-          })
-          this.selectIndex = i;
+        if (this.groupType == 'group'){
+          this.selectIndex = this.idRoomChoose
         }
       })
       axios
       .post("http://localhost:8000/users/directs", params)
       .then((response) => {
         this.direct = response.data;
-        let i;
-        if (this.groupType == 'direct') {
-          this.direct.find((element, index)=>{
-            if (element.room._id === data.room_id) {
-              return i = index;
-            }
-          })
-          this.selectIndex = i;
-        } 
+        if (this.groupType == 'direct'){
+          this.selectIndex = this.idRoomChoose
+        }
       })
       if (data.room_id === this.idRoomChoose) {
         this.messages.push(data);
-      } 
-      // else bôi đen
+      }
     })
     socket.on("A member added", (data)=>{
       if (data.room_id === this.idRoomChoose) {
@@ -750,6 +740,7 @@ export default {
         if (response.data[0]) {
           this.idRoomChoose = response.data[0].id;
           this.nameChoose = response.data[0].name;
+          this.selectIndex = this.idRoomChoose
           let params = {
             id: this.idRoomChoose,
           };
@@ -1081,7 +1072,7 @@ export default {
     chooseGroup(){
       if (this.group[0]) {
         this.groupType = 'group'
-        this.selectIndex = 0
+        this.selectIndex = this.group[0].id
         this.setID(this.group[0].id, this.group[0].name)
         this.infoRoom(this.group[0].id)
       } else {
@@ -1091,7 +1082,7 @@ export default {
     chooseDirect(){
       if (this.direct[0]) {
         this.groupType = 'direct'
-        this.selectIndex = 0
+        this.selectIndex = this.direct[0].room._id
         this.setID(this.direct[0].room._id, this.direct[0].friend.username)
       } else {
         this.groupType = 'none'

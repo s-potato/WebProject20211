@@ -49,7 +49,7 @@
 <script>
 import axios from 'axios';
 export default {
-    name: 'dialog',
+    name: 'vdialog',
     props: {
         username: String,
         icon: Boolean,
