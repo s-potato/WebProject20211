@@ -65,14 +65,7 @@
           ></SettingGroup>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <!-- theme -->
-      <!-- <v-expansion-panel>
-        <v-expansion-panel-header>
-          <h3>Theme</h3>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content> </v-expansion-panel-content>
-      </v-expansion-panel> -->
-      <!-- Pictures -->
+      <!-- pictures -->
       <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Pictures</h3>

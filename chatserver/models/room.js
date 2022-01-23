@@ -78,7 +78,7 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
   Room.findById(room.id)
     .populate({
       path: "messages",
-      populate: [{ path: "sender" }, { path: "room" }, { path: "react.user", select: '_id username'}, {path: "reply_to"}],
+      populate: [{ path: "sender" }, { path: "room" }, { path: "react.user", select: '_id username display_name'}, {path: "reply_to"}],
     })
     .exec(function (err, result) {
       if (err || !result) {
