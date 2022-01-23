@@ -37,21 +37,15 @@
                             v-model="newPass"
                             label="New password"
                             :type="show ? 'text' : 'password'"
-                            :append-icon="show ? 'visibility' : 'visibility_off'"
-                            counter
-                            @click:append="show = !show"
                             :rules="[rules.required, rules.min]"></v-text-field>
                         <v-text-field
                             v-model="newPassConfirm"
                             label="New password"
                             :type="show ? 'text' : 'password'"
-                            :append-icon="show ? 'visibility' : 'visibility_off'"
-                            counter
-                            @click:append="show = !show"
                             :rules="[rules.required, rules.min, passwordConfirmationRule]"></v-text-field>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="primary" :loading="loading" @click="updatePassword();">
+                        <v-btn color="primary" @click="updatePassword();">
                             <v-icon left dark>check</v-icon>
                             Save Changes
                         </v-btn>
@@ -134,9 +128,12 @@
             await axios
             .post("http://localhost:8000/users/changepassword", params)
             .then( ()=>{
-                let here = this
-                setTimeout(function(){here.value = false}, 1000);
-                this.text = "Password successfully updated"
+                    let here = this
+                    setTimeout(function(){here.value = false}, 1000);
+                    this.text = "Password successfully updated";
+                    this.password = '';
+                    this.newPass = '';
+                    this.newPassConfirm = '';
                 }
             )
             .catch(() => {

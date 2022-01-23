@@ -2,9 +2,8 @@
   <div>Loading.....</div>
 </template>
 
-
 <script>
-  // import axios from 'axios';
+  import axios from 'axios';
   import VueJwtDecode from "vue-jwt-decode";
 
   export default {
@@ -21,9 +20,13 @@
     mounted: function() {
       let params = {
         username: this.user.username,
-        joinKey: this.$route.params.id
+        key: this.$route.params.id
       }
-      console.log(params);
+     console.log(params); 
+      axios.post("http://localhost:8000/rooms/joinwithkey", params)
+        .then(()=>{
+          this.$router.push('/');
+        })
     } 
   }
 </script>

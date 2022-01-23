@@ -2,11 +2,9 @@
   <div class="extension" v-if="groupType == 'group'">
     <!-- Groups -->
     <v-card class="text-center mt-8 mb-3" shaped>
-      <v-badge bordered bottom color="green" dot offset-x="11" offset-y="13">
-        <v-avatar class="mt-n7" size="60" elevation="10">
-          <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
-        </v-avatar>
-      </v-badge>
+      <v-avatar class="mt-n7" size="60" elevation="10">
+        <img src="/groupavatar.png" />
+      </v-avatar>
       <v-card-title class="layout justify-center">{{
         this.nameChoose
       }}</v-card-title>
@@ -24,23 +22,17 @@
           <v-list color="rgba(0,0,0,0)">
             <v-list-item-group>
               <template v-for="(item, index) in members">
-                <v-list-item :key="index">
+                <v-list-item :key="'Members'+index">
                   <v-badge
                     bordered
                     bottom
-                    color="green"
+                    :color="item.status ? 'green':'grey'"
                     dot
                     offset-x="22"
                     offset-y="26"
                   >
                     <v-list-item-avatar>
-                      <v-img
-                        :src="
-                          typeof item.avatar != 'undefined'
-                            ? item.avatar
-                            : '/avatar.png'
-                        "
-                      ></v-img>
+                      <v-img :src="typeof item.avatar != 'undefined'? item.avatar: '/avatar.png'"></v-img>
                     </v-list-item-avatar>
                   </v-badge>
                   <template>
@@ -132,16 +124,11 @@
           <v-list three-line>
             <template v-for="(item, index) in pinList">
               <v-list-item :key="'PinA' + index">
-                <v-list-item-avatar>
-                  <v-img
-                    :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
-                  ></v-img>
-                </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title v-html="item.content"></v-list-item-title>
                   <v-list-item-subtitle
-                    v-html="item.display_name"
+                    v-html="item.sender.display_name + ':'"
                   ></v-list-item-subtitle>
+                  <v-list-item-title v-html="item.content"></v-list-item-title>
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-btn icon @click="unPin(item.id)">
@@ -158,11 +145,9 @@
   <div class="extension" v-else>
     <!-- Direct -->
     <v-card class="text-center mt-8 mb-3" shaped>
-      <v-badge bordered bottom color="green" dot offset-x="11" offset-y="13">
-        <v-avatar class="mt-n7" size="60" elevation="10">
-          <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
-        </v-avatar>
-      </v-badge>
+      <v-avatar class="mt-n7" size="60" elevation="10">
+        <img :src="avatar"/>
+      </v-avatar>
       <v-card-title class="layout justify-center">{{
         this.nameChoose
       }}</v-card-title>
@@ -241,16 +226,11 @@
           <v-list three-line>
             <template v-for="(item, index) in pinList">
               <v-list-item :key="'PinB' + index">
-                <v-list-item-avatar>
-                  <v-img
-                    :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
-                  ></v-img>
-                </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title v-html="item.content"></v-list-item-title>
                   <v-list-item-subtitle
-                    v-html="item.sender.display_name"
+                    v-html="item.sender.display_name + ':'"
                   ></v-list-item-subtitle>
+                  <v-list-item-title v-html="item.content"></v-list-item-title>
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-btn icon @click="unPin(item.id)">
@@ -294,6 +274,9 @@ export default {
       type: Array,
       required: true,
     },
+    avatar: {
+      type: String,
+    }
   },
   components: {
     SettingGroup,
@@ -330,7 +313,6 @@ export default {
       .post("http://localhost:8000/rooms/pins", params)
       .then((response) => {
         this.pinList = response.data;
-        // console.log(response.data);
       })
       .catch((err) => {
         console.log(err);
@@ -345,7 +327,6 @@ export default {
         .post("http://localhost:8000/rooms/pins", params)
         .then((response) => {
           let pinList = response.data;
-          // console.log(response.data);
           if (pinList) {
             pinList.forEach((pin) => {
               this.members.forEach((member) => {

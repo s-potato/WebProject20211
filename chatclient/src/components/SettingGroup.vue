@@ -29,7 +29,6 @@
                 <v-card-actions>
                   <v-btn
                     color="primary"
-                    :loading="loading"
                     @click="
                       dialog.value = false;
                       updateGroup();
@@ -40,7 +39,6 @@
                   </v-btn>
                   <v-btn
                     color="primary"
-                    :loading="loading"
                     @click="dialog.value = false"
                   >
                     <v-icon left dark>fas fa-times</v-icon>

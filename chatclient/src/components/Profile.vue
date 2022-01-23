@@ -35,7 +35,7 @@
                             readonly></v-text-field>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="primary" :loading="loading" @click="dialog.value = false; updateName();">
+                        <v-btn color="primary" @click="dialog.value = false; updateName();">
                             <v-icon left dark>check</v-icon>
                             Save Changes
                         </v-btn>
