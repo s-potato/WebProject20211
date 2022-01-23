@@ -70,12 +70,12 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- theme -->
-      <v-expansion-panel>
+      <!-- <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Theme</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content> </v-expansion-panel-content>
-      </v-expansion-panel>
+      </v-expansion-panel> -->
       <!-- Pictures -->
       <v-expansion-panel>
         <v-expansion-panel-header>
@@ -170,12 +170,20 @@
     </v-card>
     <v-expansion-panels v-model="panel" multiple>
       <!-- theme -->
-      <v-expansion-panel>
+      <!-- <v-expansion-panel>
         <v-expansion-panel-header>
           <h3>Theme</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content> </v-expansion-panel-content>
-      </v-expansion-panel>
+        <v-expansion-panel-content>
+          <v-switch
+        v-model="$vuetify.theme.dark"
+        hint="This toggles the global state of the Vuetify theme"
+        inset
+        label="Vuetify Theme Dark"
+        persistent-hint
+      ></v-switch>
+        </v-expansion-panel-content>
+      </v-expansion-panel> -->
       <!-- Pictures -->
       <v-expansion-panel>
         <v-expansion-panel-header>

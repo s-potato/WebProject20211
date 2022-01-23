@@ -111,7 +111,7 @@
                 
             </router-view>
         </v-col>
-    </v-row>    
+    </v-row>   
 </template>
 <script>
 import axios from 'axios';
