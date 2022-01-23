@@ -43,7 +43,6 @@ export default {
       axios
         .post("http://localhost:8000/rooms/search", params)
         .then((response) => {
-          console.log(response.data);
           return (this.searchList = response.data);
         })
         .catch((err) => {

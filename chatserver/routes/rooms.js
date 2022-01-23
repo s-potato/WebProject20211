@@ -120,8 +120,10 @@ router.post('/refreshKey', (req, res, next)=>{
 
 router.post('/joinwithkey', (req, res, next)=>{
     Room.findOne({joinKey: req.body.key}, (err, room)=>{
-        if (err || !room || room.isDirect) {
+        if (err || !room) {
             res.status(500).json({ status: "error", message: "Wrong key"})
+        } else if (room.isDirect){
+            res.status(500).json({ status: "error", message: "Where did you get that key?"})
         } else {
             User.addToGroup({username: req.body.username, room_id: room._id}, (err, result)=>{
                 if (err) {
@@ -130,6 +132,16 @@ router.post('/joinwithkey', (req, res, next)=>{
                     res.json({status: 'success'})
                 }
             })
+        }
+    })
+})
+
+router.get('/key', (req, res, next)=>{
+    Room.findById(req.query.id, (err, room)=>{
+        if (err || !room || room.isDirect) {
+            res.status(500).json({ status: "error", message: "Room not found."})
+        } else {
+            res.json(room.joinKey);
         }
     })
 })

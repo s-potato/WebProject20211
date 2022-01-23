@@ -32,20 +32,11 @@
                           :disabled="item.friend.added"
                           @click="addIntoGroupList(item.friend, index)"
                         >
-                          <v-badge
-                            bordered
-                            bottom
-                            color="green"
-                            dot
-                            offset-x="22"
-                            offset-y="26"
-                          >
                             <v-list-item-avatar>
                               <v-img
                                 :src="item.friend.avatar ? item.friend.avatar : '/avatar.png'"
                               ></v-img>
                             </v-list-item-avatar>
-                          </v-badge>
                           <template>
                             <v-list-item-content>
                               <v-list-item-title
@@ -116,20 +107,11 @@
                   :key="'A'+index"
                   :value="item.id"
                   @click="setID(item.id, item.name), infoRoom(item.id)">
-                  <v-badge
-                    bordered
-                    bottom
-                    color="grey"
-                    dot
-                    offset-x="22"
-                    offset-y="26"
-                  >
-                    <v-list-item-avatar>
-                      <v-img
-                        :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
-                      ></v-img>
-                    </v-list-item-avatar>
-                  </v-badge>
+                  <v-list-item-avatar>
+                    <v-img
+                      :src="'/groupavatar.png'"
+                    ></v-img>
+                  </v-list-item-avatar>
                   <template>
                     <v-list-item-content :class="textRead">
                       <v-list-item-title v-text="item.name"></v-list-item-title>
@@ -154,7 +136,7 @@
                   <v-badge
                     bordered
                     bottom
-                    color="green"
+                    :color="item.friend.status ? 'green':'grey'"
                     dot
                     offset-x="22"
                     offset-y="26"
@@ -196,18 +178,13 @@
         >
         
           <v-app-bar flat color="rgba(0,0,0,0,0)">
-            <v-badge
-              bordered
-              bottom
-              color="green"
-              dot
-              offset-x="11"
-              offset-y="13"
-            >
-              <v-avatar size="40" elevation="10">
-                <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg" />
-              </v-avatar>
-            </v-badge>
+            <v-avatar size="40" elevation="10" v-if="groupType == 'direct'">
+              <img :src="getDirectAvatar(idRoomChoose)" />
+            </v-avatar>
+            <v-avatar size="40" elevation="10" v-else-if="groupType == 'group'">
+                <img src="/groupavatar.png" />
+            </v-avatar>
+            
             <v-toolbar-title class="title pl-0 ml-2">
               {{ this.nameChoose }}
             </v-toolbar-title>
@@ -249,7 +226,17 @@
                               {{ currentUrl }}
                             </a>
                           </v-col>
-                          <v-col cols="12" sm="3" lg="3">
+                          <v-col cols="12" sm="1" lg="1">
+                            <v-btn
+                              title
+                              color="black"
+                              @click="refreshLink()"
+                              icon
+                            >
+                              <v-icon>fas fa-sync-alt</v-icon>
+                            </v-btn>
+                          </v-col>
+                          <v-col cols="12" sm="2" lg="2">
                             <v-btn
                               title
                               color="white"
@@ -258,8 +245,9 @@
                             >
                               Copy
                             </v-btn>
-                          </v-col></v-row
-                        >
+                          </v-col>
+                          
+                        </v-row>
                       </v-card-text>
                     </div>
                     <v-card-actions class="justify-end">
@@ -373,19 +361,9 @@
                     </v-tooltip>
                   </v-card>
                 </div>
-                <v-badge
-                  class="space"
-                  bordered
-                  bottom
-                  color="green"
-                  dot
-                  offset-x="10"
-                  offset-y="10"
-                >
-                  <v-avatar size="30" elevation="10">
-                    <img :src="getAvatar(message.sender)" @error="this.onerror=null;this.src='/avatar.png';" />
-                  </v-avatar>
-                </v-badge>
+                <v-avatar size="30" elevation="10">
+                  <img :src="getAvatar(message.sender)" @error="this.onerror=null;this.src='/avatar.png';" />
+                </v-avatar>
               </v-app-bar>
               <!-- other send -->
               <v-app-bar
@@ -396,18 +374,9 @@
                 @mouseover="active = true"
                 @mouseout="active = false"
               >
-                <v-badge
-                  bordered
-                  bottom
-                  color="green"
-                  dot
-                  offset-x="10"
-                  offset-y="10"
-                >
-                  <v-avatar size="30" elevation="10">
-                    <img :src="getAvatar(message.sender)" @error="this.onerror=null;this.src='/avatar.png';"/>
-                  </v-avatar>
-                </v-badge>
+                <v-avatar size="30" elevation="10">
+                  <img :src="getAvatar(message.sender)" @error="this.onerror=null;this.src='/avatar.png';"/>
+                </v-avatar>
                 <div>
                   <div class="name">{{ getDisplayName(message.sender) }}</div>
                   <div class="replied" v-if='message.reply_to'>
@@ -555,6 +524,7 @@
               :nameChoose="this.nameChoose"
               :idRoomChoose="this.idRoomChoose"
               @updateGroup="updateGroup"
+              :avatar="groupType == 'direct'? getDirectAvatar(this.idRoomChoose) : ''"
             ></Extension>
           </div>
         </v-col>
@@ -694,8 +664,6 @@ export default {
       })
     })
     socket.on("deleted", (data)=>{
-      console.log(data)
-      console.log("wtf man")
       let vue = this
       if (data.room_id === this.idRoomChoose) {
         this.messages.find((element, index)=>{
@@ -710,7 +678,7 @@ export default {
       this.typingIndicatorOn(data.e);
     })
     // get Link
-    this.currentUrl = window.location.href
+    // this.currentUrl = window.location.href
   },
   computed: {
     theme() {
@@ -738,7 +706,6 @@ export default {
     axios
       .post("http://localhost:8000/users/rooms", params)
       .then((response) => {
-        console.log(response.data)
         if (response.data[0]) {
           this.idRoomChoose = response.data[0].id;
           this.nameChoose = response.data[0].name;
@@ -763,6 +730,11 @@ export default {
               console.log(err);
             });
             this.groupType = 'group'
+          axios.get("http://localhost:8000/rooms/key", {params})
+            .then((response) => {
+              var host = window.location.protocol + "//" + window.location.host;
+              this.currentUrl = host + '/join/' + response.data;
+            })
         } else {
           this.groupType = 'none';
         }
@@ -783,6 +755,16 @@ export default {
       });
   },
   methods: {
+    getDirectAvatar(room_id) {
+      return ((room_id)=>{      // anonymous function
+        var direct = this.direct.find(element=>element.room._id == room_id)
+        if (direct && direct.friend.avatar) {
+          return direct.friend.avatar
+        } else {
+          return '/avatar.png'
+        }
+      })(room_id)
+    },
     getDisplayName(username) {
       return ((username)=>{
           if (this.user.username == username) {
@@ -791,8 +773,7 @@ export default {
           var user = this.groupUsers.find(element => element.username == username)
           if (!user) {
             var direct = this.direct.find(element=> element.friend.username == username)
-            console.log(direct)
-            user = direct.friend
+            if (direct) user = direct.friend
           }
           if (user && user.displayname) {
             return user.displayname
@@ -801,12 +782,8 @@ export default {
           }
         }
       )(username)
-      // return typeof this.groupUsers.find( element => element.username == username ).display_name != 'undefined' ?
-      //     this.groupUsers.find( element => element.username == username ).display_name : username
     },
     getAvatar(username) {
-      // return typeof this.groupUsers.find( element => element.username == username ).avatar != 'undefined' ?
-      //     this.groupUsers.find( element => element.username == username ).avatar : '/avatar.png'
       return ((username)=>{
           if (this.user.username == username) {
             return this.user.avatar ? this.user.avatar : '/avatar.png'
@@ -890,6 +867,11 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+      axios.get("http://localhost:8000/rooms/key", {params})
+        .then((response) => {
+          var host = window.location.protocol + "//" + window.location.host;
+          this.currentUrl = host + '/join/' + response.data;
+        })
     },
     format_date(value) {
       if (value) {
@@ -939,7 +921,6 @@ export default {
       //
     },
     getUser(data){
-      console.log(data)
       let message = {};
       message.replyUser = this.getDisplayName(data.sender);
       if (data.type != 'text') {
@@ -949,7 +930,6 @@ export default {
       }
       message._id = data._id;
       this.replyMess = message
-      console.log(this.replyMess)
     },    
     addPin(messageId){
       let params = {
@@ -1089,6 +1069,17 @@ export default {
       } else {
         this.groupType = 'none'
       }
+    },
+    refreshLink(){
+      let params = {
+        id: this.idRoomChoose,
+      }
+
+      axios.post("http://localhost:8000/rooms/refreshKey", params)
+      .then((response)=>{
+        var host = window.location.protocol + "//" + window.location.host;
+        this.currentUrl = host + '/join/' + response.data;
+      })
     }
   },
 };
