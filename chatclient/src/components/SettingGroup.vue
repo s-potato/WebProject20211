@@ -21,11 +21,11 @@
                                 ></v-text-field>
                         </v-card-text>
                         <v-card-actions>
-                            <v-btn color="primary" :loading="loading" @click="dialog.value = false; updateGroup();">
+                            <v-btn color="primary" @click="dialog.value = false; updateGroup();">
                                 <v-icon left dark>check</v-icon>
                                 Save Changes
                             </v-btn>
-                            <v-btn color="primary" :loading="loading" @click="dialog.value = false;">
+                            <v-btn color="primary" @click="dialog.value = false;">
                                 <v-icon left dark>fas fa-times</v-icon>
                                 Close
                             </v-btn>

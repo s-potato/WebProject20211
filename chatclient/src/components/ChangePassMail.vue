@@ -51,7 +51,7 @@
                             :rules="[rules.required, rules.min, passwordConfirmationRule]"></v-text-field>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="primary" :loading="loading" @click="updatePassword();">
+                        <v-btn color="primary" @click="updatePassword();">
                             <v-icon left dark>check</v-icon>
                             Save Changes
                         </v-btn>
