@@ -270,7 +270,7 @@
             </v-btn>
           </v-app-bar>
         
-          <div style="overflow: auto; max-height: 82%; height:750px;display: flex;flex-direction: column-reverse">
+          <div style="overflow: auto; max-height: 82%; height:750px" ref="chatmessage">
             <div v-for="(message,index) in messages" :key="message.date">
               <!-- user send -->
               <v-app-bar
@@ -313,13 +313,13 @@
                   </v-list>
                 </v-menu>
 
-                  <v-menu class="space1" left bottom :offset-x="offset">
-                    <template v-slot:activator="{ on, attrs }">
+                  <v-menu class="space1" left bottom :offset-x="offset" v-model="pickEmojiShowB[message._id]">
+                      <template v-slot:activator="{ on, attrs }">
                       <v-btn icon v-bind="attrs" v-on="on">
                         <v-icon v-show="active">far fa-grin-beam</v-icon>
                       </v-btn>
-                    </template>
-                    <VuemojiPicker @emojiClick="handleEmojiClick($event, message._id)" />
+                      </template>
+                    <VuemojiPicker @emojiClick="handleEmojiClick($event, message._id, index)"/>
                   </v-menu>
                 <!-- chat message -->
                 <div>
@@ -347,14 +347,14 @@
                       <span> {{ format_date(message.date) }}</span>
                     </v-tooltip>
                   </v-card>
-                  <v-card >
-                    <v-tooltip top >
+                  <v-card v-if="message.react && message.react.length > 0">
+                    <v-tooltip top>
                       <template v-slot:activator="{ on, attrs }">
                         <div class="emo" v-bind="attrs" v-on="on">
-                         {{message.react[0].icon}}
+                         {{message.react.length > 0 ? message.react.length + message.react[0].icon : ""}}
                         </div>
                       </template>
-                      <span> {{message.react[0].icon}} {{message.react[0].user}}</span>
+                      <div v-for="(react, index) in message.react" :key="'React'+index"> {{react.icon}} {{react.user.display_name}}</div>
                     </v-tooltip>
                   </v-card>
                 </div>
@@ -399,24 +399,24 @@
                       <span> {{ format_date(message.date) }}</span>
                     </v-tooltip>
                   </v-card>
-                  <v-card >
-                    <v-tooltip top >
+                  <v-card  v-if="message.react && message.react.length > 0">
+                    <v-tooltip top>
                       <template v-slot:activator="{ on, attrs }">
                         <div class="emo" v-bind="attrs" v-on="on">
-                         {{message.react[0].icon}}
+                         {{message.react.length > 0 ? message.react.length + message.react[0].icon : ""}}
                         </div>
                       </template>
-                      <span> {{message.react[0].icon}} {{message.react[0].user}}</span>
-                    </v-tooltip> 
+                      <div v-for="(react, index) in message.react" :key="'React'+index"> {{react.icon}} {{react.user.display_name}}</div>
+                    </v-tooltip>
                   </v-card>
                 </div>
-                <v-menu left bottom :offset-x="offset">
+                <v-menu left bottom :offset-x="offset" v-model="pickEmojiShowB[message._id]">
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn icon v-bind="attrs" v-on="on" class="ml-2">
                       <v-icon v-show="active">far fa-grin-beam</v-icon>
                     </v-btn>
                   </template>
-                  <VuemojiPicker @emojiClick="handleEmojiClick($event, message._id)"/>
+                  <VuemojiPicker @emojiClick="handleEmojiClick($event, message._id, index)"/>
                 </v-menu>
                 <v-menu left bottom :offset-x="offset">
                   <template v-slot:activator="{ on, attrs }">
@@ -598,6 +598,7 @@ export default {
       isRead:false,
       openMenuChat: false,
       pickEmojiShow: false,
+      pickEmojiShowB: {},
       emo: [],
       isEmo:false,
       selectIndex: "",
@@ -633,6 +634,9 @@ export default {
       })
       if (data.room_id === this.idRoomChoose) {
         this.messages.push(data);
+        setTimeout(() => {
+          this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
+        }, 200);
       }
     })
     socket.on("A member added", (data)=>{
@@ -684,9 +688,44 @@ export default {
         })
       }
     })
-
+    socket.on("Reacted",(data)=>{
+      console.log(data);
+      if (data.room_id == this.idRoomChoose) {
+        var message_index;
+        this.messages.forEach((element, index)=>{
+          if(element._id == data.message_id) {
+            message_index = index
+          }
+        })
+        console.log(message_index)
+        var count = false;
+        this.messages[message_index].react.forEach((element, index)=>{
+          if (element.user.username == data.username) {
+            if (element.icon == data.icon) {
+              this.messages[message_index].react.splice(index, 1);
+            } else {
+              this.messages[message_index].react[index].icon = data.icon
+            }
+            count = true;
+            return
+          } 
+        })
+        if(count == false){
+          this.messages[message_index].react.push({
+            user: {
+              _id: data.user_id,
+              username: data.username,
+              display_name: data.display_name
+            },
+            icon: data.icon
+          })
+        }
+      }
+    })
     socket.on("Someone typing" , (data)=>{
+      if(data.room_id == this.idRoomChoose){
       this.typingIndicatorOn(data.e);
+      }
     })
     // get Link
     // this.currentUrl = window.location.href
@@ -703,18 +742,18 @@ export default {
     }
   }
   },
-  mounted: function () {
+  mounted: async function () {
     let params = {
       username: this.user.username,
     };
     // get info:
-    axios
+    await axios
       .post("http://localhost:8000/users/info", params)
       .then((response) => {
         this.user = response.data
       })
     // show group list
-    axios
+    await axios
       .post("http://localhost:8000/users/rooms", params)
       .then((response) => {
         if (response.data[0]) {
@@ -756,7 +795,7 @@ export default {
       });
 
     // show direct list
-    axios
+    await axios
       .post("http://localhost:8000/users/directs", params)
       .then((response) => {
         this.direct = response.data;
@@ -764,6 +803,7 @@ export default {
       .catch((err) => {
         console.log(err);
       });
+    this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
   },
   methods: {
     getDirectAvatar(room_id) {
@@ -779,17 +819,17 @@ export default {
     getDisplayName(username) {
       return ((username)=>{
           if (this.user.username == username) {
-            return this.user.displayname ? this.user.displayname : this.user.username
+            return this.user.display_name ? this.user.display_name : this.user.username
           }
           var user = this.groupUsers.find(element => element.username == username)
           if (!user) {
             var direct = this.direct.find(element=> element.friend.username == username)
             if (direct) user = direct.friend
           }
-          if (user && user.displayname) {
-            return user.displayname
+          if (user && user.display_name) {
+            return user.display_name
           } else {
-            return user.username
+            return username
           }
         }
       )(username)
@@ -849,22 +889,24 @@ export default {
       this.message = "";
       this.isReply = false;
     },
-    setID(id, name) {
+    async setID(id, name) {
       this.idRoomChoose = id;
       this.nameChoose = name;
       let params = {
         id: this.idRoomChoose,
       };
-      axios
+      await axios
         .post("http://localhost:8000/rooms/messages", params)
         .then((response) => {
           this.messages = response.data;
           this.imgList = this.messages.filter(message => (message.type == "image"));
           this.fileList = this.messages.filter(message => message.type == "file");
+          
         })
         .catch((err) => {
           console.log(err);
         });
+        this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
     },
     infoRoom(id) {
       // show message list
@@ -892,6 +934,8 @@ export default {
       }
     },
     handleEmojiClick(EmojiClickEventDetail, id) {
+      console.log(this.pickEmojiShowB)
+      this.pickEmojiShowB[id] = false;
       let params = {
         icon: EmojiClickEventDetail.unicode,
         message_id: id,
@@ -900,8 +944,15 @@ export default {
       axios
         .post("http://localhost:8000/users/reactMessage", params)
         .then((response) =>{
-          this.pickEmojiShow = false;
           console.log(response.data);
+          socket.emit("React a message",({
+            message_id: id, 
+            icon: EmojiClickEventDetail.unicode, 
+            username:this.user.username, 
+            room_id: this.idRoomChoose, 
+            user_id: this.user._id,
+            display_name: this.user.display_name
+            }));
         })
         .catch((err) => {
           console.log(err);
@@ -916,12 +967,13 @@ export default {
       this.$set(this.direct[index].friend, 'added', true);
     },
     createGroup() {
-      let params = {
-        username: this.user.username,
-        roomname: this.groupName,
-        members: this.addGroupList,
-      };
-      (this.groupName = ""),
+      if(this.groupName != ""){
+        let params = {
+          username: this.user.username,
+          roomname: this.groupName,
+          members: this.addGroupList,
+        };
+        (this.groupName = ""),
         axios
           .post("http://localhost:8000/users/createroom", params)
           .then( (response) => {
@@ -934,6 +986,7 @@ export default {
           .catch((err) => {
             console.log(err);
           });
+      }
     },
     // get link
     async copyURL(mytext) {
@@ -1060,6 +1113,14 @@ export default {
     updateGroup(name){
       this.nameChoose = name;
       // get list room again
+      let params = {
+        username: this.user.username,
+      };
+      axios
+      .post("http://localhost:8000/users/rooms", params)
+      .then((response) => {
+        this.group = response.data;
+      })
     },
     deleteMessage(message, index) {
       let params = {
@@ -1198,9 +1259,7 @@ export default {
 }
 .emo{
     position: fixed;
-    border: 2px solid;
-    border-radius: 20px ;
-    color: white;
+    color: rgb(22, 21, 21);
 }
 .btn {
   background-color: grey;

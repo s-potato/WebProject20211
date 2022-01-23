@@ -19,7 +19,7 @@
                     <v-list-item :key="item.username" :disabled="item.inGroup" @click="addIntoGroup(item.username, index)">
                         <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
                             <v-list-item-avatar>
-                            <v-img :src="`https://cdn.vuetifyjs.com/images/lists/1.jpg`"></v-img>
+                            <v-img :src="typeof item.avatar != 'undefined'? item.avatar: '/avatar.png'"></v-img>
                             </v-list-item-avatar>
                         </v-badge>
                         <template>
@@ -87,6 +87,7 @@ export default {
                         }
                     }
                 }
+                console.log(this.findUsers)
                 return this.findUsers = findUsers
             })
             .catch((err) => {
