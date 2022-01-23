@@ -319,7 +319,7 @@ router.post('/addtogroup', (req, res, next)=>{
                     }
                 }
             }
-            result.react.push({user: req.body.username, icon: req.body.icon});
+            result.react.push({user: req.body.user_id, icon: req.body.icon});
             result.save();
             res.json({status: "Add Success"});
             return;

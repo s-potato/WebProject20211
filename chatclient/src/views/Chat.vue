@@ -357,7 +357,7 @@
                          {{message.react.icon}}
                         </div>
                       </template>
-                      <span> {{message.react.icon}} {{message.react.user}}</span>
+                      <span> {{message.react[0].icon}} {{message.react[0].user}}</span>
                     </v-tooltip>
                   </v-card>
                 </div>
@@ -895,23 +895,20 @@ export default {
       }
     },
     handleEmojiClick(EmojiClickEventDetail, id) {
-      console.log(EmojiClickEventDetail.unicode)
-      console.log(id)
       let params = {
+        icon: EmojiClickEventDetail.unicode,
         message_id: id,
-        username: this.user.username,
+        user_id: this.user._id,
       };
-      console.log(params)
-      // axios
-      //   .post("http://localhost:8000/users/reactMessage", params)
-      //   .then((response) =>{
-      //     console.log(response);
-      //     console.log("1");
-      //     this.pickEmojiShow = false;
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      axios
+        .post("http://localhost:8000/users/reactMessage", params)
+        .then((response) =>{
+          this.pickEmojiShow = false;
+          console.log(response.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     handleEmojiChat(EmojiClickEventDetail) {
       this.pickEmojiShow = false;
