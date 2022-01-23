@@ -315,11 +315,11 @@ router.post('/addtogroup', (req, res, next)=>{
                         result.react[i].icon = req.body.icon;
                         result.save();
                         res.json({status:"Change Success"});
-                        return;//hello c //choello c co sai dau ko c :V postman thu, postman ?
+                        return;
                     }
                 }
             }
-            result.react.push({user: req.body.user_id, icon: req.body.icon});
+            result.react.push({user: req.body.username, icon: req.body.icon});
             result.save();
             res.json({status: "Add Success"});
             return;

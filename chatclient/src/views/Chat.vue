@@ -334,7 +334,7 @@
                         <v-icon v-show="active">far fa-grin-beam</v-icon>
                       </v-btn>
                     </template>
-                    <VuemojiPicker @emojiClick="handleEmojiClick" />
+                    <VuemojiPicker @emojiClick="handleEmojiClick($event, message._id)" />
                   </v-menu>
                 <!-- chat message -->
                 <div>
@@ -366,10 +366,10 @@
                     <v-tooltip top >
                       <template v-slot:activator="{ on, attrs }">
                         <div class="emo" v-bind="attrs" v-on="on">
-                         {{emo}}
+                         {{message.react.icon}}
                         </div>
                       </template>
-                      <span> {{emo}} {{message.sender}}</span>
+                      <span> {{message.react.icon}} {{message.react.user}}</span>
                     </v-tooltip>
                   </v-card>
                 </div>
@@ -433,6 +433,16 @@
                       <span> {{ format_date(message.date) }}</span>
                     </v-tooltip>
                   </v-card>
+                  <v-card >
+                    <v-tooltip top >
+                      <template v-slot:activator="{ on, attrs }">
+                        <div class="emo" v-bind="attrs" v-on="on">
+                         {{message.react.icon}}
+                        </div>
+                      </template>
+                      <span> {{message.react.icon}} {{message.react.user}}</span>
+                    </v-tooltip> 
+                  </v-card>
                 </div>
                 <v-menu left bottom :offset-x="offset">
                   <template v-slot:activator="{ on, attrs }">
@@ -440,7 +450,7 @@
                       <v-icon v-show="active">far fa-grin-beam</v-icon>
                     </v-btn>
                   </template>
-                  <VuemojiPicker @emojiClick="handleEmojiClick" />
+                  <VuemojiPicker @emojiClick="handleEmojiClick($event, message._id)"/>
                 </v-menu>
                 <v-menu left bottom :offset-x="offset">
                   <template v-slot:activator="{ on, attrs }">
@@ -554,6 +564,8 @@
               :members="this.groupUsers"
               :nameChoose="this.nameChoose"
               :idRoomChoose="this.idRoomChoose"
+              :imgList="this.imgList"
+              :fileList="this.fileList"
               @updateGroup="updateGroup"
             ></Extension>
           </div>
@@ -619,9 +631,11 @@ export default {
       isRead:false,
       openMenuChat: false,
       pickEmojiShow: false,
-      emo: "",
+      emo: [],
       isEmo:false,
       selectIndex: "",
+      fileList:[],
+      imgList:[],
     };
   },
   created() {
@@ -694,8 +708,6 @@ export default {
       })
     })
     socket.on("deleted", (data)=>{
-      console.log(data)
-      console.log("wtf man")
       let vue = this
       if (data.room_id === this.idRoomChoose) {
         this.messages.find((element, index)=>{
@@ -738,7 +750,6 @@ export default {
     axios
       .post("http://localhost:8000/users/rooms", params)
       .then((response) => {
-        console.log(response.data)
         if (response.data[0]) {
           this.idRoomChoose = response.data[0].id;
           this.nameChoose = response.data[0].name;
@@ -791,7 +802,6 @@ export default {
           var user = this.groupUsers.find(element => element.username == username)
           if (!user) {
             var direct = this.direct.find(element=> element.friend.username == username)
-            console.log(direct)
             user = direct.friend
           }
           if (user && user.displayname) {
@@ -871,6 +881,8 @@ export default {
         .post("http://localhost:8000/rooms/messages", params)
         .then((response) => {
           this.messages = response.data;
+          this.imgList = this.messages.filter(message => (message.type == "image"));
+          this.fileList = this.messages.filter(message => message.type == "file");
         })
         .catch((err) => {
           console.log(err);
@@ -896,9 +908,24 @@ export default {
         return moment(value).format("h:mm");
       }
     },
-    handleEmojiClick(EmojiClickEventDetail) {
-      this.pickEmojiShow = false;
-      this.emo = EmojiClickEventDetail.unicode;
+    handleEmojiClick(EmojiClickEventDetail, id) {
+      console.log(EmojiClickEventDetail.unicode)
+      console.log(id)
+      let params = {
+        message_id: id,
+        username: this.user.username,
+      };
+      console.log(params)
+      // axios
+      //   .post("http://localhost:8000/users/reactMessage", params)
+      //   .then((response) =>{
+      //     console.log(response);
+      //     console.log("1");
+      //     this.pickEmojiShow = false;
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     },
     handleEmojiChat(EmojiClickEventDetail) {
       this.pickEmojiShow = false;
@@ -939,7 +966,7 @@ export default {
       //
     },
     getUser(data){
-      console.log(data)
+      
       let message = {};
       message.replyUser = this.getDisplayName(data.sender);
       if (data.type != 'text') {
@@ -949,7 +976,7 @@ export default {
       }
       message._id = data._id;
       this.replyMess = message
-      console.log(this.replyMess)
+      
     },    
     addPin(messageId){
       let params = {
@@ -1023,7 +1050,7 @@ export default {
       const file = this.$refs.inputFile.files[0]
       const form = new FormData();
       form.append('file', file);
-      console.log(file)
+      
       axios.post("http://localhost:8000/rooms/upload", form)
       .then((response)=>{
         let params = {
@@ -1089,7 +1116,13 @@ export default {
       } else {
         this.groupType = 'none'
       }
-    }
+    },
+    getImgList(){
+      this.imgList = this.messages.filter(message => message.type == "image");
+    },
+    getFileList(){
+      this.fileList = this.message.filter(message => message.type == "file");
+    },
   },
 };
 </script>
@@ -1171,7 +1204,7 @@ export default {
 .file1{
     padding: 5px;
     border-radius: 50px 50px;
-    background-color:rgb(72, 106, 253);
+    background-color:rgb(85, 163, 252);
     color: white;
 }
 .replied{

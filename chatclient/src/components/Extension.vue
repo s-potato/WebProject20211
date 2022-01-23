@@ -88,9 +88,9 @@
         <v-expansion-panel-content>
           <v-container fluid>
             <v-row>
-              <v-col v-for="i in 6" :key="'Picture' + i" cols="4">
+              <v-col v-for="img in imgList" :key="img._id" cols="4">
                 <img
-                  :src="`https://randomuser.me/api/portraits/men/${i + 20}.jpg`"
+                  :src= img.file.data
                   alt="lorem"
                   class="image"
                   height="100%"
@@ -104,20 +104,22 @@
       <!-- Files -->
       <v-expansion-panel>
         <v-expansion-panel-header>
-          <h3>Files(3)</h3>
+          <h3>Files</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-list shaped>
-            <v-list-item-group>
-              <v-list-item v-for="(item, i) in files" :key="'FileA' + i">
+            <template v-for="file in fileList">
+              <v-list-item :key="file._id" clickable @click="downloadFile(file._id)" >
                 <v-list-item-icon>
-                  <v-icon v-text="item.icon" color="green"></v-icon>
+                  <v-icon color="green">mdi-cloud-upload</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                  <v-list-item-title>
+                  {{file.file.filename}}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-            </v-list-item-group>
+            </template>
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -195,9 +197,9 @@
         <v-expansion-panel-content>
           <v-container fluid>
             <v-row>
-              <v-col v-for="i in 6" :key="'Picture' + i" cols="4">
+              <v-col v-for="img in imgList" :key="img._id" cols="4">
                 <img
-                  :src="`https://randomuser.me/api/portraits/men/${i + 20}.jpg`"
+                  :src= img.file.data
                   alt="lorem"
                   class="image"
                   height="100%"
@@ -211,17 +213,19 @@
       <!-- Files -->
       <v-expansion-panel>
         <v-expansion-panel-header>
-          <h3>Files(3)</h3>
+          <h3>Files</h3>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-list shaped>
-            <template v-for="(item, i) in files">
-              <v-list-item :key="'FileB' + i">
+            <template v-for="file in fileList">
+              <v-list-item :key="file._id" clickable @click="downloadFile(file._id)" >
                 <v-list-item-icon>
-                  <v-icon v-text="item.icon" color="green"></v-icon>
+                  <v-icon color="green">mdi-cloud-upload</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                  <v-list-item-title>
+                  {{file.file.filename}}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -282,6 +286,14 @@ export default {
     idRoomChoose: {
       type: String,
     },
+    imgList: {
+      type: Array,
+      required: true,
+    },
+    fileList: {
+      type: Array,
+      required: true,
+    },
   },
   components: {
     SettingGroup,
@@ -301,12 +313,8 @@ export default {
     this.user = decoded;
     return {
       panel: [2],
-      files: [
-        { text: "Landing_page.zip", icon: " mdi-cloud-upload" },
-        { text: "Requirements.pdf", icon: " mdi-cloud-upload" },
-        { text: "Uwagi.docx", icon: " mdi-cloud-upload" },
-      ],
       pinList: [],
+      token: token,
     };
   },
   watch: {
@@ -322,7 +330,7 @@ export default {
       .post("http://localhost:8000/rooms/pins", params)
       .then((response) => {
         this.pinList = response.data;
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((err) => {
         console.log(err);
@@ -337,7 +345,7 @@ export default {
         .post("http://localhost:8000/rooms/pins", params)
         .then((response) => {
           let pinList = response.data;
-          console.log(response.data);
+          // console.log(response.data);
           if (pinList) {
             pinList.forEach((pin) => {
               this.members.forEach((member) => {
@@ -372,6 +380,10 @@ export default {
     updateGroup(name) {
       this.$emit("updateGroup", name);
     },
+    downloadFile(messageid) {
+      window.open("http://localhost:8000/rooms/download?id="+messageid + "&jwt=" + this.token, "_blank");
+    },
+    
   },
 };
 </script>
