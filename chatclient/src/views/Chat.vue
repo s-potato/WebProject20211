@@ -354,7 +354,7 @@
                     <v-tooltip top >
                       <template v-slot:activator="{ on, attrs }">
                         <div class="emo" v-bind="attrs" v-on="on">
-                         {{message.react.icon}}
+                         {{message.react[0].icon}}
                         </div>
                       </template>
                       <span> {{message.react[0].icon}} {{message.react[0].user}}</span>
@@ -406,10 +406,10 @@
                     <v-tooltip top >
                       <template v-slot:activator="{ on, attrs }">
                         <div class="emo" v-bind="attrs" v-on="on">
-                         {{message.react.icon}}
+                         {{message.react[0].icon}}
                         </div>
                       </template>
-                      <span> {{message.react.icon}} {{message.react.user}}</span>
+                      <span> {{message.react[0].icon}} {{message.react[0].user}}</span>
                     </v-tooltip> 
                   </v-card>
                 </div>
