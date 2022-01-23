@@ -49,7 +49,7 @@
 import socket from '../socket';
 import axios from 'axios';
 export default {
-    name: 'dialog',
+    name: 'vdialog',
     props: {
         username: String,
         members: Array,

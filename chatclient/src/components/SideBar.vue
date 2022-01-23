@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-col-1>
+        <span>
             <nav>
                 <v-navigation-drawer v-model="drawer" dark app mini-variant mini-variant-width="100" class="white">
                     <v-list>
@@ -105,7 +105,7 @@
                     </v-list>
                 </v-navigation-drawer>
             </nav>
-        </v-col-1>
+        </span>
         <v-col>
             <router-view>
                 

@@ -86,7 +86,7 @@
           <v-row>
             <v-col
               v-for="i in 6"
-              :key="i"
+              :key="'Picture'+i"
               cols="4"
             >
               <img
@@ -109,7 +109,7 @@
         <v-expansion-panel-content>
           <v-list shaped>
             <v-list-item-group>
-              <v-list-item v-for="(item, i) in files" :key="i">
+              <v-list-item v-for="(item, i) in files" :key="'FileA'+i">
                 <v-list-item-icon>
                   <v-icon v-text="item.icon" color="green"></v-icon>
                 </v-list-item-icon>
@@ -129,7 +129,7 @@
         <v-expansion-panel-content style="overflow: auto; height: 181px">
           <v-list three-line>
             <template v-for="(item, index) in pinList">
-              <v-list-item :key="index">
+              <v-list-item :key="'PinA'+index">
                 <v-list-item-avatar>
                   <v-img
                     :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
@@ -194,7 +194,7 @@
           <v-row>
             <v-col
               v-for="i in 6"
-              :key="i"
+              :key="'Picture'+i"
               cols="4"
             >
               <img
@@ -217,7 +217,7 @@
         <v-expansion-panel-content>
           <v-list shaped>
             <template v-for="(item, i) in files">
-              <v-list-item :key="i">
+              <v-list-item :key="'FileB'+i">
                 <v-list-item-icon>
                   <v-icon v-text="item.icon" color="green"></v-icon>
                 </v-list-item-icon>
@@ -237,7 +237,7 @@
         <v-expansion-panel-content style="overflow: auto; height: 181px">
           <v-list three-line>
             <template v-for="(item, index) in pinList">
-              <v-list-item :key="index">
+              <v-list-item :key="'PinB'+index">
                 <v-list-item-avatar>
                   <v-img
                     :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"
