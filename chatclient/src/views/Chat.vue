@@ -6,8 +6,8 @@
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-dialog transition="dialog-top-transition" max-width="600">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn title color="white" block v-bind="attrs" v-on="on">
-                  <v-icon left color="blue">fas fa-plus</v-icon>
+                <v-btn title color="blue" block v-bind="attrs" v-on="on">
+                  <v-icon left color="white">fas fa-plus</v-icon>
                   <v-divider class="mx-3" vertical></v-divider>
                   New conversation
                 </v-btn>
@@ -77,7 +77,7 @@
             <v-col color="rgba(0,0,0,0,0)">
               <v-btn
                 title
-                :color="groupType == 'group' ? 'grey' : 'white'"
+                :color="groupType == 'group' ? 'grey' : 'blue'"
                 block
                 @click="chooseGroup"
               >
@@ -87,7 +87,7 @@
             <v-col>
               <v-btn
                 title
-                :color="groupType == 'direct' ? 'grey' : 'white'"
+                :color="groupType == 'direct' ? 'grey' : 'blue'"
                 block
                 @click="chooseDirect"
               >
@@ -201,7 +201,6 @@
               <v-dialog transition="dialog-bottom-transition" max-width="600" v-if="groupType == 'group'">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
-                    color="black"
                     icon
                     v-bind="attrs"
                     v-on="on"
@@ -229,7 +228,7 @@
                           <v-col cols="12" sm="1" lg="1">
                             <v-btn
                               title
-                              color="black"
+                              
                               @click="refreshLink()"
                               icon
                             >
@@ -239,7 +238,7 @@
                           <v-col cols="12" sm="2" lg="2">
                             <v-btn
                               title
-                              color="white"
+                              
                               @click="copyURL(currentUrl)"
                               block
                             >
@@ -258,14 +257,12 @@
               </v-dialog>
             <!-- search -->
             <v-btn
-              color="black"
               icon
               @click="isSearch = !isSearch"
             >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
             <v-btn
-              color="black"
               icon
               @click="isActive = !isActive"
             >
@@ -273,7 +270,7 @@
             </v-btn>
           </v-app-bar>
         
-          <div style="overflow: auto; max-height: 82%; height:750px">
+          <div style="overflow: auto; max-height: 82%; height:750px;display: flex;flex-direction: column-reverse">
             <div v-for="(message,index) in messages" :key="message.date">
               <!-- user send -->
               <v-app-bar
