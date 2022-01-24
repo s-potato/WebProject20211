@@ -29,8 +29,7 @@
                       <template v-for="(item, index) in direct">
                         <v-list-item
                           :key="item.friend._id"
-                          :disabled="item.friend.added"
-                          @click="addIntoGroupList(item.friend, index)"
+                          @click="addIntoGroupList(index)"
                         >
                             <v-list-item-avatar>
                               <v-img
@@ -58,7 +57,7 @@
                     <v-btn text @click="dialog.value = false, createGroup()">Confirm</v-btn>
                   </v-card-actions>
                   <v-card-actions class="justify-end">
-                    <v-btn text @click="dialog.value = false, clearAdd()">Close</v-btn>
+                    <v-btn text @click="dialog.value = false, clearListSelect()">Close</v-btn>
                   </v-card-actions>
                 </v-card>
               </template>
@@ -586,7 +585,6 @@ export default {
       group: [],
       direct: [],
       messages: [],
-      addGroupList: [],
       groupName: "",
       nameChoose: "",
       // get Link
@@ -973,30 +971,39 @@ export default {
       this.pickEmojiShow = false;
       this.message += EmojiClickEventDetail.unicode;
     },
-    addIntoGroupList(friend, index) {
-      this.addGroupList.push(friend);
-      this.$set(this.direct[index].friend, 'added', true);
+    addIntoGroupList(index) {
+      if(this.direct[index].friend.added) {
+        this.$set(this.direct[index].friend, 'added', false);
+      } else {
+        this.$set(this.direct[index].friend, 'added', true);
+      }
     },
-    clearAdd(){
-      this.addIntoGroupList = [];
+    clearListSelect(){
+      for (let index = 0; index < this.direct.length; index++) {
+        this.$set(this.direct[index].friend, 'added', false);
+      }
     },
     createGroup() {
+      var addGroupList = [];
+      for (let index = 0; index < this.direct.length; index++) {
+        if (this.direct[index].friend.added) {
+          addGroupList.push(this.direct[index].friend);
+        }
+      }
+      console.log(addGroupList);
       if(this.groupName != ""){
         let params = {
           username: this.user.username,
           roomname: this.groupName,
-          members: this.addGroupList,
+          members: addGroupList,
           jwt: this.token
         };
         (this.groupName = ""),
         axios
           .post("http://localhost:8000/users/createroom", params)
           .then( (response) => {
-            socket.emit("create group", {username: this.user.username, room_id: response.data._id, members: this.addGroupList})
-            this.direct.forEach(element => {
-              this.$set(element.friend, 'added', false);
-            });
-            this.addGroupList = []
+            socket.emit("create group", {username: this.user.username, room_id: response.data._id, members: addGroupList})
+            this.clearListSelect();
           })
           .catch((err) => {
             console.log(err);
