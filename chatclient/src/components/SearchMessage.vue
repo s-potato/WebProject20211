@@ -23,6 +23,7 @@ export default {
     idRoom: String,
   },
   data() {
+    let token = localStorage.getItem("jwt");
     return {
       searchMessage: "",
       searchList: [{
@@ -31,6 +32,7 @@ export default {
         sender: ""
       }],
       findSig: false,
+      token: token
     };
   },
   methods: {
@@ -39,6 +41,7 @@ export default {
       let params = {
         term: this.searchMessage.trim(),
         room_id: this.idRoom,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/search", params)

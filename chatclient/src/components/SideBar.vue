@@ -115,7 +115,6 @@
 </template>
 <script>
 import axios from 'axios';
-import VueJwtDecode from "vue-jwt-decode";
 import Dialog from './Dialog.vue';
 import Profile from './Profile.vue';
 import ChangePassMail from './ChangePassMail.vue';
@@ -129,49 +128,52 @@ export default {
     },
     data () {
         let token = localStorage.getItem("jwt");
-        let decoded = VueJwtDecode.decode(token);
-        this.user = decoded;
         return{
-            user: decoded,
+            user: {},
             drawer: true,
             showPending: false,
             menu: false,
-            items: [
-                {
-                    avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-                    subtitle: "I'll be in your neighborhood doing errands this weekend. Do you want to hang out?",
-                    title: "Ali Connors",
-                    icon: true,
-                }],
             term: '',
             findUsers: [],
             pending: [],
+            token: token
         }
     },
     mounted: function (){
-        let params = {
-        username: this.user.username
-        };  
-        // show pending list
-        axios.post("http://localhost:8000/users/inrequest",params)
-        .then(response => {
-            this.pending = response.data;
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        axios.post("http://localhost:8000/users/info",params)
-        .then(response => {
-            this.user = response.data;
-        })
-        .catch((err) => {
-            console.log(err);
+        var params = {
+            jwt: this.token
+        };
+        axios.post("http://localhost:8000/users", params)
+        .then((response)=>{
+            this.user = response.data
+            params = {
+                username: this.user.username,
+                jwt: this.token
+            };
+            axios.post("http://localhost:8000/users/inrequest",params)
+            .then(response => {
+                this.pending = response.data;
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            axios.post("http://localhost:8000/users/info",params)
+            .then(response => {
+                this.user = response.data;
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }).catch(()=>{
+            localStorage.removeItem("jwt");
+            this.$router.push('/login');
         })
     },
     created() {
         socket.on("F-request", () => {
             let params = {
-                username: this.user.username
+                username: this.user.username,
+                jwt: this.token
             };  
             // show pending list
             axios.post("http://localhost:8000/users/inrequest",params)
@@ -188,7 +190,8 @@ export default {
         sendRequest(friendName) {
             let params = {
                 friendname: friendName,
-                username: this.user.username
+                username: this.user.username,
+                jwt: this.token
             };
             axios.post("http://localhost:8000/users/sendrequest",params)
             .then(()=>{
@@ -201,7 +204,8 @@ export default {
         },
         acceptRequest(id,index) {
             let params = {               
-                request_id: id
+                request_id: id,
+                jwt: this.token
             };
             axios.post("http://localhost:8000/users/acceptrequest",params)
             .then( (response) => {

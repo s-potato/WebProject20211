@@ -301,6 +301,7 @@ export default {
   mounted: function () {
     let params = {
       id: this.idRoomChoose,
+      jwt: this.token
     };
     axios
       .post("http://localhost:8000/rooms/pins", params)
@@ -315,6 +316,7 @@ export default {
     getPinList() {
       let params = {
         id: this.idRoomChoose,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/pins", params)
@@ -338,6 +340,7 @@ export default {
         username: this.user.username,
         message_id: messageId,
         room_id: this.idRoomChoose,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/users/unpin", params)

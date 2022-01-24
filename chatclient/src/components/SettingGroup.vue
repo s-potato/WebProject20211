@@ -82,6 +82,7 @@ export default {
         avatar: null,
         groupname: this.nameChoose,
       },
+      token: token
     };
   },
   methods: {
@@ -89,6 +90,7 @@ export default {
       let params = {
         id: this.idRoomChoose,
         groupname: this.group.groupname,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/updateinfo", params)
@@ -101,6 +103,7 @@ export default {
       let params = {
         id: this.idRoomChoose,
         username: this.user.username,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/outgroup", params)

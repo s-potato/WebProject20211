@@ -6,12 +6,12 @@ const Room = require('../models/room');
 const jwt = require('jsonwebtoken');
 const auth = require('../util/auth');
 const router = express.Router();
-/* GET users listing. */
+
 router.post('/', auth.isAuthorized, function (req, res, next) {
-    res.json({username: req.body.decoded.username});
+    res.json(req.body.decoded);
 });
 
-router.post('/info', function(req, res, next) {
+router.post('/info', auth.isAuthorized, function(req, res, next) {
     User.findOne({username: req.body.username}, '+email', (err, result) => {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!"})
@@ -21,7 +21,7 @@ router.post('/info', function(req, res, next) {
     })
 })
 
-router.post('/updateinfo', function(req, res, next) {
+router.post('/updateinfo', auth.isAuthorized, function(req, res, next) {
     User.findOne({username: req.body.username}, (err, result)=> {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!"})
@@ -68,7 +68,7 @@ router.post('/login', function (req, res, next) {
     })
 })
 
-router.post('/rooms', function (req, res, next) {
+router.post('/rooms', auth.isAuthorized, function (req, res, next) {
     User.getRoomsList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
@@ -79,7 +79,7 @@ router.post('/rooms', function (req, res, next) {
     })
 })
 
-router.post('/createroom', (req, res, next) => {
+router.post('/createroom', auth.isAuthorized, (req, res, next) => {
     User.findOne({ username: req.body.username }, function (err, user) {
         if (err || !user) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
@@ -101,7 +101,7 @@ router.post('/createroom', (req, res, next) => {
     })
 })
 
-router.post('/joinroom', (req, res, next) => {
+router.post('/joinroom', auth.isAuthorized, (req, res, next) => {
     User.findOne({ username: req.body.username }, function (err, result) {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
@@ -119,7 +119,7 @@ router.post('/joinroom', (req, res, next) => {
     })
 })
 
-router.post('/find', (req, res, next)=>{
+router.post('/find', auth.isAuthorized, (req, res, next)=>{
     if (req.body.term == '') {
         res.json([]);
         return;
@@ -139,7 +139,7 @@ router.post('/find', (req, res, next)=>{
     })
 })
 
-router.post('/acceptrequest', (req, res, next)=> {
+router.post('/acceptrequest', auth.isAuthorized, (req, res, next)=> {
     Request.findById( req.body.request_id, function (err, request) {
         if (err || !request) {
             res.status(500).json({ status: "error", message: "Not found!" });
@@ -158,7 +158,7 @@ router.post('/acceptrequest', (req, res, next)=> {
     })
 })
 
-router.post('/directs', function (req, res, next) {
+router.post('/directs', auth.isAuthorized, function (req, res, next) {
     User.getDirectsList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
@@ -169,7 +169,7 @@ router.post('/directs', function (req, res, next) {
     })
 })
 
-router.post('/sendrequest', (req, res, next)=> {
+router.post('/sendrequest', auth.isAuthorized, (req, res, next)=> {
     User.findOne( { username: req.body.username }, function (err, result) {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
@@ -187,7 +187,7 @@ router.post('/sendrequest', (req, res, next)=> {
     })
 })
 
-router.post('/inrequest', (req, res, next)=>{
+router.post('/inrequest', auth.isAuthorized, (req, res, next)=>{
     User.findOne( { username: req.body.username }, function (err, result) {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
@@ -205,7 +205,7 @@ router.post('/inrequest', (req, res, next)=>{
     })
 })
 
-router.post('/outrequest', (req, res, next)=>{
+router.post('/outrequest', auth.isAuthorized, (req, res, next)=>{
     User.findOne( { username: req.body.username }, function (err, result) {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
@@ -223,7 +223,7 @@ router.post('/outrequest', (req, res, next)=>{
     })
 })
 
-router.post('/pinmessage', (req,res,next) => {
+router.post('/pinmessage', auth.isAuthorized, (req,res,next) => {
     User.findOne( { username: req.body.username }, function (err, result) {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
@@ -241,7 +241,7 @@ router.post('/pinmessage', (req,res,next) => {
     })
 })
 
-router.post('/unpin', (req,res,next) => {
+router.post('/unpin', auth.isAuthorized, (req,res,next) => {
     User.findOne( { username: req.body.username }, function (err, result) {
     if (err || !result) {
         res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
@@ -259,7 +259,7 @@ router.post('/unpin', (req,res,next) => {
 })
 })
 
-router.post('/addtogroup', (req, res, next)=>{
+router.post('/addtogroup', auth.isAuthorized, (req, res, next)=>{
     User.findOne( { username: req.body.username }, function (err, result) {
         if (err || !result) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });
@@ -277,7 +277,7 @@ router.post('/addtogroup', (req, res, next)=>{
     })
 })
 
-    router.post('/deleteMessage', (req,res,next)=> {
+    router.post('/deleteMessage', auth.isAuthorized, (req,res,next)=> {
         Message.findById(req.body.message_id , (err,result)=>{
             if(err || !result) {
                 res.status(500).json({ status: "error", message: "Not found!"});
@@ -298,7 +298,7 @@ router.post('/addtogroup', (req, res, next)=>{
     });
 
 
-    router.post('/reactMessage', (req,res,next) => {
+    router.post('/reactMessage', auth.isAuthorized, (req,res,next) => {
         Message.findById(req.body.message_id).exec(function (err, result){
             if ( err || !result ){
                 res.status(500).json({status: "error", message: "Not found!"});
@@ -327,7 +327,7 @@ router.post('/addtogroup', (req, res, next)=>{
         })
     })
 
-router.post('/changepassword', (req, res, next) => {
+router.post('/changepassword', auth.isAuthorized, (req, res, next) => {
     User.findOne({ username: req.body.username }, 'password', function (err, user) {
         if (err || !user) {
             res.status(500).json({ status: "error", message: "Not found!", data: req.body.username });

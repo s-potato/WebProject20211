@@ -61,11 +61,13 @@
         return{
             displayname: "",
             user: decoded,
+            token: token
         }
     },
     mounted: function (){
         let params = {
-            username: this.user.username
+            username: this.user.username,
+            jwt: this.token
         };
         axios.post("http://localhost:8000/users/info",params)
         .then(response => {
@@ -90,7 +92,8 @@
                 rawImg = reader.result;
                 let params = {
                     username: this.user.username,
-                    avatar: rawImg
+                    avatar: rawImg,
+                    jwt: this.token
                 };
                 axios
                 .post("http://localhost:8000/users/updateinfo", params)
@@ -104,7 +107,8 @@
         updateName() {
             let params = {
                 username: this.user.username,
-                display_name: this.displayname
+                display_name: this.displayname,
+                jwt: this.token
             };
                 axios
                 .post("http://localhost:8000/users/updateinfo", params)
