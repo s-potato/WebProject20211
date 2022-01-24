@@ -6,13 +6,15 @@ require('dotenv').config();
 const app = require('./app');
 const http = require('http');
 const dbconnect = require('./config/database');
-
+const socket = require('socket.io');
+const test = require('./test/test');
+const ioutils = require('./socket');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '8000');
 app.set('port', port);
 
 /**
@@ -22,6 +24,14 @@ app.set('port', port);
 var server = http.createServer(app);
 
 dbconnect();
+
+const io = socket(server, {
+  cors: {
+    origin: process.env.CLIENT,
+  },
+});
+ioutils(io);
+test();
 /**
  * Listen on provided port, on all network interfaces.
  */
