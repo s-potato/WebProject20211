@@ -484,12 +484,6 @@
               type="file"
               @change="uploadFile()"
               style="display: none;">
-
-            <v-btn class="mr-5">
-              <v-icon right class="mr-5"> fas fa-video </v-icon>
-
-              <span class="hidden-sm-and-down">Video</span>
-            </v-btn>
           </v-btn-toggle>
           <v-text-field
             v-model="message"
