@@ -942,7 +942,7 @@ export default {
     },
     format_date(value) {
       if (value) {
-        return moment(value).format("h:mm");
+        return moment(value).format("DD/MM h:mm A");
       }
     },
     handleEmojiClick(EmojiClickEventDetail, id) {
