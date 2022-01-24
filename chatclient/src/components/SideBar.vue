@@ -11,11 +11,9 @@
                         </v-list-item>
                         <v-list-item>
                             <v-list-item-avatar >
-                                <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
-                                    <v-avatar size="40">
-                                        <v-img :src="user.avatar ? user.avatar : '/avatar.png'"></v-img>
-                                    </v-avatar>
-                                </v-badge>
+                                <v-avatar size="40">
+                                    <v-img :src="user.avatar ? user.avatar : '/avatar.png'"></v-img>
+                                </v-avatar>
                             </v-list-item-avatar>
                         </v-list-item>
                     </v-list>

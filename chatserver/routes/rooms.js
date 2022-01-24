@@ -41,7 +41,7 @@ router.post('/pins', auth.isAuthorized, function(req,res,next) {
     })
 })
 
-router.post('/upload', auth.isAuthorized, upload.single('file'), (req, res, next) => {
+router.post('/upload', upload.single('file'), (req, res, next) => {
     res.json({filename: req.file.filename});
 })
 

@@ -109,12 +109,11 @@ export default {
             };
             axios
                 .post("http://localhost:8000/users/addtogroup", params)
-                .then(()=>{
+                .then(
                     socket.emit("Add member", {room_id: this.idRoomChoose, members: this.addGroupList})
-                    }
                 )
                 .catch((err) => {
-                console.log(err);
+                    console.log(err);
                 });
         }
     }

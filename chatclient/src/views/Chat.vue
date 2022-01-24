@@ -58,7 +58,7 @@
                     <v-btn text @click="dialog.value = false, createGroup()">Confirm</v-btn>
                   </v-card-actions>
                   <v-card-actions class="justify-end">
-                    <v-btn text @click="dialog.value = false">Close</v-btn>
+                    <v-btn text @click="dialog.value = false, clearAdd()">Close</v-btn>
                   </v-card-actions>
                 </v-card>
               </template>
@@ -635,12 +635,10 @@ export default {
       })
       if (data.room_id === this.idRoomChoose) {
         this.messages.push(data);
-        setTimeout(() => {
-          this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
-        }, 200);
       }
     })
     socket.on("A member added", (data)=>{
+      console.log(data);
       if (data.room_id === this.idRoomChoose) {
         let params = {
           id: this.idRoomChoose,
@@ -701,6 +699,9 @@ export default {
           }
         })
         var count = false;
+        if (!this.messages[message_index].react) {
+          this.messages[message_index].react = []
+        }
         this.messages[message_index].react.forEach((element, index)=>{
           if (element.user.username == data.username) {
             if (element.icon == data.icon) {
@@ -771,6 +772,11 @@ export default {
             .post("http://localhost:8000/rooms/messages", params)
             .then((response) => {
               this.messages = response.data;
+              this.imgList = this.messages.filter(message => (message.type == "image"));
+              this.fileList = this.messages.filter(message => message.type == "file");
+              setTimeout(()=>{
+                this.$refs.chatmessage.scrollTop = 5000
+              }, 100)
             })
             .catch((err) => {
               console.log(err);
@@ -807,7 +813,6 @@ export default {
       .catch((err) => {
         console.log(err);
       });
-    this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
   },
   methods: {
     getDirectAvatar(room_id) {
@@ -906,12 +911,13 @@ export default {
           this.messages = response.data;
           this.imgList = this.messages.filter(message => (message.type == "image"));
           this.fileList = this.messages.filter(message => message.type == "file");
-          
         })
         .catch((err) => {
           console.log(err);
         });
-        this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
+        setTimeout(()=>{
+          this.$refs.chatmessage.scrollTop = 5000
+        }, 100)
     },
     infoRoom(id) {
       // show message list
@@ -970,6 +976,9 @@ export default {
     addIntoGroupList(friend, index) {
       this.addGroupList.push(friend);
       this.$set(this.direct[index].friend, 'added', true);
+    },
+    clearAdd(){
+      this.addIntoGroupList = [];
     },
     createGroup() {
       if(this.groupName != ""){
@@ -1038,20 +1047,21 @@ export default {
       this.$refs.inputFile.click();
     },
     uploadImage() {
-      const file = document.querySelector('input[type=file]').files[0]
+      const ofile = document.querySelector('input[type=file]').files[0]
       let vue = this
       var options = {
-        file: file,
+        file: ofile,
         quality: 0.5,
         maxWidth: 800,
         maxHeight: 800,
-        convertSize: Infinity,
+        convertSize: 512000,
         // Callback before compression
         beforeCompress: function () {
         },
 
         // Compression success callback
         success: function (result) {
+            console.log(result);
             const reader = new FileReader()
 
             let rawImg;
@@ -1062,7 +1072,7 @@ export default {
                 sender: vue.user.username,
                 file: {
                   data: rawImg,
-                  filename: vue.name
+                  filename: ofile.name
                 },
                 type: "image"
               }
@@ -1076,6 +1086,9 @@ export default {
               vue.isReply = false;
             }
             reader.readAsDataURL(result);
+        },
+        error: function (msg) {
+            console.error(msg);
         }
       };
       new ImageCompressor(options)

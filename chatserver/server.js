@@ -9,6 +9,13 @@ const dbconnect = require('./config/database');
 const socket = require('socket.io');
 const test = require('./test/test');
 const ioutils = require('./socket');
+const fs = require("fs")
+
+var dir = 'uploads';
+
+if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+}
 
 /**
  * Get port from environment and store in Express.
