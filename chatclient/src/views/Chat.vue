@@ -615,6 +615,7 @@ export default {
       // get room list
       let params = {
         username: this.user.username,
+        jwt: this.token
       };
       axios
       .post("http://localhost:8000/users/rooms", params)
@@ -643,6 +644,7 @@ export default {
       if (data.room_id === this.idRoomChoose) {
         let params = {
           id: this.idRoomChoose,
+          jwt: this.token
         };
         axios
           .post("http://localhost:8000/rooms/members", params)
@@ -657,6 +659,7 @@ export default {
     socket.on("Join room",(data)=> {
       let params = {
         username: this.user.username,
+        jwt: this.token
       };
     // show group list
       axios
@@ -669,6 +672,7 @@ export default {
     socket.on("Join direct room",(data)=> {
       let params = {
         username: this.user.username,
+        jwt: this.token
       };
     // show group list
       axios
@@ -689,7 +693,6 @@ export default {
       }
     })
     socket.on("Reacted",(data)=>{
-      console.log(data);
       if (data.room_id == this.idRoomChoose) {
         var message_index;
         this.messages.forEach((element, index)=>{
@@ -697,7 +700,6 @@ export default {
             message_index = index
           }
         })
-        console.log(message_index)
         var count = false;
         this.messages[message_index].react.forEach((element, index)=>{
           if (element.user.username == data.username) {
@@ -745,6 +747,7 @@ export default {
   mounted: async function () {
     let params = {
       username: this.user.username,
+        jwt: this.token
     };
     // get info:
     await axios
@@ -762,6 +765,7 @@ export default {
           this.selectIndex = this.idRoomChoose
           let params = {
             id: this.idRoomChoose,
+            jwt: this.token
           };
           axios
             .post("http://localhost:8000/rooms/messages", params)
@@ -894,6 +898,7 @@ export default {
       this.nameChoose = name;
       let params = {
         id: this.idRoomChoose,
+        jwt: this.token
       };
       await axios
         .post("http://localhost:8000/rooms/messages", params)
@@ -913,6 +918,7 @@ export default {
       this.idRoomChoose = id;
       let params = {
         id: this.idRoomChoose,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/members", params)
@@ -934,17 +940,16 @@ export default {
       }
     },
     handleEmojiClick(EmojiClickEventDetail, id) {
-      console.log(this.pickEmojiShowB)
       this.pickEmojiShowB[id] = false;
       let params = {
         icon: EmojiClickEventDetail.unicode,
         message_id: id,
         user_id: this.user._id,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/users/reactMessage", params)
-        .then((response) =>{
-          console.log(response.data);
+        .then(() =>{
           socket.emit("React a message",({
             message_id: id, 
             icon: EmojiClickEventDetail.unicode, 
@@ -972,6 +977,7 @@ export default {
           username: this.user.username,
           roomname: this.groupName,
           members: this.addGroupList,
+          jwt: this.token
         };
         (this.groupName = ""),
         axios
@@ -1014,6 +1020,7 @@ export default {
         username: this.user.username,
         message_id: messageId,
         room_id: this.idRoomChoose,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/users/pinmessage", params)
@@ -1040,15 +1047,11 @@ export default {
         maxHeight: 800,
         convertSize: Infinity,
         // Callback before compression
-        beforeCompress: function (result) {
-          console.log('Image size before compression:', result.size);
-          console.log('mime type:', result.type);
+        beforeCompress: function () {
         },
 
         // Compression success callback
         success: function (result) {
-          console.log('Image size after compression:', result.size);
-          console.log('mime type:', result.type);
             const reader = new FileReader()
 
             let rawImg;
@@ -1081,6 +1084,7 @@ export default {
       const file = this.$refs.inputFile.files[0]
       const form = new FormData();
       form.append('file', file);
+      form.append('jwt', this.token)
       
       axios.post("http://localhost:8000/rooms/upload", form)
       .then((response)=>{
@@ -1115,6 +1119,7 @@ export default {
       // get list room again
       let params = {
         username: this.user.username,
+        jwt: this.token
       };
       axios
       .post("http://localhost:8000/users/rooms", params)
@@ -1125,6 +1130,7 @@ export default {
     deleteMessage(message, index) {
       let params = {
         message_id: message._id,
+        jwt: this.token
       };
       message.index = index;
       axios
@@ -1159,6 +1165,7 @@ export default {
     refreshLink(){
       let params = {
         id: this.idRoomChoose,
+        jwt: this.token
       }
 
       axios.post("http://localhost:8000/rooms/refreshKey", params)

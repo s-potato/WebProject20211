@@ -56,7 +56,9 @@ export default {
         idRoomChoose: String,
     },
     data() {
+        let token = localStorage.getItem("jwt");
         return {
+            token: token,
             findUsers: [],
             addGroupList: [],
             term: '',
@@ -66,7 +68,8 @@ export default {
         Search() {
             let params = {
                 term: this.term,
-                username: this.username
+                username: this.username,
+                jwt: this.token
             };
             let findUsers = []
             axios.post("http://localhost:8000/users/find",params)
@@ -87,7 +90,6 @@ export default {
                         }
                     }
                 }
-                console.log(this.findUsers)
                 return this.findUsers = findUsers
             })
             .catch((err) => {
@@ -103,6 +105,7 @@ export default {
                 username: this.username,
                 room_id: this.idRoomChoose,
                 members: this.addGroupList,
+                jwt: this.token
             };
             axios
                 .post("http://localhost:8000/users/addtogroup", params)

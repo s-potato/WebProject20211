@@ -56,7 +56,9 @@ export default {
         fab: Boolean,
     },
     data() {
+        let token = localStorage.getItem("jwt");
         return {
+            token: token,
             findUsers: [],
             term: '',
         }
@@ -65,7 +67,8 @@ export default {
         Search() {
             let params = {
                 term: this.term,
-                username: this.username
+                username: this.username,
+                jwt: this.token
             };
             axios.post("http://localhost:8000/users/find",params)
             .then(response => {

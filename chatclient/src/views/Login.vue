@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-content>
+    <v-main>
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="8" md="8">
@@ -139,7 +139,7 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -148,12 +148,11 @@ import axios from 'axios';
 import socket from '../socket';
 
 export default {
-  username: '',
-  password: '',
   data: () => ({
     step: 1,
     username: "",
-    pass: '',
+    password: "",
+    email: ""
   }),
   beforeCreate() {
     if(localStorage.getItem('jwt') !== null)
@@ -182,7 +181,7 @@ export default {
           console.log(err);
         })
       this.username='';
-      this.pass='';
+      this.password='';
     },
     async Register() {
       let params = {

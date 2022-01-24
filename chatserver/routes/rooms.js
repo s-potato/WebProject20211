@@ -8,7 +8,7 @@ var upload = require('../util/upload')
 var md5 = require('md5')
 const router = express.Router();
 
-router.post('/messages', function (req, res, next) {
+router.post('/messages', auth.isAuthorized, function (req, res, next) {
     Room.getMessagesList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
@@ -19,7 +19,7 @@ router.post('/messages', function (req, res, next) {
     })
 })
 
-router.post('/members', function (req, res, next) {
+router.post('/members', auth.isAuthorized, function (req, res, next) {
     Room.getMembersList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
@@ -30,7 +30,7 @@ router.post('/members', function (req, res, next) {
     })
 })
 
-router.post('/pins',function(req,res,next) {
+router.post('/pins', auth.isAuthorized, function(req,res,next) {
     Room.getPinList(req.body, function (err, result) {
         if (err) {
             res.status(500).json(err);
@@ -41,7 +41,7 @@ router.post('/pins',function(req,res,next) {
     })
 })
 
-router.post('/upload', upload.single('file'), (req, res, next) => {
+router.post('/upload', auth.isAuthorized, upload.single('file'), (req, res, next) => {
     res.json({filename: req.file.filename});
 })
 
@@ -53,7 +53,6 @@ router.get('/download', auth.isAuthorized, (req, res, next)=>{
         if (err || !result) {
             res.json("File not found.")
         } else {
-            console.log(result.room.users, req.body.decoded.username)
             if (result.room.users.find((element)=>{
                 return element.username == req.body.decoded.username
             })) {

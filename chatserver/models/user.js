@@ -119,35 +119,6 @@ UserSchema.methods.addListIntoGroup = function(data, cb){
     })
 }
 
-// UserSchema.statics.addToGroup = function(data, cb) {
-//     Room.findById(data.room_id , (err, result) => {
-//         if (err || !result) {
-//             cb({ err: "Can't query" });
-//         }else{
-//             User.findOne({username: data.username}, (err, user)=>{
-//                 if (err || !user) {
-//                     cb({ err: "Can't query" });
-//                 } else{
-//                     if (!result.users.find(element=>String(element) == String(user._id)))
-//                         {    
-//                         user.rooms.push(result._id);
-//                         result.users.push(user._id);
-//                         result.save(function (err) {
-//                             if (err) console.log(err);
-//                         });
-//                         user.save(function (err) {
-//                             if (err) console.log(err);
-//                         });
-//                         cb(null, { status: "Success" });
-//                     } else {
-//                         cb({status: 'err', message: 'duplicate user'})
-//                     }
-//                 }
-//             })
-//         }
-//     })
-// }
-
 UserSchema.statics.addToGroup = function(data, cb) {
     User.findOne({username: data.username}, (err, user)=>{
         if (err || !user) {

@@ -44,7 +44,6 @@ export default {
     },
     methods: {
         handleEmojiClick(EmojiClickEventDetail) {
-            console.log(EmojiClickEventDetail);
             this.pickEmojiShow = false;
         },
     }

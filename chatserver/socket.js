@@ -91,9 +91,9 @@ module.exports = (io) => {
           result.save(function (err) {
             if (err) console.log(err);
           });
+          console.log(username + " disconnected");
         }
       })
-      console.log(username + " disconnected");
     });
 
     socket.on("chat message", (data) => {
@@ -124,7 +124,6 @@ module.exports = (io) => {
     });
 
     socket.on("Pin message", (data) => {
-      console.log("Pin " +data.message_id)
       io.to(data.room_id).emit("A message pinned",(data));
     });
 
@@ -161,13 +160,10 @@ module.exports = (io) => {
 
     ,
     socket.on("Send f-request", (data) => {
-      console.log(data)
-      console.log("Send f-request to" + data.request_to);
       io.to(data.request_to).emit("F-request", (data));
     })
 
     socket.on("Typing",(data) =>{
-      //console.log("typing");
       socket.broadcast.to(data.room_id).emit("Someone typing",(data));
     })
     

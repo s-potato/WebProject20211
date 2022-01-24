@@ -86,6 +86,7 @@
         let decoded = VueJwtDecode.decode(token);
         this.user = decoded;
         return{
+            token: token,
             show: false,
             user: decoded,
             password: '',
@@ -103,7 +104,8 @@
     },
     mounted: function (){
         let params = {
-            username: this.user.username
+            username: this.user.username,
+            jwt: this.token
         };
         axios.post("http://localhost:8000/users/info",params)
         .then(response => {
@@ -123,7 +125,8 @@
             let params = {
                 username: this.user.username,
                 oldpassword: this.password,
-                newpassword: this.newPass
+                newpassword: this.newPass,
+                jwt: this.token
             };
             await axios
             .post("http://localhost:8000/users/changepassword", params)
