@@ -98,6 +98,9 @@ RoomSchema.statics.getMessagesList = function (room, cb) {
           temp.sender = result.messages[i].sender.username;
           temp.date = result.messages[i].created_at.getTime();
           temp.react = result.messages[i].react
+          if(!temp.react) {
+            temp.react = [];
+          }
           if (result.messages[i].reply_to) {
             temp.reply_to = {}
             temp.reply_to._id = result.messages[i].reply_to._id

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/user')
 
 module.exports.isAuthorized = (req, res, next) => {
     var token;
@@ -7,15 +8,20 @@ module.exports.isAuthorized = (req, res, next) => {
     } else if (req.query.jwt) {
         token = req.query.jwt;
     } else {
-        return next({err: "no token"})
+        return next({status: 401, err: "no token"})
     }
-    console.log(token);
     jwt.verify(token, process.env.SECRET, function (err, data) {
         if (err) {
-            return next(err);
+            return next({...err, status: 401});
         } else {
-            req.body.decoded = data;
-            return next();
+            User.findOne({username: data.username}, (err, result)=>{
+                if (err || !result) {
+                    return next({status: 401, err: "user not found"});
+                } else {
+                    req.body.decoded = data;
+                    return next();
+                }
+            })
         }
     })
 }

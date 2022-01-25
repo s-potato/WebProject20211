@@ -70,20 +70,18 @@
         <v-expansion-panel-header>
           <h3>Pictures</h3>
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-container fluid>
+        <v-expansion-panel-content style="overflow: auto; height: 200px">
             <v-row>
-              <v-col v-for="img in imgList" :key="img._id" cols="4">
+              <v-col v-for="img in imgList" :key="img._id" cols="6">
                 <img
                   :src= img.file.data
                   alt="lorem"
                   class="image"
-                  height="100%"
+                  height="auto"
                   width="100%"
                 />
               </v-col>
             </v-row>
-          </v-container>
         </v-expansion-panel-content>
       </v-expansion-panel>
       <!-- Files -->
@@ -121,7 +119,12 @@
                   <v-list-item-subtitle
                     v-html="item.sender.display_name + ':'"
                   ></v-list-item-subtitle>
-                  <v-list-item-title v-html="item.content"></v-list-item-title>
+                  <v-list-item v-if="item.type == 'text'">
+                    <v-list-item-title v-html="item.content"></v-list-item-title>
+                  </v-list-item>
+                  <v-list-item v-else>
+                      <v-list-item-title>{{item.type + ': ' + item.file.filename}}</v-list-item-title>
+                    </v-list-item>    
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-btn icon @click="unPin(item.id)">
@@ -223,7 +226,12 @@
                   <v-list-item-subtitle
                     v-html="item.sender.display_name + ':'"
                   ></v-list-item-subtitle>
-                  <v-list-item-title v-html="item.content"></v-list-item-title>
+                  <v-list-item v-if="item.type == 'text'">
+                    <v-list-item-title v-html="item.content"></v-list-item-title>
+                  </v-list-item>
+                  <v-list-item v-else>
+                      <v-list-item-title>{{item.type + ': ' + item.file.filename}}</v-list-item-title>
+                    </v-list-item>              
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-btn icon @click="unPin(item.id)">
@@ -301,6 +309,7 @@ export default {
   mounted: function () {
     let params = {
       id: this.idRoomChoose,
+      jwt: this.token
     };
     axios
       .post("http://localhost:8000/rooms/pins", params)
@@ -315,6 +324,7 @@ export default {
     getPinList() {
       let params = {
         id: this.idRoomChoose,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/pins", params)
@@ -338,6 +348,7 @@ export default {
         username: this.user.username,
         message_id: messageId,
         room_id: this.idRoomChoose,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/users/unpin", params)

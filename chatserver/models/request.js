@@ -15,7 +15,7 @@ var RequestSchema = mongoose.Schema({
 RequestSchema.index({ requester: 1, request_to: 1 }, { unique: true });
 
 RequestSchema.statics.inRequest = function(user_id, cb){
-    Request.find({request_to: user_id}).populate('requester', 'username').exec((err, result) => {
+    Request.find({request_to: user_id}).populate('requester', 'username display_name avatar').exec((err, result) => {
         if (err || !result) cb(err)
         else {
             cb(null, result);

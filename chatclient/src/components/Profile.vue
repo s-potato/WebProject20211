@@ -51,6 +51,8 @@
 
   import axios from 'axios';
   import VueJwtDecode from "vue-jwt-decode";
+  
+import ImageCompressor from 'js-image-compressor'
 
   export default {
     name: 'profile',
@@ -61,11 +63,13 @@
         return{
             displayname: "",
             user: decoded,
+            token: token
         }
     },
     mounted: function (){
         let params = {
-            username: this.user.username
+            username: this.user.username,
+            jwt: this.token
         };
         axios.post("http://localhost:8000/users/info",params)
         .then(response => {
@@ -82,29 +86,54 @@
             this.$refs.inputAvatar.click()
         },
         changeAvatar(){
-            const file = document.querySelector('input[type=file]').files[0]
-            const reader = new FileReader()
+            const ofile = document.querySelector('input[type=file]').files[0]
+            let vue = this
+            var options = {
+                file: ofile,
+                quality: 0.5,
+                maxWidth: 200,
+                maxHeight: 200,
+                convertSize: 512000,
+                // Callback before compression
+                beforeCompress: function (result) {
+                    console.log(result);
+                },
 
-            let rawImg;
-            reader.onloadend = () => {
-                rawImg = reader.result;
-                let params = {
-                    username: this.user.username,
-                    avatar: rawImg
-                };
-                axios
-                .post("http://localhost:8000/users/updateinfo", params)
-                .then(()=>{this.$router.go()})
-                .catch((err) => {
-                console.log(err);
-                });
-            }
-            reader.readAsDataURL(file);
+                // Compression success callback
+                success: function (result) {
+                    console.log(result);
+                    const reader = new FileReader()
+
+                    let rawImg;
+                    reader.onloadend = () => {
+                        rawImg = reader.result;
+                        let params = {
+                            username: vue.user.username,
+                            avatar: rawImg,
+                            jwt: vue.token
+                        };
+                        axios
+                            .post("http://localhost:8000/users/updateinfo", params)
+                            .then(()=>{
+                                vue.$router.go()
+                                })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    }
+                    reader.readAsDataURL(result);
+                },
+                error: function (msg) {
+                    console.error(msg);
+                }
+            };
+            new ImageCompressor(options)
         },
         updateName() {
             let params = {
                 username: this.user.username,
-                display_name: this.displayname
+                display_name: this.displayname,
+                jwt: this.token
             };
                 axios
                 .post("http://localhost:8000/users/updateinfo", params)

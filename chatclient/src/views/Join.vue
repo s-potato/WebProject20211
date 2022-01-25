@@ -15,14 +15,15 @@
         return{
             displayname: "",
             user: decoded,
+            token: token
         }
     },
     mounted: function() {
       let params = {
         username: this.user.username,
-        key: this.$route.params.id
+        key: this.$route.params.id,
+        jwt: this.token
       }
-     console.log(params); 
       axios.post("http://localhost:8000/rooms/joinwithkey", params)
         .then(()=>{
           this.$router.push('/');

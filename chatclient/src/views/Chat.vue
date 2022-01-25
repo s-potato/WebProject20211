@@ -4,6 +4,9 @@
       <v-row>
         <v-col cols="12" sm="3" lg="3" class="border">
           <v-app-bar flat color="rgba(0,0,0,0,0)">
+            <div class="text-h5 font-weight-regular lefttext">Welcome to Circuverse</div>
+          </v-app-bar>
+          <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-dialog transition="dialog-top-transition" max-width="600">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn title color="blue" block v-bind="attrs" v-on="on">
@@ -29,8 +32,7 @@
                       <template v-for="(item, index) in direct">
                         <v-list-item
                           :key="item.friend._id"
-                          :disabled="item.friend.added"
-                          @click="addIntoGroupList(item.friend, index)"
+                          @click="addIntoGroupList(index)"
                         >
                             <v-list-item-avatar>
                               <v-img
@@ -58,13 +60,13 @@
                     <v-btn text @click="dialog.value = false, createGroup()">Confirm</v-btn>
                   </v-card-actions>
                   <v-card-actions class="justify-end">
-                    <v-btn text @click="dialog.value = false">Close</v-btn>
+                    <v-btn text @click="dialog.value = false, clearListSelect()">Close</v-btn>
                   </v-card-actions>
                 </v-card>
               </template>
             </v-dialog>
           </v-app-bar>
-          <v-app-bar flat color="rgba(0,0,0,0,0)">
+          <!-- <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-text-field
               filled
               label="Search Here"
@@ -72,7 +74,7 @@
               color="grey"
             >
             </v-text-field>
-          </v-app-bar>
+          </v-app-bar> -->
           <v-row class="mt-1 mb-1">
             <v-col color="rgba(0,0,0,0,0)">
               <v-btn
@@ -485,12 +487,6 @@
               type="file"
               @change="uploadFile()"
               style="display: none;">
-
-            <v-btn class="mr-5">
-              <v-icon right class="mr-5"> fas fa-video </v-icon>
-
-              <span class="hidden-sm-and-down">Video</span>
-            </v-btn>
           </v-btn-toggle>
           <v-text-field
             v-model="message"
@@ -503,7 +499,7 @@
             label="Message"
             type="text"
             class="chatbar"
-            :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
+            :append-outer-icon="message ? 'mdi-send' : ''"
             :class="isActive ? 'half' : 'full'"
             @keyup="typingEvent"
             @keyup.enter="sendMessage"
@@ -559,7 +555,7 @@ export default {
     VuemojiPicker,
     Extension,
     AddGroup,
-    SearchMessage
+    SearchMessage,
   },
   data() {
     let token = localStorage.getItem("jwt");
@@ -586,7 +582,6 @@ export default {
       group: [],
       direct: [],
       messages: [],
-      addGroupList: [],
       groupName: "",
       nameChoose: "",
       // get Link
@@ -615,6 +610,7 @@ export default {
       // get room list
       let params = {
         username: this.user.username,
+        jwt: this.token
       };
       axios
       .post("http://localhost:8000/users/rooms", params)
@@ -634,15 +630,14 @@ export default {
       })
       if (data.room_id === this.idRoomChoose) {
         this.messages.push(data);
-        setTimeout(() => {
-          this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
-        }, 200);
       }
     })
     socket.on("A member added", (data)=>{
+      console.log(data);
       if (data.room_id === this.idRoomChoose) {
         let params = {
           id: this.idRoomChoose,
+          jwt: this.token
         };
         axios
           .post("http://localhost:8000/rooms/members", params)
@@ -657,6 +652,7 @@ export default {
     socket.on("Join room",(data)=> {
       let params = {
         username: this.user.username,
+        jwt: this.token
       };
     // show group list
       axios
@@ -669,6 +665,7 @@ export default {
     socket.on("Join direct room",(data)=> {
       let params = {
         username: this.user.username,
+        jwt: this.token
       };
     // show group list
       axios
@@ -689,7 +686,6 @@ export default {
       }
     })
     socket.on("Reacted",(data)=>{
-      console.log(data);
       if (data.room_id == this.idRoomChoose) {
         var message_index;
         this.messages.forEach((element, index)=>{
@@ -697,8 +693,10 @@ export default {
             message_index = index
           }
         })
-        console.log(message_index)
         var count = false;
+        if (!this.messages[message_index].react) {
+          this.messages[message_index].react = []
+        }
         this.messages[message_index].react.forEach((element, index)=>{
           if (element.user.username == data.username) {
             if (element.icon == data.icon) {
@@ -745,6 +743,7 @@ export default {
   mounted: async function () {
     let params = {
       username: this.user.username,
+        jwt: this.token
     };
     // get info:
     await axios
@@ -762,11 +761,17 @@ export default {
           this.selectIndex = this.idRoomChoose
           let params = {
             id: this.idRoomChoose,
+            jwt: this.token
           };
           axios
             .post("http://localhost:8000/rooms/messages", params)
             .then((response) => {
               this.messages = response.data;
+              this.imgList = this.messages.filter(message => (message.type == "image"));
+              this.fileList = this.messages.filter(message => message.type == "file");
+              setTimeout(()=>{
+                this.$refs.chatmessage.scrollTop = 5000
+              }, 100)
             })
             .catch((err) => {
               console.log(err);
@@ -803,7 +808,6 @@ export default {
       .catch((err) => {
         console.log(err);
       });
-    this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
   },
   methods: {
     getDirectAvatar(room_id) {
@@ -894,6 +898,7 @@ export default {
       this.nameChoose = name;
       let params = {
         id: this.idRoomChoose,
+        jwt: this.token
       };
       await axios
         .post("http://localhost:8000/rooms/messages", params)
@@ -901,18 +906,20 @@ export default {
           this.messages = response.data;
           this.imgList = this.messages.filter(message => (message.type == "image"));
           this.fileList = this.messages.filter(message => message.type == "file");
-          
         })
         .catch((err) => {
           console.log(err);
         });
-        this.$refs.chatmessage.scrollTop = this.$refs.chatmessage.scrollHeight;
+        setTimeout(()=>{
+          this.$refs.chatmessage.scrollTop = 5000
+        }, 100)
     },
     infoRoom(id) {
       // show message list
       this.idRoomChoose = id;
       let params = {
         id: this.idRoomChoose,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/members", params)
@@ -930,21 +937,20 @@ export default {
     },
     format_date(value) {
       if (value) {
-        return moment(value).format("h:mm");
+        return moment(value).format("DD/MM h:mm A");
       }
     },
     handleEmojiClick(EmojiClickEventDetail, id) {
-      console.log(this.pickEmojiShowB)
       this.pickEmojiShowB[id] = false;
       let params = {
         icon: EmojiClickEventDetail.unicode,
         message_id: id,
         user_id: this.user._id,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/users/reactMessage", params)
-        .then((response) =>{
-          console.log(response.data);
+        .then(() =>{
           socket.emit("React a message",({
             message_id: id, 
             icon: EmojiClickEventDetail.unicode, 
@@ -962,26 +968,39 @@ export default {
       this.pickEmojiShow = false;
       this.message += EmojiClickEventDetail.unicode;
     },
-    addIntoGroupList(friend, index) {
-      this.addGroupList.push(friend);
-      this.$set(this.direct[index].friend, 'added', true);
+    addIntoGroupList(index) {
+      if(this.direct[index].friend.added) {
+        this.$set(this.direct[index].friend, 'added', false);
+      } else {
+        this.$set(this.direct[index].friend, 'added', true);
+      }
+    },
+    clearListSelect(){
+      for (let index = 0; index < this.direct.length; index++) {
+        this.$set(this.direct[index].friend, 'added', false);
+      }
     },
     createGroup() {
+      var addGroupList = [];
+      for (let index = 0; index < this.direct.length; index++) {
+        if (this.direct[index].friend.added) {
+          addGroupList.push(this.direct[index].friend);
+        }
+      }
+      console.log(addGroupList);
       if(this.groupName != ""){
         let params = {
           username: this.user.username,
           roomname: this.groupName,
-          members: this.addGroupList,
+          members: addGroupList,
+          jwt: this.token
         };
         (this.groupName = ""),
         axios
           .post("http://localhost:8000/users/createroom", params)
           .then( (response) => {
-            socket.emit("create group", {username: this.user.username, room_id: response.data._id, members: this.addGroupList})
-            this.direct.forEach(element => {
-              this.$set(element.friend, 'added', false);
-            });
-            this.addGroupList = []
+            socket.emit("create group", {username: this.user.username, room_id: response.data._id, members: addGroupList})
+            this.clearListSelect();
           })
           .catch((err) => {
             console.log(err);
@@ -1014,6 +1033,7 @@ export default {
         username: this.user.username,
         message_id: messageId,
         room_id: this.idRoomChoose,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/users/pinmessage", params)
@@ -1031,24 +1051,21 @@ export default {
       this.$refs.inputFile.click();
     },
     uploadImage() {
-      const file = document.querySelector('input[type=file]').files[0]
+      const ofile = document.querySelector('input[type=file]').files[0]
       let vue = this
       var options = {
-        file: file,
+        file: ofile,
         quality: 0.5,
         maxWidth: 800,
         maxHeight: 800,
-        convertSize: Infinity,
+        convertSize: 512000,
         // Callback before compression
-        beforeCompress: function (result) {
-          console.log('Image size before compression:', result.size);
-          console.log('mime type:', result.type);
+        beforeCompress: function () {
         },
 
         // Compression success callback
         success: function (result) {
-          console.log('Image size after compression:', result.size);
-          console.log('mime type:', result.type);
+            console.log(result);
             const reader = new FileReader()
 
             let rawImg;
@@ -1059,7 +1076,7 @@ export default {
                 sender: vue.user.username,
                 file: {
                   data: rawImg,
-                  filename: vue.name
+                  filename: ofile.name
                 },
                 type: "image"
               }
@@ -1073,6 +1090,9 @@ export default {
               vue.isReply = false;
             }
             reader.readAsDataURL(result);
+        },
+        error: function (msg) {
+            console.error(msg);
         }
       };
       new ImageCompressor(options)
@@ -1081,6 +1101,7 @@ export default {
       const file = this.$refs.inputFile.files[0]
       const form = new FormData();
       form.append('file', file);
+      form.append('jwt', this.token)
       
       axios.post("http://localhost:8000/rooms/upload", form)
       .then((response)=>{
@@ -1115,6 +1136,7 @@ export default {
       // get list room again
       let params = {
         username: this.user.username,
+        jwt: this.token
       };
       axios
       .post("http://localhost:8000/users/rooms", params)
@@ -1125,6 +1147,7 @@ export default {
     deleteMessage(message, index) {
       let params = {
         message_id: message._id,
+        jwt: this.token
       };
       message.index = index;
       axios
@@ -1159,6 +1182,7 @@ export default {
     refreshLink(){
       let params = {
         id: this.idRoomChoose,
+        jwt: this.token
       }
 
       axios.post("http://localhost:8000/rooms/refreshKey", params)
@@ -1173,6 +1197,11 @@ export default {
 <style scoped>
 .boder {
   border-right: 1px solid grey;
+}
+.lefttext{
+  margin-left: 60px;
+  color: white;
+  text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
 }
 .sender {
   border-radius: 1px 50px 50px;
