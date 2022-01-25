@@ -115,7 +115,7 @@ import ImageCompressor from 'js-image-compressor'
                         axios
                             .post("http://localhost:8000/users/updateinfo", params)
                             .then(()=>{
-                                //vue.$router.go()
+                                vue.$router.go()
                                 })
                             .catch((err) => {
                                 console.log(err);

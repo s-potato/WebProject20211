@@ -51,10 +51,10 @@
                                         <v-list>
                                             <v-list-item v-for="(item,index) in pending" :key=item.id>
                                                 <v-list-item-avatar>
-                                                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+                                                <img :src="item.requester.avatar ? item.requester.avatar : 'https://cdn.vuetifyjs.com/images/john.jpg'">
                                                 </v-list-item-avatar>
                                                 <v-list-item-content>
-                                                <v-list-item-title>{{item.requester.username}}</v-list-item-title>
+                                                <v-list-item-title>{{item.requester.display_name}}</v-list-item-title>
                                                 </v-list-item-content>
                                                 <v-spacer></v-spacer>
                                                 <v-btn
