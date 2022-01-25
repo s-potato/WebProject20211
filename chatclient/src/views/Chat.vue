@@ -501,7 +501,7 @@
             label="Message"
             type="text"
             class="chatbar"
-            :append-outer-icon="message ? 'mdi-send' : 'mdi-microphone'"
+            :append-outer-icon="message ? 'mdi-send' : ''"
             :class="isActive ? 'half' : 'full'"
             @keyup="typingEvent"
             @keyup.enter="sendMessage"

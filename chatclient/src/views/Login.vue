@@ -193,8 +193,9 @@ export default {
             this.$router.push('/')
           }
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          this.text = "username and password are incorrect";
+          this.snackbar = true
         })
       this.username='';
       this.password='';
