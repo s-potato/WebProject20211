@@ -6,7 +6,7 @@
                     <v-list>
                         <v-list-item >
                             <v-list-item-content>
-                                <v-icon class="mb-2" large color="blue">fas fa-dove</v-icon>
+                                <img class="mb-2" src="/logo.png" style="width: 100%"/>
                             </v-list-item-content>
                         </v-list-item>
                         <v-list-item>

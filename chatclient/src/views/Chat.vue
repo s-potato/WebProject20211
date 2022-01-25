@@ -4,8 +4,6 @@
       <v-row>
         <v-col cols="12" sm="3" lg="3" class="border">
           <v-app-bar flat color="rgba(0,0,0,0,0)">
-            <v-icon class="mb-2" large color="blue">mdi-webhook
-            </v-icon>
             <div class="text-h5 font-weight-regular lefttext">Welcome to Circuverse</div>
           </v-app-bar>
           <v-app-bar flat color="rgba(0,0,0,0,0)">
@@ -557,7 +555,7 @@ export default {
     VuemojiPicker,
     Extension,
     AddGroup,
-    SearchMessage
+    SearchMessage,
   },
   data() {
     let token = localStorage.getItem("jwt");
