@@ -174,6 +174,7 @@ module.exports = (io) => {
 
     socket.on("delete", (data) =>{
       io.to(data.room_id).emit("deleted", data);
+      io.to(data.room_id).emit("pin deleted", data);
     })
 
     socket.on("Leave room",(data) => {

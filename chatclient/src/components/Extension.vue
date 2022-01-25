@@ -281,6 +281,11 @@ export default {
     socket.on("Unpinned a message", () => {
       this.getPinList();
     });
+
+    socket.on("pin deleted", ()=>{
+      this.getPinList();
+    })
+
   },
 
   data() {

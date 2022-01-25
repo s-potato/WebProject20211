@@ -287,6 +287,7 @@ router.post('/addtogroup', (req, res, next)=>{
                     if(err || !result) {
                     res.status(500).json({ status: "error", message: "Room not found!"});
                     }else{
+                        result1.pinMessages.pull({_id: result._id});
                         result1.messages.pull({_id: result._id });
                         result1.save();
                     }
