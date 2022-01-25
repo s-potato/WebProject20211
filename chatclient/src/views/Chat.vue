@@ -6,7 +6,7 @@
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-icon class="mb-2" large color="blue">mdi-webhook
             </v-icon>
-            <v-text class="text-h5 font-weight-regular lefttext">Welcome to Web Chat</v-text>
+            <div class="text-h5 font-weight-regular lefttext">Welcome to Circuverse</div>
           </v-app-bar>
           <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-dialog transition="dialog-top-transition" max-width="600">
