@@ -16,9 +16,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/rooms', roomsRouter);
+
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
-    res.json(err);
+    if (err.status && err.status == 401) {
+      res.json("Unauthorized")
+    } else {
+      res.json(err);
+    }
   });
 
 module.exports = app;

@@ -6,16 +6,14 @@
                     <v-list>
                         <v-list-item >
                             <v-list-item-content>
-                                <v-icon class="mb-2" large color="blue">fas fa-dove</v-icon>
+                                <img class="mb-2" src="/logo.png" style="width: 100%"/>
                             </v-list-item-content>
                         </v-list-item>
                         <v-list-item>
                             <v-list-item-avatar >
-                                <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
-                                    <v-avatar size="40">
-                                        <v-img :src="user.avatar ? user.avatar : '/avatar.png'"></v-img>
-                                    </v-avatar>
-                                </v-badge>
+                                <v-avatar size="40">
+                                    <v-img :src="user.avatar ? user.avatar : '/avatar.png'"></v-img>
+                                </v-avatar>
                             </v-list-item-avatar>
                         </v-list-item>
                     </v-list>
@@ -53,18 +51,12 @@
                                         <v-list>
                                             <v-list-item v-for="(item,index) in pending" :key=item.id>
                                                 <v-list-item-avatar>
-                                                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+                                                <img :src="item.requester.avatar ? item.requester.avatar : '/pendingAvatar.png'">
                                                 </v-list-item-avatar>
                                                 <v-list-item-content>
-                                                <v-list-item-title>{{item.requester.username}}</v-list-item-title>
+                                                <v-list-item-title>{{item.requester.display_name}}</v-list-item-title>
                                                 </v-list-item-content>
                                                 <v-spacer></v-spacer>
-                                                <v-btn
-                                                    @click="menu = false"
-                                                    outlined
-                                                >
-                                                    Decline
-                                                </v-btn>
                                                 <v-btn
                                                     class="ml-2"
                                                     outlined
@@ -80,21 +72,9 @@
                         </v-list-item>
                         <v-list-item>
                             <v-list-item-content>
-                                <!-- <v-icon color="grey">
-                                    fas fa-cog
-                                </v-icon> -->
                                 <ChangePassMail></ChangePassMail>
                             </v-list-item-content>
                         </v-list-item>
-                        <!-- <v-list-item>
-                            <v-list-item-avatar class="mb-5">
-                                <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
-                                    <v-avatar size="40">
-                                        <v-img :src="user.avatar ? user.avatar : '/avatar.png'"></v-img>
-                                    </v-avatar>
-                                </v-badge>
-                            </v-list-item-avatar>
-                        </v-list-item> -->
                         <v-list-item @click="logUserOut">
                             <v-list-item-content>
                                 <v-icon color="grey">
@@ -115,7 +95,6 @@
 </template>
 <script>
 import axios from 'axios';
-import VueJwtDecode from "vue-jwt-decode";
 import Dialog from './Dialog.vue';
 import Profile from './Profile.vue';
 import ChangePassMail from './ChangePassMail.vue';
@@ -129,49 +108,52 @@ export default {
     },
     data () {
         let token = localStorage.getItem("jwt");
-        let decoded = VueJwtDecode.decode(token);
-        this.user = decoded;
         return{
-            user: decoded,
+            user: {},
             drawer: true,
             showPending: false,
             menu: false,
-            items: [
-                {
-                    avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-                    subtitle: "I'll be in your neighborhood doing errands this weekend. Do you want to hang out?",
-                    title: "Ali Connors",
-                    icon: true,
-                }],
             term: '',
             findUsers: [],
             pending: [],
+            token: token
         }
     },
     mounted: function (){
-        let params = {
-        username: this.user.username
-        };  
-        // show pending list
-        axios.post("http://localhost:8000/users/inrequest",params)
-        .then(response => {
-            this.pending = response.data;
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        axios.post("http://localhost:8000/users/info",params)
-        .then(response => {
-            this.user = response.data;
-        })
-        .catch((err) => {
-            console.log(err);
+        var params = {
+            jwt: this.token
+        };
+        axios.post("http://localhost:8000/users", params)
+        .then((response)=>{
+            this.user = response.data
+            params = {
+                username: this.user.username,
+                jwt: this.token
+            };
+            axios.post("http://localhost:8000/users/inrequest",params)
+            .then(response => {
+                this.pending = response.data;
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            axios.post("http://localhost:8000/users/info",params)
+            .then(response => {
+                this.user = response.data;
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }).catch(()=>{
+            localStorage.removeItem("jwt");
+            this.$router.push('/login');
         })
     },
     created() {
         socket.on("F-request", () => {
             let params = {
-                username: this.user.username
+                username: this.user.username,
+                jwt: this.token
             };  
             // show pending list
             axios.post("http://localhost:8000/users/inrequest",params)
@@ -188,7 +170,8 @@ export default {
         sendRequest(friendName) {
             let params = {
                 friendname: friendName,
-                username: this.user.username
+                username: this.user.username,
+                jwt: this.token
             };
             axios.post("http://localhost:8000/users/sendrequest",params)
             .then(()=>{
@@ -201,7 +184,8 @@ export default {
         },
         acceptRequest(id,index) {
             let params = {               
-                request_id: id
+                request_id: id,
+                jwt: this.token
             };
             axios.post("http://localhost:8000/users/acceptrequest",params)
             .then( (response) => {

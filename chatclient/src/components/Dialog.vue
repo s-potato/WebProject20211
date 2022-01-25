@@ -19,8 +19,8 @@
                 <template v-for="(item, index) in findUsers">
                     <v-list-item :key="item.username" :disabled="item.isFriend || item.isRequested" @click="sendRequest(item.username, index)">
                         <v-badge bordered bottom color="green" dot offset-x="22" offset-y="26">
-                            <v-list-item-avatar>
-                            <v-img :src="'https://cdn.vuetifyjs.com/images/lists/1.jpg'"></v-img>
+                            <v-list-item-avatar> 
+                            <v-img :src="typeof item.avatar != 'undefined'? item.avatar: '/avatar.png'"></v-img>
                             </v-list-item-avatar>
                         </v-badge>
                         <template>
@@ -56,7 +56,9 @@ export default {
         fab: Boolean,
     },
     data() {
+        let token = localStorage.getItem("jwt");
         return {
+            token: token,
             findUsers: [],
             term: '',
         }
@@ -65,7 +67,8 @@ export default {
         Search() {
             let params = {
                 term: this.term,
-                username: this.username
+                username: this.username,
+                jwt: this.token
             };
             axios.post("http://localhost:8000/users/find",params)
             .then(response => {

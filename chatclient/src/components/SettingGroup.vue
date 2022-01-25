@@ -22,7 +22,7 @@
               <v-card>
                 <v-card-text>
                   <v-text-field
-                    v-model="group.groupname"
+                    v-model="groupname"
                     label="New Group Name"
                   ></v-text-field>
                 </v-card-text>
@@ -78,21 +78,25 @@ export default {
     return {
       displayname: "",
       user: decoded,
-      group: {
-        avatar: null,
-        groupname: this.nameChoose,
-      },
+      groupname: this.nameChoose,
+      token: token
     };
+  },
+  watch: {
+    nameChoose: function (newVal, oldVal) {
+      if (newVal != oldVal) this.groupname = this.nameChoose;
+    },
   },
   methods: {
     updateGroup() {
       let params = {
         id: this.idRoomChoose,
-        groupname: this.group.groupname,
+        groupname: this.groupname,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/updateinfo", params)
-        .then(this.$emit("updateGroup", this.group.groupname))
+        .then(this.$emit("updateGroup", this.groupname))
         .catch((err) => {
           console.log(err);
         });
@@ -101,6 +105,7 @@ export default {
       let params = {
         id: this.idRoomChoose,
         username: this.user.username,
+        jwt: this.token
       };
       axios
         .post("http://localhost:8000/rooms/outgroup", params)
