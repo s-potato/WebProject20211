@@ -51,18 +51,12 @@
                                         <v-list>
                                             <v-list-item v-for="(item,index) in pending" :key=item.id>
                                                 <v-list-item-avatar>
-                                                <img :src="item.requester.avatar ? item.requester.avatar : 'https://cdn.vuetifyjs.com/images/john.jpg'">
+                                                <img :src="item.requester.avatar ? item.requester.avatar : '/pendingAvatar.png'">
                                                 </v-list-item-avatar>
                                                 <v-list-item-content>
                                                 <v-list-item-title>{{item.requester.display_name}}</v-list-item-title>
                                                 </v-list-item-content>
                                                 <v-spacer></v-spacer>
-                                                <v-btn
-                                                    @click="menu = false"
-                                                    outlined
-                                                >
-                                                    Decline
-                                                </v-btn>
                                                 <v-btn
                                                     class="ml-2"
                                                     outlined
@@ -78,21 +72,9 @@
                         </v-list-item>
                         <v-list-item>
                             <v-list-item-content>
-                                <!-- <v-icon color="grey">
-                                    fas fa-cog
-                                </v-icon> -->
                                 <ChangePassMail></ChangePassMail>
                             </v-list-item-content>
                         </v-list-item>
-                        <!-- <v-list-item>
-                            <v-list-item-avatar class="mb-5">
-                                <v-badge bordered bottom color="green" dot offset-x="10" offset-y="10">
-                                    <v-avatar size="40">
-                                        <v-img :src="user.avatar ? user.avatar : '/avatar.png'"></v-img>
-                                    </v-avatar>
-                                </v-badge>
-                            </v-list-item-avatar>
-                        </v-list-item> -->
                         <v-list-item @click="logUserOut">
                             <v-list-item-content>
                                 <v-icon color="grey">

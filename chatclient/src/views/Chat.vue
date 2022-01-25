@@ -4,6 +4,11 @@
       <v-row>
         <v-col cols="12" sm="3" lg="3" class="border">
           <v-app-bar flat color="rgba(0,0,0,0,0)">
+            <v-icon class="mb-2" large color="blue">mdi-webhook
+            </v-icon>
+            <v-text class="text-h5 font-weight-regular lefttext">Welcome to Web Chat</v-text>
+          </v-app-bar>
+          <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-dialog transition="dialog-top-transition" max-width="600">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn title color="blue" block v-bind="attrs" v-on="on">
@@ -63,7 +68,7 @@
               </template>
             </v-dialog>
           </v-app-bar>
-          <v-app-bar flat color="rgba(0,0,0,0,0)">
+          <!-- <v-app-bar flat color="rgba(0,0,0,0,0)">
             <v-text-field
               filled
               label="Search Here"
@@ -71,7 +76,7 @@
               color="grey"
             >
             </v-text-field>
-          </v-app-bar>
+          </v-app-bar> -->
           <v-row class="mt-1 mb-1">
             <v-col color="rgba(0,0,0,0,0)">
               <v-btn
@@ -1194,6 +1199,11 @@ export default {
 <style scoped>
 .boder {
   border-right: 1px solid grey;
+}
+.lefttext{
+  margin-left: 60px;
+  color: white;
+  text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
 }
 .sender {
   border-radius: 1px 50px 50px;
