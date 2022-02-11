@@ -70,7 +70,7 @@ export default {
                 username: this.username,
                 jwt: this.token
             };
-            axios.post("http://localhost:8000/users/find",params)
+            axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/find",params)
             .then(response => {
                 return this.findUsers = response.data
             })

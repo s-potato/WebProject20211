@@ -24,7 +24,7 @@
         key: this.$route.params.id,
         jwt: this.token
       }
-      axios.post("http://localhost:8000/rooms/joinwithkey", params)
+      axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/joinwithkey", params)
         .then(()=>{
           this.$router.push('/');
         })

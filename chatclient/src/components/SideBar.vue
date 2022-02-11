@@ -123,21 +123,21 @@ export default {
         var params = {
             jwt: this.token
         };
-        axios.post("http://localhost:8000/users", params)
+        axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users", params)
         .then((response)=>{
             this.user = response.data
             params = {
                 username: this.user.username,
                 jwt: this.token
             };
-            axios.post("http://localhost:8000/users/inrequest",params)
+            axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/inrequest",params)
             .then(response => {
                 this.pending = response.data;
             })
             .catch((err) => {
                 console.log(err);
             })
-            axios.post("http://localhost:8000/users/info",params)
+            axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/info",params)
             .then(response => {
                 this.user = response.data;
             })
@@ -156,7 +156,7 @@ export default {
                 jwt: this.token
             };  
             // show pending list
-            axios.post("http://localhost:8000/users/inrequest",params)
+            axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/inrequest",params)
             .then(response => {
                 this.pending = response.data
             })
@@ -173,7 +173,7 @@ export default {
                 username: this.user.username,
                 jwt: this.token
             };
-            axios.post("http://localhost:8000/users/sendrequest",params)
+            axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/sendrequest",params)
             .then(()=>{
                 socket.emit("Send f-request", {requester: this.user.username, request_to: friendName})
             }
@@ -187,7 +187,7 @@ export default {
                 request_id: id,
                 jwt: this.token
             };
-            axios.post("http://localhost:8000/users/acceptrequest",params)
+            axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/acceptrequest",params)
             .then( (response) => {
                 socket.emit("Accept f-request", {room_id: response.data._id, requester: response.data.requester, request_to: response.data.request_to})
                 this.pending.splice(index, 1)

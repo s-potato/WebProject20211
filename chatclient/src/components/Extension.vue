@@ -317,7 +317,7 @@ export default {
       jwt: this.token
     };
     axios
-      .post("http://localhost:8000/rooms/pins", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/pins", params)
       .then((response) => {
         this.pinList = response.data;
       })
@@ -332,7 +332,7 @@ export default {
         jwt: this.token
       };
       axios
-        .post("http://localhost:8000/rooms/pins", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/pins", params)
         .then((response) => {
           let pinList = response.data;
           if (pinList) {
@@ -356,7 +356,7 @@ export default {
         jwt: this.token
       };
       axios
-        .post("http://localhost:8000/users/unpin", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/unpin", params)
         .then(() => {
           socket.emit("Unpin message", {
             room_id: this.idRoomChoose,
@@ -371,7 +371,7 @@ export default {
       this.$emit("updateGroup", name);
     },
     downloadFile(messageid) {
-      window.open("http://localhost:8000/rooms/download?id="+messageid + "&jwt=" + this.token, "_blank");
+      window.open(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/download?id="+messageid + "&jwt=" + this.token, "_blank");
     },
     
   },

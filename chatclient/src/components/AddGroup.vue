@@ -72,7 +72,7 @@ export default {
                 jwt: this.token
             };
             let findUsers = []
-            axios.post("http://localhost:8000/users/find",params)
+            axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/find",params)
             .then(response => {
                 findUsers = response.data
                 for( var i = 0; i < findUsers.length; i++) {
@@ -108,7 +108,7 @@ export default {
                 jwt: this.token
             };
             axios
-                .post("http://localhost:8000/users/addtogroup", params)
+                .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/addtogroup", params)
                 .then(
                     socket.emit("Add member", {room_id: this.idRoomChoose, members: this.addGroupList})
                 )

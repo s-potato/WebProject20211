@@ -44,7 +44,7 @@ export default {
         jwt: this.token
       };
       axios
-        .post("http://localhost:8000/rooms/search", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/search", params)
         .then((response) => {
           return (this.searchList = response.data);
         })

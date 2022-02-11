@@ -184,7 +184,7 @@ export default {
       };
       let username = params.username;
       await axios
-        .post("http://localhost:8000/users/login",params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/login",params)
         .then(response => {
           let token = response.data.data.jwt;
           localStorage.setItem("jwt", token);
@@ -207,7 +207,7 @@ export default {
         email: this.email,
       };
       await axios
-        .post("http://localhost:8000/users/register", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/register", params)
         .then(() => {
           this.text = "Register successfully."
           this.snackbar = true

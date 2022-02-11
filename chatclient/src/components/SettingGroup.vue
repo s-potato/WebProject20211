@@ -95,7 +95,7 @@ export default {
         jwt: this.token
       };
       axios
-        .post("http://localhost:8000/rooms/updateinfo", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/updateinfo", params)
         .then(this.$emit("updateGroup", this.groupname))
         .catch((err) => {
           console.log(err);
@@ -108,7 +108,7 @@ export default {
         jwt: this.token
       };
       axios
-        .post("http://localhost:8000/rooms/outgroup", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/outgroup", params)
         .then(() => {
           socket.emit("Leave room", { room_id: this.idRoomChoose });
           this.$router.go();

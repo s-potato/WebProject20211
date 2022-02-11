@@ -613,7 +613,7 @@ export default {
         jwt: this.token
       };
       axios
-      .post("http://localhost:8000/users/rooms", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/rooms", params)
       .then((response) => {
         this.group = response.data;
         if (this.groupType == 'group'){
@@ -621,7 +621,7 @@ export default {
         }
       })
       axios
-      .post("http://localhost:8000/users/directs", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/directs", params)
       .then((response) => {
         this.direct = response.data;
         if (this.groupType == 'direct'){
@@ -640,7 +640,7 @@ export default {
           jwt: this.token
         };
         axios
-          .post("http://localhost:8000/rooms/members", params)
+          .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/members", params)
           .then((response) => {
             this.groupUsers = response.data;
           })
@@ -656,7 +656,7 @@ export default {
       };
     // show group list
       axios
-      .post("http://localhost:8000/users/rooms", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/rooms", params)
       .then((response) => {
         this.group = response.data;
         socket.emit("Joined room", { room_id: data.room_id });
@@ -669,7 +669,7 @@ export default {
       };
     // show group list
       axios
-      .post("http://localhost:8000/users/directs", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/directs", params)
       .then((response) => {
         this.direct = response.data;
         socket.emit("Joined room", { room_id: data.room_id });
@@ -747,13 +747,13 @@ export default {
     };
     // get info:
     await axios
-      .post("http://localhost:8000/users/info", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/info", params)
       .then((response) => {
         this.user = response.data
       })
     // show group list
     await axios
-      .post("http://localhost:8000/users/rooms", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/rooms", params)
       .then((response) => {
         if (response.data[0]) {
           this.idRoomChoose = response.data[0].id;
@@ -764,7 +764,7 @@ export default {
             jwt: this.token
           };
           axios
-            .post("http://localhost:8000/rooms/messages", params)
+            .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/messages", params)
             .then((response) => {
               this.messages = response.data;
               this.imgList = this.messages.filter(message => (message.type == "image"));
@@ -777,7 +777,7 @@ export default {
               console.log(err);
             });
           axios
-            .post("http://localhost:8000/rooms/members", params)
+            .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/members", params)
             .then((response) => {
               this.groupUsers = response.data;
             })
@@ -785,7 +785,7 @@ export default {
               console.log(err);
             });
             this.groupType = 'group'
-          axios.get("http://localhost:8000/rooms/key", {params})
+          axios.get(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/key", {params})
             .then((response) => {
               var host = window.location.protocol + "//" + window.location.host;
               this.currentUrl = host + '/join/' + response.data;
@@ -801,7 +801,7 @@ export default {
 
     // show direct list
     await axios
-      .post("http://localhost:8000/users/directs", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/directs", params)
       .then((response) => {
         this.direct = response.data;
       })
@@ -901,7 +901,7 @@ export default {
         jwt: this.token
       };
       await axios
-        .post("http://localhost:8000/rooms/messages", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/messages", params)
         .then((response) => {
           this.messages = response.data;
           this.imgList = this.messages.filter(message => (message.type == "image"));
@@ -922,14 +922,14 @@ export default {
         jwt: this.token
       };
       axios
-        .post("http://localhost:8000/rooms/members", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/members", params)
         .then((response) => {
           this.groupUsers = response.data;
         })
         .catch((err) => {
           console.log(err);
         });
-      axios.get("http://localhost:8000/rooms/key", {params})
+      axios.get(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/key", {params})
         .then((response) => {
           var host = window.location.protocol + "//" + window.location.host;
           this.currentUrl = host + '/join/' + response.data;
@@ -949,7 +949,7 @@ export default {
         jwt: this.token
       };
       axios
-        .post("http://localhost:8000/users/reactMessage", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/reactMessage", params)
         .then(() =>{
           socket.emit("React a message",({
             message_id: id, 
@@ -997,7 +997,7 @@ export default {
         };
         (this.groupName = ""),
         axios
-          .post("http://localhost:8000/users/createroom", params)
+          .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/createroom", params)
           .then( (response) => {
             socket.emit("create group", {username: this.user.username, room_id: response.data._id, members: addGroupList})
             this.clearListSelect();
@@ -1036,7 +1036,7 @@ export default {
         jwt: this.token
       };
       axios
-        .post("http://localhost:8000/users/pinmessage", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/pinmessage", params)
         .then(()=>
           {socket.emit("Pin message",params);}
         )
@@ -1103,7 +1103,7 @@ export default {
       form.append('file', file);
       form.append('jwt', this.token)
       
-      axios.post("http://localhost:8000/rooms/upload", form)
+      axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/upload", form)
       .then((response)=>{
         let params = {
           room_id: this.idRoomChoose,
@@ -1125,7 +1125,7 @@ export default {
       })
     },
     downloadFile(messageid) {
-      window.open("http://localhost:8000/rooms/download?id="+messageid + "&jwt=" + this.token, "_blank");
+      window.open(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/download?id="+messageid + "&jwt=" + this.token, "_blank");
     },
     addIntoGroup(){
       // need to check
@@ -1139,7 +1139,7 @@ export default {
         jwt: this.token
       };
       axios
-      .post("http://localhost:8000/users/rooms", params)
+      .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/rooms", params)
       .then((response) => {
         this.group = response.data;
       })
@@ -1151,7 +1151,7 @@ export default {
       };
       message.index = index;
       axios
-        .post("http://localhost:8000/users/deleteMessage", params)
+        .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/deleteMessage", params)
         .then(()=>
         {
           socket.emit("delete",{room_id: this.idRoomChoose, _id: message._id});
@@ -1185,7 +1185,7 @@ export default {
         jwt: this.token
       }
 
-      axios.post("http://localhost:8000/rooms/refreshKey", params)
+      axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/rooms/refreshKey", params)
       .then((response)=>{
         var host = window.location.protocol + "//" + window.location.host;
         this.currentUrl = host + '/join/' + response.data;

@@ -71,7 +71,7 @@ import ImageCompressor from 'js-image-compressor'
             username: this.user.username,
             jwt: this.token
         };
-        axios.post("http://localhost:8000/users/info",params)
+        axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/info",params)
         .then(response => {
             this.user = response.data;
             this.displayname = this.user.display_name;
@@ -113,7 +113,7 @@ import ImageCompressor from 'js-image-compressor'
                             jwt: vue.token
                         };
                         axios
-                            .post("http://localhost:8000/users/updateinfo", params)
+                            .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/updateinfo", params)
                             .then(()=>{
                                 vue.$router.go()
                                 })
@@ -136,7 +136,7 @@ import ImageCompressor from 'js-image-compressor'
                 jwt: this.token
             };
                 axios
-                .post("http://localhost:8000/users/updateinfo", params)
+                .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/updateinfo", params)
                 .then()
                 .catch((err) => {
                 console.log(err);

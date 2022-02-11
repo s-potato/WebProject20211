@@ -107,7 +107,7 @@
             username: this.user.username,
             jwt: this.token
         };
-        axios.post("http://localhost:8000/users/info",params)
+        axios.post(process.env.VUE_APP_SERVER_ADDRESS+"/users/info",params)
         .then(response => {
             this.user = response.data;
         })
@@ -129,7 +129,7 @@
                 jwt: this.token
             };
             await axios
-            .post("http://localhost:8000/users/changepassword", params)
+            .post(process.env.VUE_APP_SERVER_ADDRESS+"/users/changepassword", params)
             .then( ()=>{
                     let here = this
                     setTimeout(function(){here.value = false}, 1000);
