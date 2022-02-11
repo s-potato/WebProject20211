@@ -1,4 +1,8 @@
-# chatclient
+# ChatClient
+
+A chat client using Vuejs and SocketIO.
+
+Using Vuetify for Design Framework
 
 ## Project setup
 ```
