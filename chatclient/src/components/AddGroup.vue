@@ -38,7 +38,7 @@
             </v-list>
             <v-card-actions class="justify-end">
                 <v-btn text @click="dialog.value = false, addGroup()">Add</v-btn>
-                <v-btn text @click="dialog.value = false">Close</v-btn>
+                <v-btn text @click="dialog.value = false, deleteSearch()">Close</v-btn>
             </v-card-actions>
             </v-card>
         </template>
@@ -115,6 +115,9 @@ export default {
                 .catch((err) => {
                     console.log(err);
                 });
+        },
+        deleteSearch(){
+            this.term = ""
         }
     }
 }
