@@ -1008,12 +1008,29 @@ export default {
       }
     },
     // get link
-    async copyURL(mytext) {
-      try {
-        await navigator.clipboard.writeText(mytext);
-        // alert('Copied');
-      } catch ($e) {
-        alert("Cannot copy");
+    copyURL(mytext) {
+      console.log(mytext);
+      if (navigator.clipboard && window.isSecureContext) {
+        // navigator clipboard api method'
+        navigator.clipboard.writeText(mytext).then();
+      } else {
+        let textArea = document.createElement("input");
+        textArea.value = mytext;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        try{
+          textArea.select();
+          console.log(textArea.value);
+          document.execCommand('copy');
+          console.log("copied");
+        } catch (err) {
+          console.log("err");
+        }
+        
+        textArea.remove();    
       }
       //
     },
